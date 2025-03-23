@@ -1,0 +1,478 @@
+/* Styles for the body elements */
+html {
+    /*background-image: linear-gradient(to right, lightgrey, grey);*/
+}
+body {
+    /*background-image: linear-gradient(to right, lightgrey, grey);
+    font-family: 'kanit', sans-serif;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;*/
+}
+h1, h2 {
+    /*text-align: center;*/
+}
+.nav-header {
+    /*width: 42px;
+    border-radius: 50%;*/
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'kanit', sans-serif;
+}
+body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: linear-gradient(to right, #808080, #2E2E30);
+    background-size: cover;
+}
+
+/* Styles for the login page*/
+.login-container {
+    width: 300px;
+    height: 375px;
+    position: relative;
+    z-index: 1;
+    background: #808080;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    border: 1px solid #fff;
+}
+.login-container::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: -1;
+}
+.login-box {
+    max-width: 250px;
+    margin: 0 auto;
+    text-align: center;
+}
+.login-box h2 {
+    color: #C51D34;
+    margin-top: 30px;
+    margin-bottom: -20px;
+    font-size: 35px;
+    text-shadow: 1px 1px 2px #C51D34, 0 0 1em rgb(0, 0, 0), 0 0 0.2em rgb(0, 0, 0);
+}
+.login-box p {
+    font-size: 12px;
+    color: #000000;
+    margin-top: 15px;
+}
+.login-box p a{
+    text-decoration: none;
+    color: #C51D34;
+    font-weight: bold;
+}
+
+/* Styles for the create account page*/
+.register-container {
+    width: 300px;
+    height: 450px;
+    position: relative;
+    z-index: 1;
+    background: #808080;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    border: 1px solid #fff;
+}
+.register-container::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: -1;
+}
+.register-box {
+    max-width: 250px;
+    margin: 0 auto;
+    text-align: center;
+}
+.register-box h2 {
+    color: #C51D34;
+    margin-top: 30px;
+    margin-bottom: -20px;
+    font-size: 35px;
+    text-shadow: 1px 1px 2px #C51D34, 0 0 1em rgb(0, 0, 0), 0 0 0.2em rgb(0, 0, 0);
+}
+
+/* Styles for the enter information page*/
+.enter-info-container {
+    width: 300px;
+    height: 550px;
+    position: relative;
+    z-index: 1;
+    background: #808080;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    border: 1px solid #fff;
+}
+.enter-info-container::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: -1;
+}
+.enter-info-box {
+    max-width: 250px;
+    margin: 0 auto;
+    text-align: center;
+}
+.enter-info-box h2 {
+    color: #C51D34;
+    margin-top: 30px;
+    margin-bottom: -20px;
+}
+
+/* Styles for the nav bar*/
+.nav-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 85px;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    background-color: #C51D34;
+    padding: 25px 20px;
+    transition: all 0.4s ease;
+}
+.nav-container:hover {
+    width: 260px;
+}
+.nav-header {
+    display: flex;
+    align-items: center;
+}
+.nav-header img {
+    width: 42px;
+    border-radius: 50%;
+}
+.nav-header h2 {
+    font-size: 1.25em;
+    font-weight: 600;
+    color: #F5F5F5;
+    margin-left: 23px;
+}
+.nav-links {
+    list-style: none;
+    margin-top: 20px;
+    height: 80%;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+.nav-links h4 {
+    color: #F5F5F5;
+    font-weight: 500;
+    margin: 10px 0;
+    white-space: nowrap;
+    position: relative;
+}
+.nav-container:hover .nav-links h4 span {
+    opacity: 1;
+}
+.nav-links h4 span {
+    opacity: 0;
+}
+.nav-links .menu-separator {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 1px;
+    transform: scaleX(1);
+    transform: translateY(-50%);
+    background: white;
+    transform-origin: right;
+    transition-duration: 0.2s;
+}
+.nav-container:hover .nav-links .menu-separator {
+    transition-delay: 0s;
+    transform: scaleX(0);
+}
+.nav-links li a {
+    display: flex;
+    align-items: center;
+    gap: 0 20px;
+    color: lightgray;
+    font-weight: 500;
+    padding: 15px 10px;
+    white-space: nowrap;
+    text-decoration: none;
+}
+.nav-links li a:hover {
+    background: #ffffff2d;
+    color: #fff;
+    border-radius: 4px;
+}
+.user-account {
+    margin-top: auto;
+    padding: 12px 10px;
+    margin-left: -10px;
+}
+.user-account .user-profile {
+    display: flex;
+    align-items: center;
+    color: #e5dede;
+}
+.user-detail {
+    margin-left: 23px;
+    white-space: nowrap;
+}
+.user-profile img {
+    width: 42px;
+    border-radius: 50%;
+}
+.user-profile h3 {
+    font-size: 1rem;
+    font-weight: 600;
+}
+.user-profile span {
+    font-size: 0.775rem;
+    font-weight: 600;
+    display: block;
+    margin-top: 0;
+}
+.nav-container:hover .user-account {
+    background: #ffffff2d;
+    border-radius: 4px;
+}
+
+/* Styles for the welcome page */
+.welcome-container h1 {
+    color: #C51D34;
+    font-size: 5em;
+    text-shadow: 1px 1px 2px #C51D34, 0 0 1em rgb(0, 0, 0), 0 0 0.2em rgb(0, 0, 0);
+    margin-bottom: 15px;
+}
+.welcome-container img {
+    width: 100px;
+    border-radius: 50%;
+}
+.welcome-container .button-container .log-in {
+    margin-right: 10px;
+}
+.welcome-container .button-container .create-account {
+    margin-right: 10px;
+}
+
+/* Styles for the home page */
+.dashboard-container h1 {
+    text-align: center;
+    color: #C51D34;
+    font-size: 35px;
+    text-shadow: 1px 1px 2px #C51D34, 0 0 1em rgb(0, 0, 0), 0 0 0.2em rgb(0, 0, 0);
+}
+.cards-container {
+    position: relative;
+    z-index: 1;
+    background: #808080;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    border: 1px solid #fff;
+}
+.cards-container::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: -1;
+}
+.current-date {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    font-size: 15px;
+    padding: 5px 10px;
+    z-index: 1000;
+    background: #808080;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    border: 1px solid #fff;
+}
+
+/* Styles for the stats page */
+.stats-container h1 {
+    text-align: center;
+    color: #C51D34;
+    font-size: 35px;
+    text-shadow: 1px 1px 2px #C51D34, 0 0 1em rgb(0, 0, 0), 0 0 0.2em rgb(0, 0, 0);
+}
+
+/* Styles for the profile page */
+.profile-container h1 {
+    text-align: center;
+    color: #C51D34;
+    font-size: 35px;
+    text-shadow: 1px 1px 2px #C51D34, 0 0 1em rgb(0, 0, 0), 0 0 0.2em rgb(0, 0, 0);
+}
+
+/* Styles for the settings page */
+.settings-container h1 {
+    text-align: center;
+    color: #C51D34;
+    font-size: 35px;
+    text-shadow: 1px 1px 2px #C51D34, 0 0 1em rgb(0, 0, 0), 0 0 0.2em rgb(0, 0, 0);
+}
+
+/* Styles for the calorie counter page */
+.calorie-counter-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+}
+.calorie-counter-container h1 {
+    text-align: center;
+    color: #C51D34;
+    font-size: 35px;
+    text-shadow: 1px 1px 2px #C51D34, 0 0 1em rgb(0, 0, 0), 0 0 0.2em rgb(0, 0, 0);
+}
+.icon-container {
+    display: inline-block;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.5s ease-in-out;
+    padding: 50px;
+
+}
+.icon-container:hover {
+    transform: scale(1.2);
+}
+.exit-container {
+    margin-top: 10px;
+}
+.speed-dial-container {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+}
+@keyframes fireBurst {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.5);
+        opacity: 0.6;
+    }
+    100% {
+        transform: scale(0);
+        opacity: 0;
+    }
+}
+.fireburst {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-color: orange;
+    border-radius: 50%;
+    animation: fireBurst 1s ease-out;
+    pointer-events: none;
+}
+
+/* Profile Image Styles */
+.profile-collapsable {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    text-align: left;
+    z-index: 1;
+}
+.profile-collapsable ul {
+    list-style-type: none;  
+    position: relative;
+    padding: 0;
+    margin: 0;
+}
+.profile-collapsable ul li {
+    padding: 8px;
+    text-align: center; 
+}
+.profile-image-container {
+    position: relative;
+    width: 75px;
+    height: 75px;
+    background-color: black;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 3px solid black;
+}
+.profile-image-container img,
+.profile-image img {
+    max-width: 75px;
+    max-height: 75px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+.profile-image {
+    cursor: pointer;
+    margin-right: 15px;
+}
+.profile-username {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+}
+.profile-username h3, .profile-username h4 {
+    margin: 0;
+    padding: 0;
+}
+.profile-stats {
+    display: none;
+    position: absolute;
+    top: 70px;
+    padding: 15px;
+    margin-top: 30px;
+    border: solid black;
+    width: 150px;
+    z-index: 2;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.profile-stats.visible {
+    display: flex;
+}
+.profile-stats ul li {
+    padding: 8px;
+    text-align: left;
+}
+.profile-stats button {
+    width: 100px;
+    padding: 10px;
+}
