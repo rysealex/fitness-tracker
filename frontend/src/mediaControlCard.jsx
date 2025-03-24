@@ -1,13 +1,13 @@
 import React from 'react';
-import { IconButton } from '@mui/material';
+import { Button } from '@mui/material';
 
 const MediaControlCard = ({ isPlaying, currentTrack, togglePlayPause, skipNext, skipPrevious }) => {
   return (
     <div>
       <h3>{currentTrack}</h3>
-      <IconButton onClick={skipPrevious}>Prev</IconButton>
-			<IconButton onClick={togglePlayPause}>{isPlaying ? 'Pause' : 'Play'}</IconButton>
-      <IconButton onClick={skipNext}>Next</IconButton>
+      <Button onClick={skipPrevious}>Prev</Button>
+			<Button onClick={togglePlayPause}>{isPlaying ? 'Pause' : 'Play'}</Button>
+      <Button onClick={skipNext}>Next</Button>
     </div>
   );
 };

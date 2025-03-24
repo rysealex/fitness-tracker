@@ -1,5 +1,5 @@
 # Step 1: Use an official Node.js image to build the app
-FROM node:16 AS build
+FROM node:20
 
 # Step 2: Set the working directory in the container
 WORKDIR /app
@@ -13,5 +13,8 @@ RUN npm install
 # Step 5: Copy the rest of the application code to the container
 COPY . .
 
-# Run the Flask app
+# Step 6: Expose the port the app will run on
+EXPOSE 3000
+
+# Run the React app
 CMD ["npm", "start"]
