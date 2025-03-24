@@ -1,8 +1,2 @@
 run: 
-	cd backend
-	docker build -t flask-app .
-	docker run -p 5000:5000 flask-app
-
-	cd ../frontend
-	docker build -t react-app .
-	docker run react-app
+	docker-compose up --build
