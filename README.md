@@ -6,4 +6,9 @@ Implemented user authentication and features to allow users to update and track 
 
 Enhanced proficiency in Docker, React, Flask, APIs, and containerized web application architectures
 
-docker-compose up --build (to build and run everything)
+## Pre-reqs
+
+Install Docker Desktop and Make
+
+- run `make run` to start the services
+- run `make clean` to stop/delete the service instances
