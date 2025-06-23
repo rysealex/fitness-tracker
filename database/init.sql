@@ -96,6 +96,8 @@ CREATE TABLE IF NOT EXISTS `fitness_tracker`.`Goals` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+INSERT INTO `fitness_tracker`.`Users` (`user_id`, `username`, `email`, `password`, `fname`, `lname`, `dob`, `height_in`, `weight_lbs`, `gender`, `profile_pic`, `occupation`) VALUES
+(1, 'john_doe', 'john@example.com', 'hashed_password', 'John', 'Doe', '1990-01-01', 70, 180, 'Male', 'path/to/profile_pic.jpg', 'Software Engineer');
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
