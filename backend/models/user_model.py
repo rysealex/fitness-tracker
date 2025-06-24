@@ -30,7 +30,7 @@ class UserModel:
                 conn.close()
 
     """Function to create a user in the database"""
-    def create_user(self, username, email, password, fname, lname, dob, height_in, weight_lbs, gender, profile_pic, occupation):
+    def create_user(self, username, email, password, fname, lname, dob, height_ft, weight_lbs, gender, profile_pic, occupation):
         conn = None
         cursor = None
         try:
@@ -38,14 +38,14 @@ class UserModel:
             cursor = conn.cursor()
 
             sql = """
-            INSERT INTO Users (username, email, password, fname, lname, dob, height_in, weight_lbs, gender, profile_pic, occupation)
+            INSERT INTO Users (username, email, password, fname, lname, dob, height_ft, weight_lbs, gender, profile_pic, occupation)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
 
             if isinstance(dob, str):
                 dob = datetime.strptime(dob, "%Y-%m-%d").date()
 
-            user_data = (username, email, password, fname, lname, dob, height_in, weight_lbs, gender, profile_pic, occupation)
+            user_data = (username, email, password, fname, lname, dob, height_ft, weight_lbs, gender, profile_pic, occupation)
             cursor.execute(sql, user_data)
             conn.commit() # Commit the transaction
             return cursor.lastrowid

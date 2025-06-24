@@ -28,7 +28,7 @@ def register():
     fname = data.get('fname')
     lname = data.get('lname')
     dob = data.get('dob')
-    height_in = data.get('height_in')
+    height_ft = data.get('height_ft')
     weight_lbs = data.get('weight_lbs')
     gender = data.get('gender')
     profile_pic = data.get('profile_pic')
