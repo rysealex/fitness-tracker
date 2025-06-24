@@ -2,4 +2,4 @@ flask
 flask_cors
 mysql-connector-python
 bcrypt
-python-dotenv
+gunicorn
