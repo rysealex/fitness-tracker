@@ -170,80 +170,34 @@ function Home() {
       return newVisible;
     });
   };
-  // Fetch user stats
+  // fetch user stats on component mount
   useEffect(() => {
-    if (!isPlaying) {
-      startAudio();
-    }
-    if (username) {
-      axios.get(`http://127.0.0.1:5000/user/${username}/stats`)
-        .then(function (response) {
-          console.log(response);
-          setStats(response.data);
-          setWeightInput(response.data.weight);
-          setHeightInput(response.data.height);
-          setProfilePicture(response.data.profile_pic);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }
-  }, [username, isPlaying, startAudio]);
+    const fetchStats = async () => {
+      // get the current users user_id from local storage
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        console.error("User ID not found in local storage.");
+        return;
+      }
+      try {
+        const response = await fetch(`http://localhost:5000/auth/user/${userId}`);
+        if (response.ok) {
+          const data = await response.json();
+          setStats(data);
+          console.log("User stats fetched successfully:", data);
+        } else {
+          console.error("Failed to fetch user stats:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching user stats:", error);
+      }
+    };
+    // call the fetchStats function to get user stats
+    fetchStats();
+  }, []);
+    
   return (
     <div>
-      {/*<aside className='profile-collapsable'>
-        <div className='profile-image' onClick={handleProfilePicClick}>
-          <div className='profile-image-container'>
-            {previewPicture ? (
-              <img src={URL.createObjectURL(previewPicture)} alt="Profile-pic" />
-            ) : (
-              profilePicture ? (
-                <img src={`http://127.0.0.1:5000${profilePicture}`} alt="Profile-pic" />
-              ) : (
-                <FontAwesomeIcon icon={faUser} size="3x" />
-              )
-            )}
-          </div>
-        </div>
-        <div className='profile-username'>
-          <h3>{stats.fname} {stats.lname}</h3>
-          <h4>{`${username}`}</h4>
-        </div>
-        {profileVisible && (
-          <div className={`profile-stats ${profileVisible ? 'visible' : ''}`}>
-            {console.log("profile stats rednered")}
-            <ul>
-              <li>{stats.gender}</li>
-              <li>{stats.age} yrs</li>
-              <li>{stats.weight} lbs</li>
-              <li>{stats.height} ft</li>
-            </ul>
-            <div>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handlePictureChange}
-              />
-              {previewPicture && (
-                <div className='profile-stats'>
-                  <div className='profile-image-container'>
-                    <img 
-                      src={URL.createObjectURL(previewPicture)} 
-                      alt="Profile-pic-preview" 
-                    />
-                  </div>
-                  <Button 
-                    variant='contained' 
-                    onClick={handleSaveProfilePicture}
-                  >
-                    Save
-                  </Button>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-      </aside>*/}
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
       <aside className='nav-container'>
         <div className='nav-header'>
@@ -359,81 +313,6 @@ function Home() {
           </Stack>
         </div>
       </section>
-      {/*<Container> 
-      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-        <div style={{ width: '100%', maxWidth: '300px', marginBottom: '20px' }}>
-          <StatCard
-            title="Username"
-            value={`${username}`}
-          //unit=""
-          //icon={<FaFireAlt />}
-          />
-        </div>
-        <div style={{ width: '100%', maxWidth: '300px', marginBottom: '20px' }}>
-          <StatCard
-            title="Today's Date"
-            value={<CurrentDate />}
-          //unit="lbs"
-          //icon={<FaWalking />}
-          />
-        </div>
-        <div style={{ width: '100%', maxWidth: '300px', marginBottom: '20px' }}>
-          <StatCard
-            title="Weight"
-            value={stats.weight}
-            unit="lbs"
-          //icon={<FaWalking />}
-          />
-          <Button variant="contained" onClick={handleClickWeight}>Edit</Button>
-          {editModeWeight && (
-            <>
-              <input
-                type="text"
-                value={weightInput}
-                onChange={handleWeightInputChange}
-              />
-              <Button variant='contained' onClick={handleSaveWeight}>Save</Button>
-            </>
-          )}
-        </div>
-        <div style={{ width: '100%', maxWidth: '300px', marginBottom: '20px' }}>
-          <StatCard
-            title="Height"
-            value={stats.height}
-            unit="feet"
-          //icon={<FaFireAlt />}
-          />
-          <Button variant="contained" onClick={handleClickHeight}>Edit</Button>
-          {editModeHeight && (
-            <>
-              <input
-                type="text"
-                value={heightInput}
-                onChange={handleHeightInputChange}
-              />
-              <Button variant='contained' onClick={handleSaveHeight}>Save</Button>
-            </>
-          )}
-        </div>
-        <div style={{ width: '100%', maxWidth: '300px', marginBottom: '20px' }}>
-          <StatCard
-            title="Age"
-            value={stats.age}
-            unit="years"
-          //icon={<FaFireAlt />}
-          />
-        </div>
-        <div style={{ width: '100%', maxWidth: '300px', marginBottom: '20px' }}>
-          <StatCard
-            title="Gender"
-            value={stats.gender}
-          //unit=""
-          //icon={<FaFireAlt />}
-          />
-        </div>
-      </div>
-      <Button variant="contained" onClick={() => handleSignOut()}>Sign Out</Button>
-      </Container>*/}
     </div>
   )
 };

@@ -34,10 +34,10 @@ def register():
     profile_pic = data.get('profile_pic')
     occupation = data.get('occupation')
 
-    if not all([username, email, password, fname, lname, dob, height_in, weight_lbs, gender, profile_pic, occupation]):
+    if not all([username, email, password, fname, lname, dob, height_ft, weight_lbs, gender, profile_pic, occupation]):
         return jsonify({"error": "All fields are required"}), 400
 
-    user_id = user_model.create_user(username, email, password, fname, lname, dob, height_in, weight_lbs, gender, profile_pic, occupation)
+    user_id = user_model.create_user(username, email, password, fname, lname, dob, height_ft, weight_lbs, gender, profile_pic, occupation)
 
     if user_id:
         return jsonify({"message": "User registered successfully", "user_id": user_id}), 201
@@ -64,3 +64,12 @@ def login():
         return jsonify({"message": "Login successful", "user": user}), 200
     else:
         return jsonify({"error": "Invalid username or password"}), 401
+    
+@auth_bp.route('/user/<int:user_id>', methods=['GET'])
+def get_user_by_id(user_id):
+    """Endpoint to get a user by user_id"""
+    user = user_model.get_user_by_id(user_id)
+    if user:
+        return jsonify(user), 200
+    else:
+        return jsonify({"error": "User not found"}), 404

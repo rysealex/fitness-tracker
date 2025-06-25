@@ -73,10 +73,33 @@ class UserModel:
             """
             cursor.execute(sql, (username, password))
             user = cursor.fetchone()
-            return user is not None
+            return user
         except Error as e:
             print(f"Error checking if user exists: {e}")
             return False
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
+
+    """Function to get a user by user_id"""
+    def get_user_by_id(self, user_id):
+        conn = None
+        cursor = None
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor(dictionary=True)
+
+            sql = """
+            SELECT * FROM Users WHERE user_id = %s
+            """
+            cursor.execute(sql, (user_id,))
+            user = cursor.fetchone()
+            return user
+        except Error as e:
+            print(f"Error fetching user by ID: {e}")
+            return None
         finally:
             if cursor:
                 cursor.close()

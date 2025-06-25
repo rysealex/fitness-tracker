@@ -43,6 +43,8 @@ function Login() {
         if (response.ok) {
           const data = await response.json();
           console.log('Login successful:', data);
+          // store the user id in local storage
+          localStorage.setItem('userId', data.user.user_id);
           handleNavigate("/home");
         } else {
           console.log('Login failed:', response.statusText);
