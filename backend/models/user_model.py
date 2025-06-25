@@ -59,3 +59,26 @@ class UserModel:
                 cursor.close()
             if conn:
                 conn.close()
+
+    """Function to check if a user exists in the database by username and password"""
+    def user_exists(self, username, password):
+        conn = None
+        cursor = None
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor(dictionary=True)
+
+            sql = """
+            SELECT * FROM Users WHERE username = %s AND password = %s
+            """
+            cursor.execute(sql, (username, password))
+            user = cursor.fetchone()
+            return user is not None
+        except Error as e:
+            print(f"Error checking if user exists: {e}")
+            return False
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()

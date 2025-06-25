@@ -43,3 +43,24 @@ def register():
         return jsonify({"message": "User registered successfully", "user_id": user_id}), 201
     else:
         return jsonify({"error": "User registration failed"}), 500
+    
+@auth_bp.route('/login', methods=['POST'])
+def login():
+    """Endpoint to log in a user"""
+    data = request.get_json()
+    
+    if not data:
+        return jsonify({"error": "No input data provided"}), 400
+    
+    username = data.get('username')
+    password = data.get('password')
+
+    if not all([username, password]):
+        return jsonify({"error": "Username and password are required"}), 400
+
+    user = user_model.user_exists(username, password)
+
+    if user:
+        return jsonify({"message": "Login successful", "user": user}), 200
+    else:
+        return jsonify({"error": "Invalid username or password"}), 401
