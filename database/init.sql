@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS `fitness_tracker`.`Users` (
   `gender` ENUM("Male", "Female", "Other") NOT NULL,
   `profile_pic` VARCHAR(255) NULL,
   `occupation` VARCHAR(45) NULL,
+  `created_at` DATETIME NOT NULL,
   UNIQUE INDEX `username_UNIQUE` (`username` ASC) VISIBLE,
   PRIMARY KEY (`user_id`))
 ENGINE = InnoDB;
@@ -94,8 +95,8 @@ CREATE TABLE IF NOT EXISTS `fitness_tracker`.`Goals` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-INSERT INTO `fitness_tracker`.`Users` (`user_id`, `username`, `password`, `fname`, `lname`, `dob`, `height_ft`, `weight_lbs`, `gender`, `profile_pic`, `occupation`) VALUES
-(1, 'john_doe', 'hashed_password', 'John', 'Doe', '1990-01-01', 5.8, 180, 'Male', 'path/to/profile_pic.jpg', 'Software Engineer');
+INSERT INTO `fitness_tracker`.`Users` (`user_id`, `username`, `password`, `fname`, `lname`, `dob`, `height_ft`, `weight_lbs`, `gender`, `profile_pic`, `occupation`, `created_at`) VALUES
+(1, 'john_doe', 'hashed_password', 'John', 'Doe', '1990-01-01', 5.8, 180, 'Male', 'path/to/profile_pic.jpg', 'Software Engineer', NOW());
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

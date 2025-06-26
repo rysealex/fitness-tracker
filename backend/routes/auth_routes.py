@@ -33,11 +33,12 @@ def register():
     gender = data.get('gender')
     profile_pic = data.get('profile_pic')
     occupation = data.get('occupation')
+    created_at = data.get('created_at')
 
-    if not all([username, email, password, fname, lname, dob, height_ft, weight_lbs, gender, profile_pic, occupation]):
+    if not all([username, email, password, fname, lname, dob, height_ft, weight_lbs, gender, profile_pic, occupation, created_at]):
         return jsonify({"error": "All fields are required"}), 400
 
-    user_id = user_model.create_user(username, email, password, fname, lname, dob, height_ft, weight_lbs, gender, profile_pic, occupation)
+    user_id = user_model.create_user(username, email, password, fname, lname, dob, height_ft, weight_lbs, gender, profile_pic, occupation, created_at)
 
     if user_id:
         return jsonify({"message": "User registered successfully", "user_id": user_id}), 201

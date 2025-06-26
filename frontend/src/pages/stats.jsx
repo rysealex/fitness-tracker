@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { useUser } from '../userContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/index.css'
+import Navbar from '../navbar';
 
 function Stats() {
   const navigate = useNavigate();
@@ -37,166 +38,135 @@ function Stats() {
   const handleClickSettings = () => {
     handleNavigate('/settings');
   };
-  // event handler for edit stats use state
-  const handleClickEditStats = () => {
-    setEditStats(!editStats);
-  }
-  // Event handler for saving the new values
-  const handleSaveWeight = () => {
-    const updatedStats = { ...stats, weight: weightInput };
-    setStats(updatedStats);
-    // Connect to backend here
-    axios.put(`http://127.0.0.1:5000/user/${username}/stats`, {
-      weight: weightInput
-    })
-      .then(response => {
-        console.log("Weight updated successfully:", response.data);
-        axios.get(`http://127.0.0.1:5000/user/${username}/stats`)
-          .then(function (response) {
-            setStats(response.data); // Ensure we have the latest stats
-            setEditStats(false);
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-      })
-      .catch(error => {
-        console.log("Error updating weight:", error);
-      });
-  };
-  const handleSaveHeight = () => {
-    const updatedStats = { ...stats, height: heightInput };
-    setStats(updatedStats);
-    // Connect to backend here
-    axios.put(`http://127.0.0.1:5000/user/${username}/stats`, {
-      height: heightInput
-    })
-      .then(response => {
-        console.log("Height updated successfully:", response.data);
-        axios.get(`http://127.0.0.1:5000/user/${username}/stats`)
-          .then(function (response) {
-            setStats(response.data); // Ensure we have the latest stats
-            setEditStats(false);
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-      })
-      .catch(error => {
-        console.log("Error updating height:", error);
-      });
-  };
-  // Error checking weight input value
-  const handleWeightInputChange = (e) => {
-    const newValue = e.target.value;
-    // allow only numbers (positive integers and decimals)
-    if (/^\d*\.?\d*$/.test(newValue)) {
-      setWeightInput(newValue);
-      setErrorWeight(false);
-      setHelperTextWeight("");
-    } else {
-      setErrorWeight(true);
-      setHelperTextWeight("Enter a valid weight");
-    }
-  };
-  // Error checking height input value
-  const handleHeightInputChange = (e) => {
-    const newValue = e.target.value;
-    // allow only numbers (positive integers and decimals)
-    if (/^\d*\.?\d*$/.test(newValue)) {
-      setHeightInput(newValue);
-      setErrorHeight(false);
-      setHelperTextHeight("");
-    } else {
-      setErrorHeight(true);
-      setHelperTextHeight("Enter a valid height");
-    }
-  };
-  // Fetch user stats
+  // // event handler for edit stats use state
+  // const handleClickEditStats = () => {
+  //   setEditStats(!editStats);
+  // }
+  // // Event handler for saving the new values
+  // const handleSaveWeight = () => {
+  //   const updatedStats = { ...stats, weight: weightInput };
+  //   setStats(updatedStats);
+  //   // Connect to backend here
+  //   axios.put(`http://127.0.0.1:5000/user/${username}/stats`, {
+  //     weight: weightInput
+  //   })
+  //     .then(response => {
+  //       console.log("Weight updated successfully:", response.data);
+  //       axios.get(`http://127.0.0.1:5000/user/${username}/stats`)
+  //         .then(function (response) {
+  //           setStats(response.data); // Ensure we have the latest stats
+  //           setEditStats(false);
+  //         })
+  //         .catch(function (error) {
+  //           console.log(error);
+  //         });
+  //     })
+  //     .catch(error => {
+  //       console.log("Error updating weight:", error);
+  //     });
+  // };
+  // const handleSaveHeight = () => {
+  //   const updatedStats = { ...stats, height: heightInput };
+  //   setStats(updatedStats);
+  //   // Connect to backend here
+  //   axios.put(`http://127.0.0.1:5000/user/${username}/stats`, {
+  //     height: heightInput
+  //   })
+  //     .then(response => {
+  //       console.log("Height updated successfully:", response.data);
+  //       axios.get(`http://127.0.0.1:5000/user/${username}/stats`)
+  //         .then(function (response) {
+  //           setStats(response.data); // Ensure we have the latest stats
+  //           setEditStats(false);
+  //         })
+  //         .catch(function (error) {
+  //           console.log(error);
+  //         });
+  //     })
+  //     .catch(error => {
+  //       console.log("Error updating height:", error);
+  //     });
+  // };
+  // // Error checking weight input value
+  // const handleWeightInputChange = (e) => {
+  //   const newValue = e.target.value;
+  //   // allow only numbers (positive integers and decimals)
+  //   if (/^\d*\.?\d*$/.test(newValue)) {
+  //     setWeightInput(newValue);
+  //     setErrorWeight(false);
+  //     setHelperTextWeight("");
+  //   } else {
+  //     setErrorWeight(true);
+  //     setHelperTextWeight("Enter a valid weight");
+  //   }
+  // };
+  // // Error checking height input value
+  // const handleHeightInputChange = (e) => {
+  //   const newValue = e.target.value;
+  //   // allow only numbers (positive integers and decimals)
+  //   if (/^\d*\.?\d*$/.test(newValue)) {
+  //     setHeightInput(newValue);
+  //     setErrorHeight(false);
+  //     setHelperTextHeight("");
+  //   } else {
+  //     setErrorHeight(true);
+  //     setHelperTextHeight("Enter a valid height");
+  //   }
+  // };
+  // // Fetch user stats
+  // useEffect(() => {
+  //   if (username) {
+  //     axios.get(`http://127.0.0.1:5000/user/${username}/stats`)
+  //       .then(function (response) {
+  //         console.log(response);
+  //         setStats(response.data);
+  //         setWeightInput(response.data.weight);
+  //         setHeightInput(response.data.height);
+  //       })
+  //       .catch(function (error) {
+  //         console.log(error);
+  //       });
+  //   }
+  // }, [username])
+
+  // fetch user stats on component mount
   useEffect(() => {
-    if (username) {
-      axios.get(`http://127.0.0.1:5000/user/${username}/stats`)
-        .then(function (response) {
-          console.log(response);
-          setStats(response.data);
-          setWeightInput(response.data.weight);
-          setHeightInput(response.data.height);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }
-  }, [username])
+    const fetchStats = async () => {
+      // get the current users user_id from local storage
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        console.error("User ID not found in local storage.");
+        return;
+      }
+      try {
+        const response = await fetch(`http://localhost:5000/auth/user/${userId}`);
+        if (response.ok) {
+          const data = await response.json();
+          setStats(data);
+          console.log("User stats fetched successfully:", data);
+        } else {
+          console.error("Failed to fetch user stats:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching user stats:", error);
+      }
+    };
+    // call the fetchStats function to get user stats
+    fetchStats();
+  }, []);
+
   return (
     <div>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-      <aside className='nav-container'>
-        <div className='nav-header'>
-          <img src='/images/muscle-logo.png' alt='logo'></img>
-          <h2>FitnessTracker</h2>
-        </div>
-        <ul className='nav-links'>
-          <h4>
-            <span>Main Menu</span>
-            <div className='menu-separator'></div>
-          </h4>
-          <li>
-            <a href='' onClick={() => handleClickDashboard()}><span 
-            class="material-symbols-outlined">
-              dashboard
-              </span>Dashboard</a>
-          </li>
-          <li>
-            <a href='' onClick={() => handleClickStats()}><span 
-            class="material-symbols-outlined">
-              monitoring
-              </span>Stats</a>
-          </li>
-          <li>
-            <a href='#'><span 
-            class="material-symbols-outlined">
-              notifications_active
-              </span>Notifications</a>
-          </li>
-          <li>
-            <a href='' onClick={() => handleClickProfile()}><span 
-            class="material-symbols-outlined">
-              account_circle
-              </span>Profile</a>
-          </li>
-          <li>
-            <a href='' onClick={() => handleClickSettings()}><span 
-            class="material-symbols-outlined">
-              settings
-              </span>Settings</a>
-          </li>
-          <li>
-            <a href='' onClick={() => handleSignOut()}><span 
-            class="material-symbols-outlined">
-              logout
-              </span>Logout</a>
-          </li>
-        </ul>
-        <div className='user-account'>
-          <div className='user-profile'>
-            <img src='/images/yami.png'
-            alt='profile-img'></img>
-            <div className='user-detail'>
-              <h3>{stats.fname} {stats.lname}</h3>
-              <span>Software Engineer</span>
-            </div>
-          </div>
-        </div>
-      </aside>
+      <Navbar stats={stats} />
       <section className='stats-container'>
         <h1>Your Stats</h1>
         <ul>
-          <li>Age: {stats.age}</li>
+          <li>Age: {stats.dob}</li>
           <li>Gender: {stats.gender}</li>
-          <li>Height: {stats.height}</li>
-          <li>Weight: {stats.weight}</li>
+          <li>Height: {stats.height_ft}</li>
+          <li>Weight: {stats.weight_lbs}</li>
         </ul>
-        {editStats && (
+        {/* {editStats && (
           <>
           <div className='enter-height-container'>
             <TextField
@@ -257,15 +227,15 @@ function Stats() {
             </Button>
           </div>
           </>
-        )}
-        <Button 
+        )} */}
+        {/* <Button 
           variant="contained" 
           style={{marginTop: '15px',
             backgroundColor: '#C51D34'
           }}
           onClick={handleClickEditStats}>
             {editStats ? "Exit Edit" : "Edit Stats"}
-        </Button>
+        </Button> */}
       </section>
     </div>
   );
