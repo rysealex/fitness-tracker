@@ -30,7 +30,7 @@ class UserModel:
                 conn.close()
 
     """Function to create a user in the database"""
-    def create_user(self, username, email, password, fname, lname, dob, height_ft, weight_lbs, gender, profile_pic, occupation, created_at=None):
+    def create_user(self, username, password, fname, lname, dob, height_ft, weight_lbs, gender, profile_pic, occupation, created_at=datetime.now()):
         conn = None
         cursor = None
         try:
@@ -38,17 +38,19 @@ class UserModel:
             cursor = conn.cursor()
 
             sql = """
-            INSERT INTO Users (username, email, password, fname, lname, dob, height_ft, weight_lbs, gender, profile_pic, occupation, created_at)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO Users (username, password, fname, lname, dob, height_ft, weight_lbs, gender, profile_pic, occupation, created_at)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
 
             if isinstance(dob, str):
                 dob = datetime.strptime(dob, "%Y-%m-%d").date()
+            if isinstance(created_at, str):
+                created_at = datetime.strptime(created_at, "%Y-%m-%d").date()
 
-            user_data = (username, email, password, fname, lname, dob, height_ft, weight_lbs, gender, profile_pic, occupation, created_at)
+            user_data = (username, password, fname, lname, dob, height_ft, weight_lbs, gender, profile_pic, occupation, created_at)
             cursor.execute(sql, user_data)
             conn.commit() # Commit the transaction
-            return cursor.lastrowid
+            return cursor.lastrowid # Return the ID of the newly created user
         except Error as e:
             print(f"Error creating user: {e}")
             if conn:
