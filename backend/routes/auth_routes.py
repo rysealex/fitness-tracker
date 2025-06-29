@@ -23,7 +23,6 @@ def register():
         return jsonify({"error": "No input data provided"}), 400
     
     username = data.get('username')
-    email = data.get('email')
     password = data.get('password')
     fname = data.get('fname')
     lname = data.get('lname')
@@ -35,10 +34,10 @@ def register():
     occupation = data.get('occupation')
     created_at = data.get('created_at')
 
-    if not all([username, email, password, fname, lname, dob, height_ft, weight_lbs, gender, profile_pic, occupation, created_at]):
+    if not all([username, password, fname, lname, dob, height_ft, weight_lbs, gender, profile_pic, occupation, created_at]):
         return jsonify({"error": "All fields are required"}), 400
 
-    user_id = user_model.create_user(username, email, password, fname, lname, dob, height_ft, weight_lbs, gender, profile_pic, occupation, created_at)
+    user_id = user_model.create_user(username, password, fname, lname, dob, height_ft, weight_lbs, gender, profile_pic, occupation, created_at)
 
     if user_id:
         return jsonify({"message": "User registered successfully", "user_id": user_id}), 201
@@ -74,3 +73,15 @@ def get_user_by_id(user_id):
         return jsonify(user), 200
     else:
         return jsonify({"error": "User not found"}), 404
+    
+@auth_bp.route('/username-exists', methods=['POST'])
+def username_exists():
+    """Endpoint to check if a username exists"""
+    data = request.get_json()
+    username = data.get('username')
+
+    if not username:
+        return jsonify({"error": "Username is required"}), 400
+
+    exists = user_model.username_exists(username)
+    return jsonify({"exists": exists}), 200

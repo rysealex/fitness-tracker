@@ -105,3 +105,26 @@ class UserModel:
                 cursor.close()
             if conn:
                 conn.close()
+
+    """Function to check if a username already exists in the database"""
+    def username_exists(self, username):
+        conn = None
+        cursor = None
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor(dictionary=True)
+
+            sql = """
+            SELECT * FROM Users WHERE username = %s
+            """
+            cursor.execute(sql, (username,))
+            user = cursor.fetchone()
+            return user is not None
+        except Error as e:
+            print(f"Error checking if username exists: {e}")
+            return False
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
