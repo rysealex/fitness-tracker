@@ -130,3 +130,28 @@ class UserModel:
                 cursor.close()
             if conn:
                 conn.close()
+
+    """Function to update user details"""
+    def update_user_attribute(self, user_id, attribute, value):
+        conn = None
+        cursor = None
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+
+            sql = f"""
+            UPDATE Users SET {attribute} = %s WHERE user_id = %s
+            """
+            cursor.execute(sql, (value, user_id))
+            conn.commit()
+            return cursor.rowcount > 0
+        except Error as e:
+            print(f"Error updating the user's {attribute} with {value}: {e}")
+            if conn:
+                conn.rollback()
+            return False
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()

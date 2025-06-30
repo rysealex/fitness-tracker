@@ -84,3 +84,20 @@ def username_exists():
 
     exists = user_model.username_exists(username)
     return jsonify({"exists": exists}), 200
+
+@auth_bp.route('/update-attribute/<int:user_id>', methods=['PUT'])
+def update_user_attribute(user_id):
+    """Endpoint to update a user's attribute"""
+    data = request.get_json()
+    attribute = data.get('attribute')
+    value = data.get('value')
+
+    if not attribute or value is None:
+        return jsonify({"error": "Attribute and value are required"}), 400
+
+    updated = user_model.update_user_attribute(user_id, attribute, value)
+
+    if updated:
+        return jsonify({"message": "User attribute updated successfully"}), 200
+    else:
+        return jsonify({"error": "Failed to update user attribute"}), 500
