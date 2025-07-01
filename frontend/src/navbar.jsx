@@ -2,6 +2,13 @@ import { Link } from 'react-router-dom';
 import './styles/index.css'
 
 function Navbar({ stats }) {
+	// handle the user logout
+	const handleLogout = () => {
+		// Clear user data from local storage
+		localStorage.removeItem('userId');
+		localStorage.removeItem('username');
+		localStorage.removeItem('password');
+	};
 	return (
 		<div>
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
@@ -41,7 +48,7 @@ function Navbar({ stats }) {
 					</span>Settings</Link>
 				</li>
 				<li>
-				<Link to='/'><span class="material-symbols-outlined">
+				<Link to='/' onClick={handleLogout}><span class="material-symbols-outlined">
 					logout
 					</span>Logout</Link>
 				</li>
