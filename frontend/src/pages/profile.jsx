@@ -69,6 +69,12 @@ function Profile() {
     fetchStats();
   }, []);
 
+  // function to convert birthday and account creation date to a more readable format
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   return (
     <div>
       <Navbar stats={stats} />
@@ -76,9 +82,9 @@ function Profile() {
         <h1>Your Profile</h1>
         <ul>
           <li>Name: {stats.fname} {stats.lname}</li>
-          <li>Birthday: {stats.dob}</li>
+          <li>Birthday: {formatDate(stats.dob)}</li>
           <li>Occupation: {stats.occupation}</li>
-          <li>Account Created: {stats.created_at}</li>
+          <li>Account Created: {formatDate(stats.created_at)}</li>
         </ul>
         <h2>Update Profile Pic</h2>
       </section>

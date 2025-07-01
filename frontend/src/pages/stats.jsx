@@ -192,13 +192,25 @@ function Stats() {
     }
   };
 
+  // function to calculate the user's age from the date of birth
+  const calculateAge = (dob) => {
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
   return (
     <div>
       <Navbar stats={stats} />
       <section className='stats-container'>
         <h1>Your Stats</h1>
           <ul>
-            <li>Age: {stats.dob}</li>
+            <li>Age: {calculateAge(stats.dob)}</li>
             <li>Gender: {stats.gender}</li>
             <li>
               Height: {stats.height_ft} ft

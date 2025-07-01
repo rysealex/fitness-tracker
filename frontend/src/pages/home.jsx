@@ -204,7 +204,7 @@ function Home() {
         <h2>Today's Date: <CurrentDate /></h2>
       </div>
       <section className='dashboard-container'>
-        <h1>Welcome {stats.fname}!</h1>      
+        <h1>Welcome {stats.username}!</h1>      
         <div className='cards-container'>
           <Stack direction="row" spacing={2}>
             <Card sx={{ maxWidth: 345 }}>
