@@ -155,3 +155,28 @@ class UserModel:
                 cursor.close()
             if conn:
                 conn.close()
+
+    """Function to delete a user by user_id and password"""
+    def delete_user(self, user_id, password):
+        conn = None
+        cursor = None
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+
+            sql = """
+            DELETE FROM Users WHERE user_id = %s AND password = %s
+            """
+            cursor.execute(sql, (user_id, password))
+            conn.commit()
+            return cursor.rowcount > 0
+        except Error as e:
+            print(f"Error deleting user with ID {user_id} and password {password}: {e}")
+            if conn:
+                conn.rollback()
+            return False
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()

@@ -101,3 +101,19 @@ def update_user_attribute(user_id):
         return jsonify({"message": "User attribute updated successfully"}), 200
     else:
         return jsonify({"error": "Failed to update user attribute"}), 500
+
+@auth_bp.route('/delete/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    """Endpoint to delete a user by user_id and password"""
+    data = request.get_json()
+    password = data.get('password')
+
+    if not password:
+        return jsonify({"error": "Password is required"}), 400
+
+    deleted = user_model.delete_user(user_id, password)
+
+    if deleted:
+        return jsonify({"message": "User deleted successfully"}), 200
+    else:
+        return jsonify({"error": "Failed to delete user"}), 500
