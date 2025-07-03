@@ -137,14 +137,16 @@ from flask import Flask, jsonify
 from config import Config
 from flask_cors import CORS
 from routes.auth_routes import auth_bp
+from routes.food_routes import food_bp
 import database
 
 app = Flask(__name__)
 app.config.from_object(Config)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 database.init_db_pool()
-# Register the authentication blueprints
+# Register all the blueprints
 app.register_blueprint(auth_bp)
+app.register_blueprint(food_bp)
 
 @app.route('/')
 def home():
