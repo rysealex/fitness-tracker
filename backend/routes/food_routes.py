@@ -26,12 +26,11 @@ def add_food_entry():
     food_name = data.get('food_name')
     total_calories = data.get('total_calories')
     meal_type = data.get('meal_type')
-    created_at = data.get('created_at')
 
-    if not all([user_id, food_name, total_calories, meal_type, created_at]):
+    if not all([user_id, food_name, total_calories, meal_type]):
         return jsonify({"error": "All fields are required"}), 400
 
-    food_entry_id = food_model.add_food_entry(user_id, food_name, total_calories, meal_type, created_at)
+    food_entry_id = food_model.add_food_entry(user_id, food_name, total_calories, meal_type)
 
     if food_entry_id:
         return jsonify({"message": "Food entry added successfully", "food_entry_id": food_entry_id}), 201
