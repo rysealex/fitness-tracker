@@ -17,6 +17,59 @@ function CalorieCounter() {
 		const [totalCalories, setTotalCalories] = useState(0);
 		const [mealType, setMealType] = useState("");
 		const [foodEntries, setFoodEntries] = useState({});
+		const [editModalOpen, setEditModalOpen] = useState(false);
+		const [editEntry, setEditEntry] = useState(null);
+
+		// open modal and set entry to edit
+		const openEditModal = (entry) => {
+			setEditEntry({ ...entry });
+			setEditModalOpen(true);
+		};
+
+		// close modal
+		const closeEditModal = () => {
+			setEditModalOpen(false);
+			setEditEntry(null);
+		};
+
+		// handle input changes in the edit modal
+		const handleEditChange = (e) => {
+			const { name, value } = e.target;
+			setEditEntry((prev) => ({
+				...prev,
+				[name]: value,
+			}));
+		};
+
+		// function to handle the food entry edit submission
+		const handleEditSubmit = async () => {
+			try {
+        const response = await fetch(`http://localhost:5000/food/edit/${editEntry.food_entries_id}`, {
+					method: 'PUT',
+					headers: {
+							'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+							food_name: editEntry.food_name,
+							total_calories: editEntry.total_calories,
+							meal_type: editEntry.meal_type,
+					}),
+        });
+        if (response.ok) {
+					const data = await response.json();
+					console.log("Food entry edited successfully: ", data);
+					// close the edit modal and fetch updated food entries
+					closeEditModal();
+					fetchFoodEntries();
+        } else {
+					console.error("Failed to update food entry:", response.statusText);
+					return;
+				}
+			} catch (error) {
+				console.error("Error updating food entry:", error);
+				return;
+			}
+		};
 
 		// function to handle the food entry submission attempt
 		const handleSubmit = async (e) => {
@@ -242,12 +295,50 @@ function CalorieCounter() {
 								<p>Calories: {entry.total_calories}</p>
 								<p>Meal Type: {entry.meal_type}</p>
 								<p>Date: {entry.created_at}</p>
-								<button>Edit</button>
+								<button onClick={() => openEditModal(entry)}>Edit</button>
 								<button onClick={() => handleDeleteEntry(entry.food_entries_id)}>Delete</button>
 							</li>
 						))}
 					</ul>
 				</div>
+				<Dialog open={editModalOpen} onClose={closeEditModal}>
+					<DialogTitle>Edit Food Entry</DialogTitle>
+					<DialogContent>
+						{editEntry && (
+							<>
+								<TextField
+									margin="dense"
+									label="Food Name"
+									name="food_name"
+									value={editEntry.food_name}
+									onChange={handleEditChange}
+									fullWidth
+								/>
+								<TextField
+									margin="dense"
+									label="Total Calories"
+									name="total_calories"
+									type="number"
+									value={editEntry.total_calories}
+									onChange={handleEditChange}
+									fullWidth
+								/>
+								<TextField
+									margin="dense"
+									label="Meal Type"
+									name="meal_type"
+									value={editEntry.meal_type}
+									onChange={handleEditChange}
+									fullWidth
+								/>
+							</>
+						)}
+					</DialogContent>
+					<DialogActions>
+						<Button onClick={closeEditModal}>Cancel</Button>
+						<Button onClick={handleEditSubmit} variant="contained">Save</Button>
+					</DialogActions>
+        </Dialog>
 			</div>
 			// <div>
 			// 	<div className="calorie-counter-container">
