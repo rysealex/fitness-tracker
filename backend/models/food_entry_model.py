@@ -141,3 +141,30 @@ class FoodEntryModel:
                 cursor.close()
             if conn:
                 conn.close()
+
+    """Function to get today's food entries for a user by user_id"""
+    def get_todays_food_entries_by_user_id(self, user_id):
+        conn = None
+        cursor = None
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor(dictionary=True)
+
+            sql = """
+            SELECT * FROM Food_Entries 
+            WHERE user_id = %s AND DATE(created_at) = CURDATE()
+            """
+
+            cursor.execute(sql, (user_id,))
+            food_entries = cursor.fetchall()
+            return food_entries
+        except Error as e:
+            print(f"Error fetching today's food entries for user {user_id}: {e}")
+            if conn:
+                conn.rollback()
+            return None
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()

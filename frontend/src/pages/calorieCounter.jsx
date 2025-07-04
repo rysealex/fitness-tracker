@@ -16,7 +16,8 @@ function CalorieCounter() {
 		const [foodName, setFoodName] = useState("");
 		const [totalCalories, setTotalCalories] = useState(0);
 		const [mealType, setMealType] = useState("");
-		const [foodEntries, setFoodEntries] = useState({});
+		const [allFoodEntries, setAllFoodEntries] = useState({});
+		const [todayFoodEntries, setTodayFoodEntries] = useState({});
 		const [editModalOpen, setEditModalOpen] = useState(false);
 		const [editEntry, setEditEntry] = useState(null);
 
@@ -142,17 +143,31 @@ function CalorieCounter() {
 				console.error("User ID not found in local storage.");
 				return;
 			}
+			// first fetch all food entries for the user
 			try {
 				const response = await fetch(`http://localhost:5000/food/entries/${userId}`);
 				if (response.ok) {
 					const data = await response.json();
-					setFoodEntries(data);
-					console.log("User food entries fetched successfully:", data);
+					setAllFoodEntries(data);
+					console.log("All user food entries fetched successfully:", data);
 				} else {
-					console.error("Failed to fetch user food entries:", response.statusText);
+					console.error("Failed to fetch all user food entries:", response.statusText);
 				}
 			} catch (error) {
-				console.error("Error fetching user food entries:", error);
+				console.error("Error fetching all user food entries:", error);
+			}
+			// second fetch today's food entries for the user
+			try {
+				const response = await fetch(`http://localhost:5000/food/entries/today/${userId}`);
+				if (response.ok) {
+					const data = await response.json();
+					setTodayFoodEntries(data);
+					console.log("Today's user food entries fetched successfully:", data);
+				} else {
+					console.error("Failed to fetch today's user food entries:", response.statusText);
+				}
+			} catch (error) {
+				console.error("Error fetching today's user food entries:", error);
 			}
 		};
 
@@ -160,6 +175,14 @@ function CalorieCounter() {
 		useEffect(() => {
 			fetchFoodEntries();
 		}, []);
+
+		// function to calculate today's total calories
+		const calcTodayTotalCalories = (entries) => {
+			return Object.values(entries).reduce((sum, entry) => {
+        const calories = Number(entry.total_calories) || 0;
+        return sum + calories;
+    	}, 0);
+		};
 
 		// const [fireBurstVisible, setFireBurstVisible] = useState(false);
 		// const [calorieValue, setCalorieValue] = useState(0);
@@ -287,9 +310,25 @@ function CalorieCounter() {
 					<button onClick={(e) => handleNavigate('/home')}>Exit</button>
 				</div>
 				<div>
-					<h1>Food Entries</h1>
+					<h1>Today's Food Entries</h1>
+					<h2>Today's Total Calories: {calcTodayTotalCalories(todayFoodEntries)}</h2>
 					<ul>
-						{Object.entries(foodEntries).map(([id, entry]) => (
+						{Object.entries(todayFoodEntries).map(([id, entry]) => (
+								<li key={id}>
+									<h2>{entry.food_name}</h2>
+								<p>Calories: {entry.total_calories}</p>
+								<p>Meal Type: {entry.meal_type}</p>
+								<p>Date: {entry.created_at}</p>
+								<button onClick={() => openEditModal(entry)}>Edit</button>
+								<button onClick={() => handleDeleteEntry(entry.food_entries_id)}>Delete</button>
+							</li>
+						))}
+					</ul>
+				</div>
+				<div>
+					<h1>All Food Entries</h1>
+					<ul>
+						{Object.entries(allFoodEntries).map(([id, entry]) => (
 							<li key={id}>
 								<h2>{entry.food_name}</h2>
 								<p>Calories: {entry.total_calories}</p>

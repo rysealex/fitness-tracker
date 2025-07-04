@@ -78,3 +78,13 @@ def get_food_entries_by_user(user_id):
         return jsonify(food_entries), 200
     else:
         return jsonify({"error": "Failed to fetch food entries for user"}), 500
+    
+@food_bp.route('/entries/today/<int:user_id>', methods=['GET'])
+def get_todays_food_entries_by_user(user_id):
+    """Endpoint to get all of today's food entries for a specific user"""
+    food_entries = food_model.get_todays_food_entries_by_user_id(user_id)
+
+    if food_entries is not None:
+        return jsonify(food_entries), 200
+    else:
+        return jsonify({"error": "Failed to fetch today's food entries for user"}), 500
