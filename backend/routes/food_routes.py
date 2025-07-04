@@ -72,7 +72,7 @@ def delete_food_entry(food_entries_id):
 @food_bp.route('/entries/<int:user_id>', methods=['GET'])
 def get_food_entries_by_user(user_id):
     """Endpoint to get all food entries for a specific user"""
-    food_entries = food_model.get_food_entries_by_user(user_id)
+    food_entries = food_model.get_food_entries_by_user_id(user_id)
 
     if food_entries is not None:
         return jsonify(food_entries), 200

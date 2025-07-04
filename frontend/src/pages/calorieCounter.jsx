@@ -1,5 +1,5 @@
 import { Button, Dialog, DialogContent, DialogActions, DialogTitle, TextField } from "@mui/material";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import BasicSpeedDial from "../basicSpeedDial";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,6 +16,7 @@ function CalorieCounter() {
 		const [foodName, setFoodName] = useState("");
 		const [totalCalories, setTotalCalories] = useState(0);
 		const [mealType, setMealType] = useState("");
+		const [foodEntries, setFoodEntries] = useState({});
 
 		// function to handle the food entry submission attempt
 		const handleSubmit = async (e) => {
@@ -45,6 +46,8 @@ function CalorieCounter() {
 					if (response.ok) {
 						const data = await response.json();
 						console.log("Food entry submitted successfully:", data);
+						// fetch the updated food entries after submission
+						fetchFoodEntries();
 					} else {
 						console.log("Failed to submit food entry:", response.statusText);
 						return;
@@ -55,6 +58,55 @@ function CalorieCounter() {
 				}
 			}
 		};
+
+		// function to handle the deletion of a food entry
+		const handleDeleteEntry = async (food_entries_id) => {
+			try {
+				const response = await fetch(`http://localhost:5000/food/delete/${food_entries_id}`, {
+					method: 'DELETE',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				});
+				if (response.ok) {
+					const data = await response.json();
+					console.log("Food entry deleted successfully:", data);
+					// fetch the updated food entries after deletion
+					fetchFoodEntries();
+				} else {
+					console.error("Failed to delete food entry:", response.statusText);
+				}
+			} catch (error) {
+				console.error("Error deleting food entry:", error);
+			}
+		};
+
+		//  function to fetch food entries for the user
+		const fetchFoodEntries = async () => {
+			// get the current users user_id from local storage
+			const userId = localStorage.getItem('userId');
+			if (!userId) {
+				console.error("User ID not found in local storage.");
+				return;
+			}
+			try {
+				const response = await fetch(`http://localhost:5000/food/entries/${userId}`);
+				if (response.ok) {
+					const data = await response.json();
+					setFoodEntries(data);
+					console.log("User food entries fetched successfully:", data);
+				} else {
+					console.error("Failed to fetch user food entries:", response.statusText);
+				}
+			} catch (error) {
+				console.error("Error fetching user food entries:", error);
+			}
+		};
+
+		// useEffect to fetch food entries on component mount
+		useEffect(() => {
+			fetchFoodEntries();
+		}, []);
 
 		// const [fireBurstVisible, setFireBurstVisible] = useState(false);
 		// const [calorieValue, setCalorieValue] = useState(0);
@@ -180,6 +232,21 @@ function CalorieCounter() {
 				</form>
 				<div>
 					<button onClick={(e) => handleNavigate('/home')}>Exit</button>
+				</div>
+				<div>
+					<h1>Food Entries</h1>
+					<ul>
+						{Object.entries(foodEntries).map(([id, entry]) => (
+							<li key={id}>
+								<h2>{entry.food_name}</h2>
+								<p>Calories: {entry.total_calories}</p>
+								<p>Meal Type: {entry.meal_type}</p>
+								<p>Date: {entry.created_at}</p>
+								<button>Edit</button>
+								<button onClick={() => handleDeleteEntry(entry.food_entries_id)}>Delete</button>
+							</li>
+						))}
+					</ul>
 				</div>
 			</div>
 			// <div>
