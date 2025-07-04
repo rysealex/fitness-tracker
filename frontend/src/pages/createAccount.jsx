@@ -145,7 +145,7 @@ function CreateAccount() {
   //   }
   // };
   return (
-    <>
+    <div  className='centered-page'>
       <div class="register-container">
         <div class="register-box">
           <h2>Register</h2>
@@ -254,7 +254,7 @@ function CreateAccount() {
           </Stack>
         </Box>
       </div>*/}
-    </>
+    </div>
   );
 };
 

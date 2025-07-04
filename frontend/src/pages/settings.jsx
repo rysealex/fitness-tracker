@@ -94,7 +94,7 @@ function Settings() {
   }, []);
 
   return (
-    <div>
+    <div className='centered-page'>
       <Navbar stats={stats} />
       <section className='settings-container'>
         <h1>Settings</h1> 

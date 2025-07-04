@@ -27,12 +27,21 @@ h1, h2 {
 }
 body {
     margin: 0;
-    display: flex;
+    /* display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 100vh; */
     background-image: linear-gradient(to right, #808080, #2E2E30);
     background-size: cover;
+    min-height: 100vh;
+}
+
+.centered-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Styles for the login page*/
@@ -342,11 +351,11 @@ body {
 
 /* Styles for the calorie counter page */
 .calorie-counter-container {
-    display: flex;
+    /* display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 100vh; */
     text-align: center;
 }
 .calorie-counter-container h1 {

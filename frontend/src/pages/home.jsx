@@ -198,7 +198,7 @@ function Home() {
   }, []);
     
   return (
-    <div>
+    <div className='centered-page'>
       <Navbar stats={stats} />
       <div className='current-date'>
         <h2>Today's Date: <CurrentDate /></h2>

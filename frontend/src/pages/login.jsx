@@ -57,7 +57,7 @@ function Login() {
   };
 
   return (
-    <>
+    <div  className='centered-page'>
       <div class="login-container">
         <div class="login-box">
           <h2>Login</h2>
@@ -111,7 +111,7 @@ function Login() {
             </p>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

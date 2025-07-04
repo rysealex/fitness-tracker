@@ -76,7 +76,7 @@ function Profile() {
   };
 
   return (
-    <div>
+    <div className='centered-page'>
       <Navbar stats={stats} />
       <section className='profile-container'>
         <h1>Your Profile</h1>

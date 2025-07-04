@@ -224,7 +224,7 @@ function EnterInformation() {
   //     });
   // };
   return (
-    <>
+    <div className='centered-page'>
       <div class="enter-info-container">
         <div class="enter-info-box">
           <h2>Enter Information</h2>
@@ -471,7 +471,7 @@ function EnterInformation() {
           </Stack>
         </Box>
       </div>*/}
-    </>
+    </div>
   );
 }
 

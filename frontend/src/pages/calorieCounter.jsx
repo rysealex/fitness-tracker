@@ -1,9 +1,9 @@
-import { Button, Dialog, DialogContent, DialogActions, DialogTitle, TextField } from "@mui/material";
+import { Button, Dialog, DialogContent, DialogActions, DialogTitle, TextField, Card, CardContent, Typography, Box, Divider, IconButton, MenuItem } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
+import { Edit, Delete } from '@mui/icons-material';
 import BasicSpeedDial from "../basicSpeedDial";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Box from "@mui/material/Box"
 import Slider from "@mui/material/Slider";
 import { faFireFlameCurved } from '@fortawesome/free-solid-svg-icons';
 
@@ -268,7 +268,167 @@ function CalorieCounter() {
 		
 		return (
 			<div>
-				<form onSubmit={handleSubmit}>
+        <Box sx={{ maxWidth: 700, mx: "auto", mt: 4, p: 2 }}>
+            <Typography variant="h4" align="center" gutterBottom>
+                Calorie Counter
+            </Typography>
+            <Card sx={{ mb: 4, p: 2 }}>
+                <Typography variant="h6" gutterBottom>
+                    Add New Food Entry
+                </Typography>
+                <form onSubmit={handleSubmit}>
+                    <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+                        <TextField
+                            label="Food Name"
+                            variant="outlined"
+                            value={foodName}
+                            onChange={(e) => setFoodName(e.target.value)}
+                            fullWidth
+                        />
+                        <TextField
+                            label="Calories"
+                            variant="outlined"
+                            type="number"
+                            value={totalCalories}
+                            onChange={(e) => setTotalCalories(e.target.value)}
+                            inputProps={{ step: 1, min: 0 }}
+														fullWidth
+                        />
+                        <TextField
+                            label="Meal Type"
+                            variant="outlined"
+                            value={mealType}
+                            onChange={(e) => setMealType(e.target.value)}
+														select
+                            fullWidth
+                        >
+													<MenuItem value="Breakfast">Breakfast</MenuItem>
+													<MenuItem value="Lunch">Lunch</MenuItem>
+													<MenuItem value="Dinner">Dinner</MenuItem>
+													<MenuItem value="Snack">Snack</MenuItem>
+												</TextField>
+                    </Box>
+                    <Button type="submit" variant="contained" color="primary" fullWidth>
+                        Add Food
+                    </Button>
+                </form>
+            </Card>
+
+            <Card sx={{ mb: 4 }}>
+                <CardContent>
+                    <Typography variant="h6" gutterBottom>
+                        Today's Food Entries
+                    </Typography>
+                    <Typography variant="subtitle1" sx={{ mb: 2 }}>
+                        Total Calories: <b>{calcTodayTotalCalories(todayFoodEntries)}</b>
+                    </Typography>
+                    <Divider sx={{ mb: 2 }} />
+                    {Object.keys(todayFoodEntries).length === 0 ? (
+                        <Typography color="text.secondary">No entries for today.</Typography>
+                    ) : (
+                        Object.entries(todayFoodEntries).map(([id, entry]) => (
+                            <Box key={id} sx={{ mb: 2, p: 1, borderRadius: 1, bgcolor: "#f9f9f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                <Box>
+                                    <Typography variant="subtitle1">{entry.food_name}</Typography>
+                                    <Typography variant="body2">Calories: {entry.total_calories}</Typography>
+                                    <Typography variant="body2">Meal: {entry.meal_type}</Typography>
+                                    <Typography variant="body2" color="text.secondary">Date: {entry.created_at}</Typography>
+                                </Box>
+                                <Box>
+                                    <IconButton color="primary" onClick={() => openEditModal(entry)}>
+                                        <Edit />
+                                    </IconButton>
+                                    <IconButton color="error" onClick={() => handleDeleteEntry(entry.food_entries_id)}>
+                                        <Delete />
+                                    </IconButton>
+                                </Box>
+                            </Box>
+                        ))
+                    )}
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardContent>
+                    <Typography variant="h6" gutterBottom>
+                        All Food Entries
+                    </Typography>
+                    <Divider sx={{ mb: 2 }} />
+                    {Object.keys(allFoodEntries).length === 0 ? (
+                        <Typography color="text.secondary">No entries found.</Typography>
+                    ) : (
+                        Object.entries(allFoodEntries).map(([id, entry]) => (
+                            <Box key={id} sx={{ mb: 2, p: 1, borderRadius: 1, bgcolor: "#f9f9f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                <Box>
+                                    <Typography variant="subtitle1">{entry.food_name}</Typography>
+                                    <Typography variant="body2">Calories: {entry.total_calories}</Typography>
+                                    <Typography variant="body2">Meal: {entry.meal_type}</Typography>
+                                    <Typography variant="body2" color="text.secondary">Date: {entry.created_at}</Typography>
+                                </Box>
+                                <Box>
+                                    <IconButton color="primary" onClick={() => openEditModal(entry)}>
+                                        <Edit />
+                                    </IconButton>
+                                    <IconButton color="error" onClick={() => handleDeleteEntry(entry.food_entries_id)}>
+                                        <Delete />
+                                    </IconButton>
+                                </Box>
+                            </Box>
+                        ))
+                    )}
+                </CardContent>
+            </Card>
+
+            <Box sx={{ mt: 4, textAlign: "center" }}>
+                <Button variant="outlined" color="secondary" onClick={() => handleNavigate('/home')}>
+                    Exit
+                </Button>
+            </Box>
+
+            <Dialog open={editModalOpen} onClose={closeEditModal}>
+                <DialogTitle>Edit Food Entry</DialogTitle>
+                <DialogContent>
+                    {editEntry && (
+                        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
+                            <TextField
+                                label="Food Name"
+                                name="food_name"
+                                value={editEntry.food_name}
+                                onChange={handleEditChange}
+                                fullWidth
+                            />
+                            <TextField
+                                label="Total Calories"
+                                name="total_calories"
+                                type="number"
+                                value={editEntry.total_calories}
+                                onChange={handleEditChange}
+																inputProps={{ step: 1, min: 0 }}
+                                fullWidth
+                            />
+                            <TextField
+                                label="Meal Type"
+                                name="meal_type"
+                                value={editEntry.meal_type}
+                                onChange={handleEditChange}
+																select
+                                fullWidth
+                            >
+															<MenuItem value="Breakfast">Breakfast</MenuItem>
+															<MenuItem value="Lunch">Lunch</MenuItem>
+															<MenuItem value="Dinner">Dinner</MenuItem>
+															<MenuItem value="Snack">Snack</MenuItem>
+														</TextField>
+                        </Box>
+                    )}
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={closeEditModal}>Cancel</Button>
+                    <Button onClick={handleEditSubmit} variant="contained">Save</Button>
+                </DialogActions>
+            </Dialog>
+        </Box>
+				{/* <form onSubmit={handleSubmit}>
 					<div>
 						<h1>Food Name: </h1>
 						<TextField 
@@ -377,7 +537,7 @@ function CalorieCounter() {
 						<Button onClick={closeEditModal}>Cancel</Button>
 						<Button onClick={handleEditSubmit} variant="contained">Save</Button>
 					</DialogActions>
-        </Dialog>
+        </Dialog> */}
 			</div>
 			// <div>
 			// 	<div className="calorie-counter-container">
