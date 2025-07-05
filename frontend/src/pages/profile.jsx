@@ -1,47 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useUser } from '../userContext';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import '../styles/index.css'
 import Navbar from '../navbar';
 
 function Profile() {
-  const navigate = useNavigate();
-  const handleNavigate = (url) => {
-    navigate(url);
-  };
-  const { username, setUsername } = useUser();
   const [stats, setStats] = useState({});
-  // Event handler for nav bar buttons
-  const handleSignOut = (event) => {
-    setUsername("");
-    handleNavigate('/');
-  };
-  const handleClickDashboard = () => {
-    handleNavigate('/home');
-  };
-  const handleClickStats = () => {
-    handleNavigate('/stats');
-  };
-  const handleClickProfile = () => {
-    handleNavigate('/profile');
-  };
-  const handleClickSettings = () => {
-    handleNavigate('/settings');
-  };
-  // // Fetch user stats
-  // useEffect(() => {
-  //   if (username) {
-  //     axios.get(`http://127.0.0.1:5000/user/${username}/stats`)
-  //       .then(function (response) {
-  //         console.log(response);
-  //         setStats(response.data);
-  //       })
-  //       .catch(function (error) {
-  //         console.log(error);
-  //       });
-  //   }
-  // }, [username])
 
   // fetch user stats on component mount
   useEffect(() => {

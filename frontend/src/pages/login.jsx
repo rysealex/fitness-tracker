@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useUser } from '../userContext';
+import { useState, useEffect } from 'react';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { useAudio } from '../AudioContext';
 
 function Login() {
