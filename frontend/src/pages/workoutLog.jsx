@@ -2,7 +2,6 @@ import { Button, Dialog, DialogContent, DialogActions, DialogTitle, TextField, C
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import { Edit, Delete } from '@mui/icons-material';
-import { all } from "axios";
 
 function WorkoutLog() {
 	const navigate = useNavigate();
@@ -15,7 +14,29 @@ function WorkoutLog() {
 	const [durationMin, setDurationMin] = useState(0);
 	const [allWorkoutLogs, setAllWorkoutLogs] = useState({});
 	const [todayWorkoutLogs, setTodayWorkoutLogs] = useState({});
+	const [editModalOpen, setEditModalOpen] = useState(false);
 	const [editEntry, setEditEntry] = useState(null);
+
+	// open modal and set entry to edit
+	const openEditModal = (entry) => {
+		setEditEntry({ ...entry });
+		setEditModalOpen(true);
+	};
+
+	// close modal
+	const closeEditModal = () => {
+		setEditModalOpen(false);
+		setEditEntry(null);
+	};
+
+	// handle input changes in the edit modal
+	const handleEditChange = (e) => {
+		const { name, value } = e.target;
+		setEditEntry((prev) => ({
+			...prev,
+			[name]: value,
+		}));
+	};
 
 	// function to handle the workout log submission attempt
 	const handleSubmit = async (e) => {
@@ -75,7 +96,8 @@ function WorkoutLog() {
 			if (response.ok) {
 				const data = await response.json();
 				console.log("Workout log edited successfully: ", data);
-				// fetch updated workout logs
+				// close the edit modal and fetch updated workout logs
+				closeEditModal();
 				fetchWorkoutLogs();
 			} else {
 				console.error("Failed to update workout log:", response.statusText);
@@ -118,6 +140,7 @@ function WorkoutLog() {
 			console.error("User ID not found in local storage.");
 			return;
 		}
+		// first fetch all workout logs for the user
 		try {
 			const response = await fetch(`http://localhost:5000/workout/entries/${userId}`);
 			if (response.ok) {
@@ -129,6 +152,19 @@ function WorkoutLog() {
 			}
 		} catch (error) {
 			console.error("Error fetching all user workout logs:", error);
+		}
+		// second fetch today's workout logs for the user
+		try {
+			const response = await fetch(`http://localhost:5000/workout/entries/today/${userId}`);
+			if (response.ok) {
+				const data = await response.json();
+				setTodayWorkoutLogs(data);
+				console.log("Today's user workout logs fetched successfully:", data);
+			} else {
+				console.error("Failed to fetch today's user workout logs:", response.statusText);
+			}
+		} catch (error) {
+			console.error("Error fetching today's user workout logs:", error);
 		}
 	};
 
@@ -200,14 +236,14 @@ function WorkoutLog() {
 									<Typography variant="body2">Duration (Min): {entry.duration_min}</Typography>
 									<Typography variant="body2" color="text.secondary">Date: {entry.created_at}</Typography>
 								</Box>
-								{/* <Box>
+								<Box>
 									<IconButton color="primary" onClick={() => openEditModal(entry)}>
 										<Edit />
 									</IconButton>
 									<IconButton color="error" onClick={() => handleDeleteEntry(entry.workout_id)}>
 										<Delete />
 									</IconButton>
-								</Box> */}
+								</Box>
 							</Box>
 						))
 					)}
@@ -231,14 +267,14 @@ function WorkoutLog() {
 									<Typography variant="body2">Duration (Min): {entry.duration_min}</Typography>
 									<Typography variant="body2" color="text.secondary">Date: {entry.created_at}</Typography>
 								</Box>
-								{/* <Box>
+								<Box>
 									<IconButton color="primary" onClick={() => openEditModal(entry)}>
 										<Edit />
 									</IconButton>
 									<IconButton color="error" onClick={() => handleDeleteEntry(entry.workout_id)}>
 										<Delete />
 									</IconButton>
-								</Box> */}
+								</Box>
 							</Box>
 						))
 					)}
@@ -247,6 +283,55 @@ function WorkoutLog() {
 			<button onClick={() => handleNavigate('/home')}>
 				Exit
 			</button>
+			<Dialog open={editModalOpen} onClose={closeEditModal}>
+				<DialogTitle>Edit Workout</DialogTitle>
+				<DialogContent>
+					{editEntry && (
+						<Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
+							<TextField
+								label="Workout Type"
+								name="workout_type"
+								variant="outlined"
+								value={editEntry.workout_type}
+								onChange={handleEditChange}
+								select
+								fullWidth
+							>
+								<MenuItem value="Running">Running</MenuItem>
+								<MenuItem value="Biking">Biking</MenuItem>
+								<MenuItem value="Walking">Walking</MenuItem>
+								<MenuItem value="Strength">Strength</MenuItem>
+								<MenuItem value="Yoga">Yoga</MenuItem>
+								<MenuItem value="Other">Other</MenuItem>
+							</TextField>
+							<TextField
+								label="Calories Burned"
+								name="calories_burned"
+								variant="outlined"
+								type="number"
+								value={editEntry.calories_burned}
+								onChange={handleEditChange}
+								inputProps={{ step: 1, min: 0 }}
+								fullWidth
+							/>
+							<TextField
+								label="Duration (Mins)"
+								name="duration_min"
+								variant="outlined"
+								type="number"
+								value={editEntry.duration_min}
+								onChange={handleEditChange}
+								inputProps={{ step: 1, min: 0 }}
+								fullWidth
+							/>
+						</Box>
+					)}
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={closeEditModal}>Cancel</Button>
+					<Button onClick={handleEditSubmit} variant="contained">Save</Button>
+				</DialogActions>
+			</Dialog>
 		</div>
 	);
 }
