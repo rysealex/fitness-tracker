@@ -138,6 +138,7 @@ from config import Config
 from flask_cors import CORS
 from routes.auth_routes import auth_bp
 from routes.food_routes import food_bp
+from routes.workout_routes import workout_bp
 import database
 
 app = Flask(__name__)
@@ -147,6 +148,7 @@ database.init_db_pool()
 # Register all the blueprints
 app.register_blueprint(auth_bp)
 app.register_blueprint(food_bp)
+app.register_blueprint(workout_bp)
 
 @app.route('/')
 def home():
