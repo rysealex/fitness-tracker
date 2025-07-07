@@ -41,6 +41,33 @@ function CalorieCounter() {
 		}));
 	};
 
+	// function to handle the specified day change
+	const handleSpecifiedDayChange = async (specifiedDay) => {
+		// get the current users user_id from local storage
+		const userId = localStorage.getItem('userId');
+		if (!userId) {
+			console.error("User ID not found in local storage.");
+			return;
+		}
+		// fetch food entries for the user for the specified day
+		try {
+			const response = await fetch(`http://localhost:5000/food/entries/specific/${userId}/${specifiedDay}`);
+			if (response.ok) {
+				const data = await response.json();
+				if (!data) {
+					setTodayFoodEntries({});
+				} else {
+					setTodayFoodEntries(data);
+				}
+				console.log("User food entries for the specified day fetched successfully:", data);
+			} else {
+				console.error("Failed to fetch user food entries for the specified day:", response.statusText);
+			}
+		} catch (error) {
+			console.error("Error fetching user food entries for the specified day:", error);
+		}
+	};
+
 	// function to handle the food entry edit submission
 	const handleEditSubmit = async () => {
 		try {
@@ -194,7 +221,11 @@ function CalorieCounter() {
 						<StaticDatePicker
 							displayStaticWrapperAs="desktop"
 							value={specifiedDay}
-							onChange={(newValue) => setSpecifiedDay(newValue)}
+							onChange={(newValue) => {
+								setSpecifiedDay(newValue);
+								const formattedDate = newValue.toISOString().split('T')[0];
+								handleSpecifiedDayChange(formattedDate);
+							}}
 							renderInput={(params) => <TextField {...params} />}
 						/>
 					</LocalizationProvider>

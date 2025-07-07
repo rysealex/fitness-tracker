@@ -89,23 +89,9 @@ def get_todays_food_entries_by_user(user_id):
     else:
         return jsonify({"error": "Failed to fetch today's food entries for user"}), 500
     
-@food_bp.route('/entries/specific/<int:user_id>', methods=['GET'])
-def get_specified_days_food_entries_by_user(user_id):
+@food_bp.route('/entries/specific/<int:user_id>/<specified_day>', methods=['GET'])
+def get_specified_days_food_entries_by_user(user_id, specified_day):
     """Endpoint to get all of specified day's food entries for a specific user"""
-    data = request.get_json()
-
-    if not data:
-        return jsonify({"error": "No input data provided"}), 400
-
-    specified_day = data.get('specified_day')
-
-    if not specified_day:
-        return jsonify({"error": "Specified day is required"}), 400
-
-    
     food_entries = food_model.get_specified_days_food_entries_by_user_id(user_id, specified_day)
 
-    if food_entries is not None:
-        return jsonify(food_entries), 200
-    else:
-        return jsonify({"error": "Failed to fetch today's food entries for user"}), 500    
+    return jsonify(food_entries if food_entries is not None else []), 200
