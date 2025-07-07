@@ -1,4 +1,6 @@
 import { Button, Dialog, DialogContent, DialogActions, DialogTitle, TextField, Card, CardContent, Typography, Box, Divider, IconButton, MenuItem } from "@mui/material";
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import { Edit, Delete } from '@mui/icons-material';
@@ -12,6 +14,7 @@ function CalorieCounter() {
 	const [foodName, setFoodName] = useState("");
 	const [totalCalories, setTotalCalories] = useState(0);
 	const [mealType, setMealType] = useState("");
+	const [specifiedDay, setSpecifiedDay] = useState(Date());
 	const [allFoodEntries, setAllFoodEntries] = useState({});
 	const [todayFoodEntries, setTodayFoodEntries] = useState({});
 	const [editModalOpen, setEditModalOpen] = useState(false);
@@ -186,6 +189,17 @@ function CalorieCounter() {
 				<Typography variant="h4" align="center" gutterBottom>
 					Calorie Counter
 				</Typography>
+				{/* Calendar Picker */}
+                <Box sx={{ mb: 3, display: "flex", justifyContent: "center" }}>
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <DatePicker
+                            label="Select Day"
+                            value={specifiedDay}
+                            onChange={(newValue) => setSpecifiedDay(newValue)}
+                            renderInput={(params) => <TextField {...params} />}
+                        />
+                    </LocalizationProvider>
+                </Box>
 				<Card sx={{ mb: 4, p: 2 }}>
 					<Typography variant="h6" gutterBottom>
 						Add New Food Entry
