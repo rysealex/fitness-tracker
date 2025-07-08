@@ -217,6 +217,16 @@ function CalorieCounter() {
 			return sum + calories;
 		}, 0);
 	};
+
+	// function to check if the calendar picker is the current day
+	const isToday = (date) => {
+    const today = new Date();
+    return (
+        date.getFullYear() === today.getFullYear() &&
+        date.getMonth() === today.getMonth() &&
+        date.getDate() === today.getDate()
+		);
+	};
 		
 	return (
 		<div>
@@ -289,14 +299,20 @@ function CalorieCounter() {
 				<Card sx={{ mb: 4 }}>
 					<CardContent>
 						<Typography variant="h6" gutterBottom>
-							Today's Food Entries
+							{isToday(new Date(specifiedDay))
+								? "Today's Food Entries"
+								: `${new Date(specifiedDay).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })} Food Entries`}
 						</Typography>
 						<Typography variant="subtitle1" sx={{ mb: 2 }}>
 							Total Calories: <b>{calcTodayTotalCalories(todayFoodEntries)}</b>
 						</Typography>
 						<Divider sx={{ mb: 2 }} />
 						{Object.keys(todayFoodEntries).length === 0 ? (
-							<Typography color="text.secondary">No entries for today.</Typography>
+							<Typography color="text.secondary">No entries for 
+								{isToday(new Date(specifiedDay))
+								? " today"
+								: ` ${new Date(specifiedDay).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}`}
+							</Typography>
 						) : (
 							Object.entries(todayFoodEntries).map(([id, entry]) => (
 								<Box key={id} sx={{ mb: 2, p: 1, borderRadius: 1, bgcolor: "#f9f9f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
