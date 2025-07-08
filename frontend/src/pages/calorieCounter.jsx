@@ -86,9 +86,9 @@ function CalorieCounter() {
 			if (response.ok) {
 				const data = await response.json();
 				console.log("Food entry edited successfully: ", data);
-				// close the edit modal and fetch updated food entries
+				// close the edit modal
 				closeEditModal();
-				//fetchFoodEntries();
+				// fetch the specified day change results
 				handleSpecifiedDayChange(specifiedDay);
 			} else {
 				console.error("Failed to update food entry:", response.statusText);
@@ -129,9 +129,13 @@ function CalorieCounter() {
 				if (response.ok) {
 					const data = await response.json();
 					console.log("Food entry submitted successfully:", data);
-					// fetch the updated food entries after submission
-					//fetchFoodEntries();
+					// fetch the specified day change results
 					handleSpecifiedDayChange(specifiedDay);
+					// clear the input fields
+					setFoodName("");
+					setTotalCalories(0);
+					setMealType("");
+
 				} else {
 					console.log("Failed to submit food entry:", response.statusText);
 					return;
@@ -144,7 +148,7 @@ function CalorieCounter() {
 	};
 
 	// function to handle the deletion of a food entry
-	const handleDeleteEntry = async (food_entries_id) => {
+	const handleDeleteEntry = async (food_entries_id, specifiedDay) => {
 		try {
 			const response = await fetch(`http://localhost:5000/food/delete/${food_entries_id}`, {
 				method: 'DELETE',
@@ -155,8 +159,8 @@ function CalorieCounter() {
 			if (response.ok) {
 				const data = await response.json();
 				console.log("Food entry deleted successfully:", data);
-				// fetch the updated food entries after deletion
-				fetchFoodEntries();
+				// fetch the specified day change results
+				handleSpecifiedDayChange(specifiedDay);
 			} else {
 				console.error("Failed to delete food entry:", response.statusText);
 			}
@@ -173,19 +177,19 @@ function CalorieCounter() {
 			console.error("User ID not found in local storage.");
 			return;
 		}
-		// first fetch all food entries for the user
-		try {
-			const response = await fetch(`http://localhost:5000/food/entries/${userId}`);
-			if (response.ok) {
-				const data = await response.json();
-				setAllFoodEntries(data);
-				console.log("All user food entries fetched successfully:", data);
-			} else {
-				console.error("Failed to fetch all user food entries:", response.statusText);
-			}
-		} catch (error) {
-			console.error("Error fetching all user food entries:", error);
-		}
+		// // first fetch all food entries for the user
+		// try {
+		// 	const response = await fetch(`http://localhost:5000/food/entries/${userId}`);
+		// 	if (response.ok) {
+		// 		const data = await response.json();
+		// 		setAllFoodEntries(data);
+		// 		console.log("All user food entries fetched successfully:", data);
+		// 	} else {
+		// 		console.error("Failed to fetch all user food entries:", response.statusText);
+		// 	}
+		// } catch (error) {
+		// 	console.error("Error fetching all user food entries:", error);
+		// }
 		// second fetch today's food entries for the user
 		try {
 			const response = await fetch(`http://localhost:5000/food/entries/today/${userId}`);
@@ -306,7 +310,15 @@ function CalorieCounter() {
 										<IconButton color="primary" onClick={() => openEditModal(entry)}>
 											<Edit />
 										</IconButton>
-										<IconButton color="error" onClick={() => handleDeleteEntry(entry.food_entries_id)}>
+										<IconButton
+											color="error"
+											onClick={() => {
+												const formattedDate = specifiedDay instanceof Date
+													? specifiedDay.toISOString().split('T')[0]
+													: new Date(specifiedDay).toISOString().split('T')[0];
+												handleDeleteEntry(entry.food_entries_id, formattedDate);
+											}}
+										>
 											<Delete />
 										</IconButton>
 									</Box>
@@ -316,7 +328,7 @@ function CalorieCounter() {
 					</CardContent>
 				</Card>
 
-				<Card>
+				{/* <Card>
 					<CardContent>
 						<Typography variant="h6" gutterBottom>
 							All Food Entries
@@ -345,7 +357,7 @@ function CalorieCounter() {
 							))
 						)}
 					</CardContent>
-				</Card>
+				</Card> */}
 
 				<Box sx={{ mt: 4, textAlign: "center" }}>
 					<Button variant="outlined" color="secondary" onClick={() => handleNavigate('/home')}>
