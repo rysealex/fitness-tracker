@@ -69,7 +69,7 @@ function CalorieCounter() {
 	};
 
 	// function to handle the food entry edit submission
-	const handleEditSubmit = async () => {
+	const handleEditSubmit = async (specifiedDay) => {
 		try {
 			const response = await fetch(`http://localhost:5000/food/edit/${editEntry.food_entries_id}`, {
 				method: 'PUT',
@@ -80,6 +80,7 @@ function CalorieCounter() {
 						food_name: editEntry.food_name,
 						total_calories: editEntry.total_calories,
 						meal_type: editEntry.meal_type,
+						created_at: specifiedDay
 				}),
 			});
 			if (response.ok) {
@@ -87,7 +88,8 @@ function CalorieCounter() {
 				console.log("Food entry edited successfully: ", data);
 				// close the edit modal and fetch updated food entries
 				closeEditModal();
-				fetchFoodEntries();
+				//fetchFoodEntries();
+				handleSpecifiedDayChange(specifiedDay);
 			} else {
 				console.error("Failed to update food entry:", response.statusText);
 				return;
@@ -99,7 +101,7 @@ function CalorieCounter() {
 	};
 
 	// function to handle the food entry submission attempt
-	const handleSubmit = async (e) => {
+	const handleSubmit = async (e, specifiedDay) => {
 		e.preventDefault();
 
 		// perform input validation
@@ -120,6 +122,7 @@ function CalorieCounter() {
 						food_name: foodName,
 						total_calories: totalCalories,
 						meal_type: mealType,
+						created_at: specifiedDay
 					}),
 				});
 				// check if the response is ok
@@ -127,7 +130,8 @@ function CalorieCounter() {
 					const data = await response.json();
 					console.log("Food entry submitted successfully:", data);
 					// fetch the updated food entries after submission
-					fetchFoodEntries();
+					//fetchFoodEntries();
+					handleSpecifiedDayChange(specifiedDay);
 				} else {
 					console.log("Failed to submit food entry:", response.statusText);
 					return;
@@ -234,7 +238,13 @@ function CalorieCounter() {
 					<Typography variant="h6" gutterBottom>
 						Add New Food Entry
 					</Typography>
-					<form onSubmit={handleSubmit}>
+					<form onSubmit={(e) => {
+						e.preventDefault();
+						const formattedDate = specifiedDay instanceof Date
+							? specifiedDay.toISOString().split('T')[0]
+							: new Date(specifiedDay).toISOString().split('T')[0];
+						handleSubmit(e, formattedDate);
+					}}>
 						<Box sx={{ display: "flex", gap: 2, mb: 2 }}>
 							<TextField
 								label="Food Name"
@@ -382,7 +392,17 @@ function CalorieCounter() {
 					</DialogContent>
 					<DialogActions>
 						<Button onClick={closeEditModal}>Cancel</Button>
-						<Button onClick={handleEditSubmit} variant="contained">Save</Button>
+						<Button
+							onClick={() => {
+								const formattedDate = specifiedDay instanceof Date
+									? specifiedDay.toISOString().split('T')[0]
+									: new Date(specifiedDay).toISOString().split('T')[0];
+								handleEditSubmit(formattedDate);
+							}}
+							variant="contained"
+						>
+							Save
+						</Button>
 					</DialogActions>
 				</Dialog>
 			</Box>

@@ -26,11 +26,12 @@ def add_food_entry():
     food_name = data.get('food_name')
     total_calories = data.get('total_calories')
     meal_type = data.get('meal_type')
+    created_at = data.get('created_at')
 
-    if not all([user_id, food_name, total_calories, meal_type]):
+    if not all([user_id, food_name, total_calories, meal_type, created_at]):
         return jsonify({"error": "All fields are required"}), 400
 
-    food_entry_id = food_model.add_food_entry(user_id, food_name, total_calories, meal_type)
+    food_entry_id = food_model.add_food_entry(user_id, food_name, total_calories, meal_type, created_at)
 
     if food_entry_id:
         return jsonify({"message": "Food entry added successfully", "food_entry_id": food_entry_id}), 201
@@ -48,11 +49,12 @@ def edit_food_entry(food_entries_id):
     food_name = data.get('food_name')
     total_calories = data.get('total_calories')
     meal_type = data.get('meal_type')
+    created_at = data.get('created_at')
 
-    if not all([food_name, total_calories, meal_type]):
+    if not all([food_name, total_calories, meal_type, created_at]):
         return jsonify({"error": "All fields are required"}), 400
 
-    updated_rows = food_model.edit_food_entry(food_entries_id, food_name, total_calories, meal_type)
+    updated_rows = food_model.edit_food_entry(food_entries_id, food_name, total_calories, meal_type, created_at)
 
     if updated_rows is not None:
         return jsonify({"message": "Food entry updated successfully"}), 200

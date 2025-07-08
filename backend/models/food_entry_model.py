@@ -30,7 +30,7 @@ class FoodEntryModel:
                 conn.close()
 
     """Function to add a food entry to the database"""
-    def add_food_entry(self, user_id, food_name, total_calories, meal_type, created_at=datetime.now()):
+    def add_food_entry(self, user_id, food_name, total_calories, meal_type, created_at):
         conn = None
         cursor = None
         try:
@@ -60,7 +60,7 @@ class FoodEntryModel:
                 conn.close()
 
     """Function to edit a food entry in the database"""
-    def edit_food_entry(self, food_entries_id, food_name, total_calories, meal_type, created_at=datetime.now()):
+    def edit_food_entry(self, food_entries_id, food_name, total_calories, meal_type, created_at):
         conn = None
         cursor = None
         try:
