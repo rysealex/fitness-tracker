@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS `fitness_tracker`.`Goals` (
 ENGINE = InnoDB;
 
 INSERT INTO `fitness_tracker`.`Users` (`user_id`, `username`, `password`, `fname`, `lname`, `dob`, `height_ft`, `weight_lbs`, `gender`, `profile_pic`, `occupation`, `created_at`) VALUES
-(1, 'john_doe', 'hashed_password', 'John', 'Doe', '1990-01-01', 5.8, 180, 'Male', 'path/to/profile_pic.jpg', 'Software Engineer', NOW());
+(1, 'john', 'johnpass', 'John', 'Doe', '1990-01-01', 5.8, 180, 'Male', '/images/default-profile-icon.jpg', 'Software Engineer', NOW());
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
