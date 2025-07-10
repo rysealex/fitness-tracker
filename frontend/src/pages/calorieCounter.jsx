@@ -3,7 +3,7 @@ import { StaticDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
-import { Edit, Delete } from '@mui/icons-material';
+import { Edit, Delete, Add } from '@mui/icons-material';
 
 function CalorieCounter() {
 	const navigate = useNavigate();
@@ -228,214 +228,27 @@ function CalorieCounter() {
         date.getDate() === today.getDate()
 		);
 	};
+
+	// function to group entries by meal type
+	const groupEntriesByMealType = (entries) => {
+		const groups = {
+			Breakfast: [],
+			Lunch: [],
+			Dinner: [],
+			Snack: [],
+		};
+		Object.values(entries).forEach(entry => {
+			if (groups[entry.meal_type]) {
+				groups[entry.meal_type].push(entry);
+			}
+		});
+		return groups;
+	};
+
+	const mealTypes = ["Breakfast", "Lunch", "Dinner", "Snack"];
+	const grouped = groupEntriesByMealType(todayFoodEntries);
 		
 	return (
-		// <div>
-		// 	<Box sx={{ maxWidth: 700, mx: "auto", mt: 4, p: 2 }}>
-		// 		<Typography variant="h4" align="center" gutterBottom>
-		// 			Calorie Counter
-		// 		</Typography>
-		// 		<Box sx={{ mb: 3, display: "flex", justifyContent: "center" }}>
-		// 			<LocalizationProvider dateAdapter={AdapterDateFns}>
-		// 				<StaticDatePicker
-		// 					displayStaticWrapperAs="desktop"
-		// 					value={specifiedDay}
-		// 					onChange={(newValue) => {
-		// 						setSpecifiedDay(newValue);
-		// 						const formattedDate = newValue.toISOString().split('T')[0];
-		// 						handleSpecifiedDayChange(formattedDate);
-		// 					}}
-		// 					renderInput={(params) => <TextField {...params} />}
-		// 				/>
-		// 			</LocalizationProvider>
-		// 		</Box>
-		// 		<Card sx={{ mb: 4, p: 2 }}>
-		// 			<Typography variant="h6" gutterBottom>
-		// 				Add New Food Entry
-		// 			</Typography>
-		// 			<form onSubmit={(e) => {
-		// 				e.preventDefault();
-		// 				const formattedDate = specifiedDay instanceof Date
-		// 					? specifiedDay.toISOString().split('T')[0]
-		// 					: new Date(specifiedDay).toISOString().split('T')[0];
-		// 				handleSubmit(e, formattedDate);
-		// 			}}>
-		// 				<Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-		// 					<TextField
-		// 						label="Food Name"
-		// 						variant="outlined"
-		// 						value={foodName}
-		// 						onChange={(e) => setFoodName(e.target.value)}
-		// 						fullWidth
-		// 					/>
-		// 					<TextField
-		// 						label="Calories"
-		// 						variant="outlined"
-		// 						type="number"
-		// 						value={totalCalories}
-		// 						onChange={(e) => setTotalCalories(e.target.value)}
-		// 						inputProps={{ step: 1, min: 0 }}
-		// 						fullWidth
-		// 					/>
-		// 					<TextField
-		// 						label="Meal Type"
-		// 						variant="outlined"
-		// 						value={mealType}
-		// 						onChange={(e) => setMealType(e.target.value)}
-		// 						select
-		// 						fullWidth
-		// 					>
-		// 						<MenuItem value="Breakfast">Breakfast</MenuItem>
-		// 						<MenuItem value="Lunch">Lunch</MenuItem>
-		// 						<MenuItem value="Dinner">Dinner</MenuItem>
-		// 						<MenuItem value="Snack">Snack</MenuItem>
-		// 					</TextField>
-		// 				</Box>
-		// 				<Button type="submit" variant="contained" color="primary" fullWidth>
-		// 					Add Food
-		// 				</Button>
-		// 			</form>
-		// 		</Card>
-
-		// 		<Card sx={{ mb: 4 }}>
-		// 			<CardContent>
-		// 				<Typography variant="h6" gutterBottom>
-		// 					{isToday(new Date(specifiedDay))
-		// 						? "Today's Food Entries"
-		// 						: `${new Date(specifiedDay).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })} Food Entries`}
-		// 				</Typography>
-		// 				<Typography variant="subtitle1" sx={{ mb: 2 }}>
-		// 					Total Calories: <b>{calcTodayTotalCalories(todayFoodEntries)}</b>
-		// 				</Typography>
-		// 				<Divider sx={{ mb: 2 }} />
-		// 				{Object.keys(todayFoodEntries).length === 0 ? (
-		// 					<Typography color="text.secondary">No entries for 
-		// 						{isToday(new Date(specifiedDay))
-		// 						? " today"
-		// 						: ` ${new Date(specifiedDay).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}`}
-		// 					</Typography>
-		// 				) : (
-		// 					Object.entries(todayFoodEntries).map(([id, entry]) => (
-		// 						<Box key={id} sx={{ mb: 2, p: 1, borderRadius: 1, bgcolor: "#f9f9f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-		// 							<Box>
-		// 								<Typography variant="subtitle1">{entry.food_name}</Typography>
-		// 								<Typography variant="body2">Calories: {entry.total_calories}</Typography>
-		// 								<Typography variant="body2">Meal: {entry.meal_type}</Typography>
-		// 								<Typography variant="body2" color="text.secondary">Date: {entry.created_at}</Typography>
-		// 							</Box>
-		// 							<Box>
-		// 								<IconButton color="primary" onClick={() => openEditModal(entry)}>
-		// 									<Edit />
-		// 								</IconButton>
-		// 								<IconButton
-		// 									color="error"
-		// 									onClick={() => {
-		// 										const formattedDate = specifiedDay instanceof Date
-		// 											? specifiedDay.toISOString().split('T')[0]
-		// 											: new Date(specifiedDay).toISOString().split('T')[0];
-		// 										handleDeleteEntry(entry.food_entries_id, formattedDate);
-		// 									}}
-		// 								>
-		// 									<Delete />
-		// 								</IconButton>
-		// 							</Box>
-		// 						</Box>
-		// 					))
-		// 				)}
-		// 			</CardContent>
-		// 		</Card>
-
-		// 		{/* <Card>
-		// 			<CardContent>
-		// 				<Typography variant="h6" gutterBottom>
-		// 					All Food Entries
-		// 				</Typography>
-		// 				<Divider sx={{ mb: 2 }} />
-		// 				{Object.keys(allFoodEntries).length === 0 ? (
-		// 						<Typography color="text.secondary">No entries found.</Typography>
-		// 				) : (
-		// 					Object.entries(allFoodEntries).map(([id, entry]) => (
-		// 						<Box key={id} sx={{ mb: 2, p: 1, borderRadius: 1, bgcolor: "#f9f9f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-		// 							<Box>
-		// 								<Typography variant="subtitle1">{entry.food_name}</Typography>
-		// 								<Typography variant="body2">Calories: {entry.total_calories}</Typography>
-		// 								<Typography variant="body2">Meal: {entry.meal_type}</Typography>
-		// 								<Typography variant="body2" color="text.secondary">Date: {entry.created_at}</Typography>
-		// 							</Box>
-		// 							<Box>
-		// 								<IconButton color="primary" onClick={() => openEditModal(entry)}>
-		// 									<Edit />
-		// 								</IconButton>
-		// 								<IconButton color="error" onClick={() => handleDeleteEntry(entry.food_entries_id)}>
-		// 									<Delete />
-		// 								</IconButton>
-		// 							</Box>
-		// 						</Box>
-		// 					))
-		// 				)}
-		// 			</CardContent>
-		// 		</Card> */}
-
-		// 		<Box sx={{ mt: 4, textAlign: "center" }}>
-		// 			<Button variant="outlined" color="secondary" onClick={() => handleNavigate('/home')}>
-		// 				Exit
-		// 			</Button>
-		// 		</Box>
-
-		// 		<Dialog open={editModalOpen} onClose={closeEditModal}>
-		// 			<DialogTitle>Edit Food Entry</DialogTitle>
-		// 			<DialogContent>
-		// 				{editEntry && (
-		// 					<Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
-		// 						<TextField
-		// 							label="Food Name"
-		// 							name="food_name"
-		// 							value={editEntry.food_name}
-		// 							onChange={handleEditChange}
-		// 							fullWidth
-		// 						/>
-		// 						<TextField
-		// 							label="Total Calories"
-		// 							name="total_calories"
-		// 							type="number"
-		// 							value={editEntry.total_calories}
-		// 							onChange={handleEditChange}
-		// 							inputProps={{ step: 1, min: 0 }}
-		// 							fullWidth
-		// 						/>
-		// 						<TextField
-		// 							label="Meal Type"
-		// 							name="meal_type"
-		// 							value={editEntry.meal_type}
-		// 							onChange={handleEditChange}
-		// 							select
-		// 							fullWidth
-		// 						>
-		// 							<MenuItem value="Breakfast">Breakfast</MenuItem>
-		// 							<MenuItem value="Lunch">Lunch</MenuItem>
-		// 							<MenuItem value="Dinner">Dinner</MenuItem>
-		// 							<MenuItem value="Snack">Snack</MenuItem>
-		// 						</TextField>
-		// 					</Box>
-		// 				)}
-		// 			</DialogContent>
-		// 			<DialogActions>
-		// 				<Button onClick={closeEditModal}>Cancel</Button>
-		// 				<Button
-		// 					onClick={() => {
-		// 						const formattedDate = specifiedDay instanceof Date
-		// 							? specifiedDay.toISOString().split('T')[0]
-		// 							: new Date(specifiedDay).toISOString().split('T')[0];
-		// 						handleEditSubmit(formattedDate);
-		// 					}}
-		// 					variant="contained"
-		// 				>
-		// 					Save
-		// 				</Button>
-		// 			</DialogActions>
-		// 		</Dialog>
-		// 	</Box>
-		// </div>
 		<Box sx={{
             maxWidth: 1200,
             mx: "auto",
@@ -466,16 +279,6 @@ function CalorieCounter() {
                     </LocalizationProvider>
                 </Card>
 				<Card sx={{ p: 2, textAlign: "center" }}>
-					<Button
-						variant="contained"
-						color="primary"
-						onClick={() => setAddModalOpen(true)}
-						fullWidth
-					>
-						Add New Food Entry
-					</Button>
-				</Card>
-				<Card sx={{ p: 2, textAlign: "center" }}>
 		 			<Button 
 						variant="contained" 
 						color="primary" 
@@ -485,53 +288,6 @@ function CalorieCounter() {
 						Exit
 					</Button>
 				</Card>
-                {/* <Card sx={{ p: 2 }}>
-                    <Typography variant="h6" gutterBottom>
-                        Add New Food Entry
-                    </Typography>
-                    <form onSubmit={(e) => {
-                        e.preventDefault();
-                        const formattedDate = specifiedDay instanceof Date
-                            ? specifiedDay.toISOString().split('T')[0]
-                            : new Date(specifiedDay).toISOString().split('T')[0];
-                        handleSubmit(e, formattedDate);
-                    }}>
-                        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mb: 2 }}>
-                            <TextField
-                                label="Food Name"
-                                variant="outlined"
-                                value={foodName}
-                                onChange={(e) => setFoodName(e.target.value)}
-                                fullWidth
-                            />
-                            <TextField
-                                label="Calories"
-                                variant="outlined"
-                                type="number"
-                                value={totalCalories}
-                                onChange={(e) => setTotalCalories(e.target.value)}
-                                inputProps={{ step: 1, min: 0 }}
-                                fullWidth
-                            />
-                            <TextField
-                                label="Meal Type"
-                                variant="outlined"
-                                value={mealType}
-                                onChange={(e) => setMealType(e.target.value)}
-                                select
-                                fullWidth
-                            >
-                                <MenuItem value="Breakfast">Breakfast</MenuItem>
-                                <MenuItem value="Lunch">Lunch</MenuItem>
-                                <MenuItem value="Dinner">Dinner</MenuItem>
-                                <MenuItem value="Snack">Snack</MenuItem>
-                            </TextField>
-                        </Box>
-                        <Button type="submit" variant="contained" color="primary" fullWidth>
-                            Add Food
-                        </Button>
-                    </form>
-                </Card> */}
             </Box>
 
             {/* Right Column */}
@@ -547,47 +303,63 @@ function CalorieCounter() {
                             Total Calories: <b>{calcTodayTotalCalories(todayFoodEntries)}</b>
                         </Typography>
                         <Divider sx={{ mb: 2 }} />
-                        {Object.keys(todayFoodEntries).length === 0 ? (
-                            <Typography color="text.secondary">No entries for
-                                {isToday(new Date(specifiedDay))
-                                    ? " today"
-                                    : ` ${new Date(specifiedDay).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}`}
-                            </Typography>
-                        ) : (
-                            Object.entries(todayFoodEntries).map(([id, entry]) => (
-                                <Box key={id} sx={{ mb: 2, p: 1, borderRadius: 1, bgcolor: "#f9f9f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                                    <Box>
-                                        <Typography variant="subtitle1">{entry.food_name}</Typography>
-                                        <Typography variant="body2">Calories: {entry.total_calories}</Typography>
-                                        <Typography variant="body2">Meal: {entry.meal_type}</Typography>
-                                        <Typography variant="body2" color="text.secondary">Date: {entry.created_at}</Typography>
-                                    </Box>
-                                    <Box>
-                                        <IconButton color="primary" onClick={() => openEditModal(entry)}>
-                                            <Edit />
-                                        </IconButton>
-                                        <IconButton
-                                            color="error"
-                                            onClick={() => {
-                                                const formattedDate = specifiedDay instanceof Date
-                                                    ? specifiedDay.toISOString().split('T')[0]
-                                                    : new Date(specifiedDay).toISOString().split('T')[0];
-                                                handleDeleteEntry(entry.food_entries_id, formattedDate);
-                                            }}
-                                        >
-                                            <Delete />
-                                        </IconButton>
-                                    </Box>
-                                </Box>
-                            ))
-                        )}
+						{mealTypes.map((type) => (
+							<Box key={type} sx={{ mb: 3 }}>
+								<Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+								<Typography variant="subtitle1">{type}</Typography>
+								<IconButton
+									size="small"
+									color="primary"
+									sx={{ ml: 1 }}
+									onClick={() => {
+									setMealType(type);
+									setAddModalOpen(true);
+									}}
+								>
+									<Add />
+								</IconButton>
+								</Box>
+								{grouped[type].length === 0 ? (
+								<Typography color="text.secondary" sx={{ mb: 1, ml: 2 }}>
+									No {type.toLowerCase()} entries
+								</Typography>
+								) : (
+								grouped[type].map((entry) => (
+									<Box key={entry.food_entries_id} sx={{ mb: 1, p: 1, borderRadius: 1, bgcolor: "#f9f9f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+									<Box>
+										<Typography variant="subtitle2">{entry.food_name}</Typography>
+										<Typography variant="body2">Calories: {entry.total_calories}</Typography>
+										<Typography variant="body2" color="text.secondary">Date: {entry.created_at}</Typography>
+									</Box>
+									<Box>
+										<IconButton color="primary" onClick={() => openEditModal(entry)}>
+										<Edit />
+										</IconButton>
+										<IconButton
+										color="error"
+										onClick={() => {
+											const formattedDate = specifiedDay instanceof Date
+											? specifiedDay.toISOString().split('T')[0]
+											: new Date(specifiedDay).toISOString().split('T')[0];
+											handleDeleteEntry(entry.food_entries_id, formattedDate);
+										}}
+										>
+										<Delete />
+										</IconButton>
+									</Box>
+									</Box>
+								))
+								)}
+								<Divider sx={{ mt: 2 }} />
+							</Box>
+						))}
                     </CardContent>
                 </Card>
             </Box>
 
 			{/* Add Food Entry Modal */}
 			<Dialog open={addModalOpen} onClose={() => setAddModalOpen(false)}>
-				<DialogTitle>Add New Food Entry</DialogTitle>
+				<DialogTitle>Add New {mealType ? mealType : "Food"} Entry</DialogTitle>
 				<DialogContent>
 					<Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
 						<TextField
@@ -606,7 +378,7 @@ function CalorieCounter() {
 							inputProps={{ step: 1, min: 0 }}
 							fullWidth
 						/>
-						<TextField
+						{/* <TextField
 							label="Meal Type"
 							variant="outlined"
 							value={mealType}
@@ -618,7 +390,7 @@ function CalorieCounter() {
 							<MenuItem value="Lunch">Lunch</MenuItem>
 							<MenuItem value="Dinner">Dinner</MenuItem>
 							<MenuItem value="Snack">Snack</MenuItem>
-						</TextField>
+						</TextField> */}
 					</Box>
 				</DialogContent>
 				<DialogActions>
