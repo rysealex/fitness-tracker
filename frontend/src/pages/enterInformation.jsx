@@ -24,74 +24,109 @@ function EnterInformation() {
   const [weight, setWeight] = useState("");
   const [dob, setDob] = useState("");
   const [gender, setGender] = useState(""); 
-  const [profilePic, setProfilePic] = useState(""); // optional
-  const [occupation, setOccupation] = useState(""); // optional
+  const [profilePicUrl, setProfilePicUrl] = useState("/images/default-profile-icon.jpg");
+  const [profilePicFile, setProfilePicFile] = useState(null);
+  //const [profilePic, setProfilePic] = useState(""); // optional
+  const [occupation, setOccupation] = useState("Unemployed"); // optional
+
+  // handle the file change event for the profile pic
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setProfilePicFile(file);
+    } else {
+      setProfilePicFile(null);
+      setProfilePicUrl("/images/default-profile-icon.jpg"); // reset to default
+    }
+  };
+
+  // function to upload the selected profile pic file to backend server
+  const uploadProfilePic = async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append('profile_pic', file);
+
+      // make a POST request to backend file upload endpoint
+      const response = await fetch('http://localhost:5000/auth/upload-profile-pic', {
+        method: 'POST',
+        body: formData,
+      });
+      // check if response is ok
+      if (response.ok) {
+        const data = await response.json();
+        return data.imageUrl;
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Profile picture upload failed.');
+      }
+    } catch (error) {
+      console.error('Error uploading profile picture:', error);
+      return null;
+    }
+  };
 
   // handle the account information submission attempt
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     // perform input validation
-    if (fname === "") {
-      console.log("First name is required");
-      return;
-    } else if (lname === "") {
-      console.log("Last name is required"); 
-      return;
-    } else if (height === "") {
-      console.log("Height is required");
-      return;
-    } else if (weight === "") {
-      console.log("Weight is required");  
-      return;
-    } else if (dob === "") {
-      console.log("Date of birth is required"); 
-      return;
-    } else if (gender === "") {
-      console.log("Gender is required");
-      return;
-    } else if (profilePic === "") {
-      setProfilePic("default_profile_pic.png"); // set default profile pic if not provided
-    } else if (occupation === "") {
-      setOccupation("Unemployed"); // set default occupation if not provided
-    } else {
-      // proceed to account information submission with API call
-      try {
-        console.log("Submitting account information for user:", localStorage.getItem('username'));
-        const response = await fetch('http://localhost:5000/auth/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            username: localStorage.getItem('username'),
-            password: localStorage.getItem('password'),
-            fname: fname,
-            lname: lname,
-            dob: dob,
-            height_ft: height,
-            weight_lbs: weight,
-            gender: gender,
-            profile_pic: profilePic,
-            occupation: occupation,
-          }),
-        });
-        // check if the response is ok
-        if (response.ok) {
-          const data = await response.json();
-          console.log('Account information submitted successfully:', data);
-          // store the user id in local storage
-          localStorage.setItem('userId', data.user_id);
-          console.log('User ID stored in local storage:', data.user_id);
-          handleNavigate("/home");
-        } else {
-          console.log('Account information submission failed:', response.statusText);
-          return;
-        }
-      } catch (error) {
-        console.error('Error during account information submission:', error);
+    if (fname === "") { console.log("First name is required"); return; }
+    if (lname === "") { console.log("Last name is required"); return; }
+    if (height === "") { console.log("Height is required"); return; }  
+    if (weight === "") { console.log("Weight is required"); return; }
+    if (dob === "") { console.log("Date of birth is required"); return; }
+    if (gender === "") { console.log("Gender is required"); return; }
+
+    // initialize with current profilePicUrl (default or previously set)
+    let finalProfilePicUrl = profilePicUrl; 
+
+    // if a profile pic file is selected, upload it first
+    if (profilePicFile) {
+      const uploadedUrl = await uploadProfilePic(profilePicFile);
+      if (uploadedUrl) {
+        finalProfilePicUrl = uploadedUrl; // use the URL if successful
+      } else {
+        console.log("Profile picture upload failed, cannot submit user information.");
         return;
       }
+    }
+
+    // proceed to account information submission with API call
+    try {
+      console.log("Submitting account information for user:", localStorage.getItem('username'));
+      const response = await fetch('http://localhost:5000/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          username: localStorage.getItem('username'),
+          password: localStorage.getItem('password'),
+          fname: fname,
+          lname: lname,
+          dob: dob,
+          height_ft: height,
+          weight_lbs: weight,
+          gender: gender,
+          profile_pic: finalProfilePicUrl,
+          occupation: occupation,
+        }),
+      });
+      // check if the response is ok
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Account information submitted successfully:', data);
+        // store the user id in local storage
+        localStorage.setItem('userId', data.user_id);
+        console.log('User ID stored in local storage:', data.user_id);
+        handleNavigate("/home");
+      } else {
+        console.log('Account information submission failed:', response.statusText);
+        return;
+      }
+    } catch (error) {
+      console.error('Error during account information submission:', error);
+      return;
     }
   };
 
@@ -199,10 +234,10 @@ function EnterInformation() {
             <TextField
               className='textfield'
               id="profile-pic"
-              label="Profile Picture URL (optional)"
+              label="Profile Picture (optional)"
               variant="outlined"
-              type="text"
-              onChange={(e) => setProfilePic(e.target.value)}
+              type="file"
+              onChange={handleFileChange}
               style={{padding: '10px',
                 marginTop: '25px',
                 border: 'none',

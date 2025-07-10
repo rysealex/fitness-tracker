@@ -1,4 +1,6 @@
-from flask import Blueprint, request, jsonify
+import os
+from flask import Blueprint, request, jsonify, current_app
+from werkzeug.utils import secure_filename
 from models.user_model import UserModel
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -117,3 +119,48 @@ def delete_user(user_id):
         return jsonify({"message": "User deleted successfully"}), 200
     else:
         return jsonify({"error": "Failed to delete user"}), 500
+    
+# Helper function to check allowed file extensions
+def allowed_file(filename):
+    return '.' in filename and \
+            filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
+
+@auth_bp.route('/upload-profile-pic', methods=['POST'])
+def upload_profile_pic():
+    """Endpoint to upload a user profile pic"""
+    if 'profile_pic' not in request.files:
+        current_app.logger.warning("No 'profile_pic' file part in request.")
+        return jsonify({"message": "No file part in the request"}), 400
+
+    file = request.files['profile_pic']
+
+    if file.filename == '':
+        current_app.logger.warning("No selected file (empty filename).")
+        return jsonify({"message": "No selected file"}), 400
+
+    if file and allowed_file(file.filename):
+        # generate a secure and unique filename
+        filename = secure_filename(file.filename)
+        unique_filename = f"{os.urandom(8).hex()}_{filename}"
+
+        try:
+            # construct the full path where the file will be saved
+            upload_path = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_filename)
+            file.save(upload_path)
+            current_app.logger.info(f"File saved to: {upload_path}")
+
+            # construct the URL to access the image
+            image_url = f"{request.url_root}images/{unique_filename}"
+            current_app.logger.info(f"Generated image URL: {image_url}")
+
+            return jsonify({
+                "message": "File uploaded successfully!",
+                "imageUrl": image_url
+            }), 200
+        
+        except Exception as e:
+            current_app.logger.error(f"Error saving file: {e}", exc_info=True)
+            return jsonify({"message": f"Error uploading file: {str(e)}"}), 500
+    else:
+        current_app.logger.warning(f"File type not allowed for: {file.filename}")
+        return jsonify({"message": "File type not allowed"}), 400

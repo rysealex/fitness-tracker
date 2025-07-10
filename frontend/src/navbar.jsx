@@ -55,7 +55,7 @@ function Navbar({ stats }) {
 			</ul>
 				<div className='user-account'>
 					<div className='user-profile'>
-						<img src='/images/yami.png'
+						<img src={stats.profile_pic}
 						alt='profile-img'></img>
 						<div className='user-detail'>
 							<h3>{stats.fname} {stats.lname}</h3>

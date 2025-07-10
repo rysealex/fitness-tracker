@@ -132,8 +132,8 @@
 # if __name__ == '__main__':
 #     app.run(host='localhost', port=5000)  # Change 3000 to your desired port 
     
-
-from flask import Flask, jsonify
+import os
+from flask import Flask, jsonify, send_from_directory
 from config import Config
 from flask_cors import CORS
 from routes.auth_routes import auth_bp
@@ -143,12 +143,24 @@ import database
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+# Ensure the upload directory exists when the app starts
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+    os.makedirs(app.config['UPLOAD_FOLDER'])
+    print(f"Created upload directory: {app.config['UPLOAD_FOLDER']}")
+
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 database.init_db_pool()
+
 # Register all the blueprints
 app.register_blueprint(auth_bp)
 app.register_blueprint(food_bp)
 app.register_blueprint(workout_bp)
+
+# Route to serve uploaded profile pictures
+@app.route('/images/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/')
 def home():
