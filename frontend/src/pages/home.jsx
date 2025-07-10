@@ -60,6 +60,10 @@ function Home() {
   const handleClickWorkoutLog = () => {
     handleNavigate('/workout-log');
   };
+  // event handler for goals button
+  const handleClickGoals = () => {
+    handleNavigate('/goals');
+  };
   // Event handler for edit buttons
   const [editModeWeight, setEditModeWeight] = useState(false);
   const handleClickWeight = () => {
@@ -211,6 +215,33 @@ function Home() {
         <h1>Welcome {stats.username}!</h1>      
         <div className='cards-container'>
           <Stack direction="row" spacing={2}>
+            <Card sx={{ maxWidth: 345 }}>
+              <CardMedia
+                sx={{ height: 140 }}
+                image="/images/goals.png"
+                title="goals"
+              />
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  Goals
+                </Typography>
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  Track and manage your personal goals here!
+                </Typography>
+              </CardContent>
+              <CardActions>
+                {/* <Button size="small">Share</Button>
+                <Button size="small">Learn More</Button> */}
+                <Button
+                  variant='contained'
+                  style={{
+                    backgroundColor: '#C51D34'
+                  }}
+                  onClick={handleClickGoals}> 
+                  Enter
+                </Button>
+              </CardActions>
+            </Card>
             <Card sx={{ maxWidth: 345 }}>
               <CardMedia
                 sx={{ height: 140 }}

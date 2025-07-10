@@ -10,6 +10,7 @@ import Profile from "./pages/profile"
 import Settings from "./pages/settings"
 import CalorieCounter from './pages/calorieCounter';
 import WorkoutLog from './pages/workoutLog';
+import Goals from './pages/goals';
 import './App.css';
 import React from 'react';
 
@@ -30,6 +31,7 @@ function App() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/calorie-counter" element={<CalorieCounter />} />
           <Route path="/workout-log" element={<WorkoutLog />} />
+          <Route path="/goals" element={<Goals />} />
         </Routes>
       </Router>
     </AudioProvider>
