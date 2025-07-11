@@ -1,9 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../styles/index.css'
 import Navbar from '../navbar';
+import { IconButton } from "@mui/material";
+import { Edit } from '@mui/icons-material';
 
 function Profile() {
   const [stats, setStats] = useState({});
+  const [profilePicUrl, setProfilePicUrl] = useState("/images/default-profile-icon.jpg");
+  const [profilePicFile, setProfilePicFile] = useState(null);
+
+  // ref for hidden file input
+  const fileInputRef = useRef(null);
+
+  // function to trigger the hidden file input click
+  const handleEditClick = () => {
+    fileInputRef.current.click();
+  };
+
+  // handle the file change event for the profile pic
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setProfilePicFile(file);
+    } else {
+      setProfilePicFile(null);
+      setProfilePicUrl("/images/default-profile-icon.jpg"); // reset to default
+    }
+  };
 
   // fetch user stats on component mount
   useEffect(() => {
@@ -48,7 +71,27 @@ function Profile() {
           <li>Occupation: {stats.occupation}</li>
           <li>Account Created: {formatDate(stats.created_at)}</li>
         </ul>
-        <h2>Update Profile Pic</h2>
+        <div className='user-profile'>
+          <img 
+            src={stats.profile_pic}
+            alt='profile-img'>
+          </img>
+          {/* Hidden file input */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            style={{ display: 'none' }}
+            accept="image/*" // only allow images
+          />
+          {/* Edit button */}
+          <IconButton
+            color="primary"
+            onClick={handleEditClick}
+          >
+            <Edit />
+          </IconButton>
+        </div>
       </section>
     </div>
   );
