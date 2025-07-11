@@ -6,7 +6,7 @@ import { Edit } from '@mui/icons-material';
 
 function Profile() {
   const [stats, setStats] = useState({});
-  const [profilePicUrl, setProfilePicUrl] = useState("/images/default-profile-icon.jpg");
+  const [displayedProfilePicUrl, setDisplayedProfilePicUrl] = useState("/images/default-profile-icon.jpg");
   const [profilePicFile, setProfilePicFile] = useState(null);
 
   // ref for hidden file input
@@ -22,11 +22,56 @@ function Profile() {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setProfilePicFile(file);
+      // attempt to upload the new profile pic
+      uploadNewProfilePic(file);
     } else {
       setProfilePicFile(null);
-      setProfilePicUrl("/images/default-profile-icon.jpg"); // reset to default
+      setDisplayedProfilePicUrl(stats.profile_pic || "/images/default-profile-icon.jpg"); // reset to default
     }
   };
+
+  // function to upload the new profile pic to the backend server and update user data
+  const uploadNewProfilePic = async (file) => {
+    
+    // get the current user ID from local storage
+    const userId = localStorage.getItem('userId');
+
+    if (!userId) {
+      console.error("User ID not found. Cannot upload profile picture.");
+      return;
+    }
+
+    // attempt to upload new profile pic
+    try {
+      const formData = new FormData();
+      formData.append('profile_pic', file);
+
+      // PUT request to backend to update profile pic endpoint
+      const response = await fetch(`http://localhost:5000/auth/user/${userId}/update-profile-pic`, {
+        method: 'PUT',
+        body: formData,
+      });
+
+      // check if the response if ok
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Profile picture updated successfully:', data);
+        setDisplayedProfilePicUrl(data.imageUrl); // update the displayed image
+        // update the stats state to keep it consistent with the new URL
+        setStats(prevStats => ({
+          ...prevStats,
+          profile_pic: data.imageUrl
+        }));
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update profile picture.');
+      }
+    } catch (error) {
+      console.error('Error updating profile picture:', error);
+      return;
+    }
+  };
+
 
   // fetch user stats on component mount
   useEffect(() => {

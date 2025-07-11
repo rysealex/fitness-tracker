@@ -180,3 +180,28 @@ class UserModel:
                 cursor.close()
             if conn:
                 conn.close()
+
+    """Function to update a user profile pic"""
+    def update_user_profile_pic(self, user_id, image_url):
+        conn = None
+        cursor = None
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+
+            sql = """
+            UPDATE Users SET profile_pic = %s WHERE user_id = %s
+            """
+            cursor.execute(sql, (image_url, user_id))
+            conn.commit()
+            return cursor.rowcount > 0
+        except Error as e:
+            print(f"Error updating user {user_id} with image URL of {image_url}: {e}")
+            if conn:
+                conn.rollback()
+            return False
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()

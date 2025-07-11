@@ -164,3 +164,53 @@ def upload_profile_pic():
     else:
         current_app.logger.warning(f"File type not allowed for: {file.filename}")
         return jsonify({"message": "File type not allowed"}), 400
+
+@auth_bp.route('/user/<string:user_id>/update-profile-pic', methods=['PUT'])
+def update_profile_pic(user_id):
+    """Endpoint to update a user profile pic"""
+    if 'profile_pic' not in request.files:
+        current_app.logger.warning("No 'profile_pic' file part in request.")
+        return jsonify({"message": "No file part in the request"}), 400
+
+    file = request.files['profile_pic']
+
+    if file.filename == '':
+        current_app.logger.warning("No selected file (empty filename).")
+        return jsonify({"message": "No selected file"}), 400
+
+    if file and allowed_file(file.filename):
+        # generate a secure and unique filename
+        filename = secure_filename(file.filename)
+        unique_filename = f"{os.urandom(8).hex()}_{filename}"
+
+        try:
+            # construct the full path where the file will be saved
+            upload_path = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_filename)
+            file.save(upload_path)
+            current_app.logger.info(f"File saved to: {upload_path}")
+
+            # construct the URL to access the image
+            image_url = f"{request.url_root}images/{unique_filename}"
+            current_app.logger.info(f"Generated image URL: {image_url}")
+
+            # update the user profile pic in the db
+            success = user_model.update_user_profile_pic(user_id, image_url)
+
+            if success:
+                current_app.logger.info(f"Database updated with new profile pic URL: {image_url} for user {user_id}.")
+                return jsonify({
+                    "message": "Profile picture updated successfully!",
+                    "imageUrl": image_url # return the new URL to the frontend
+                }), 200
+            else:
+                # delete the saved file if db failed
+                os.remove(upload_path)
+                current_app.logger.error(f"Failed to update database for user {user_id}. Deleting uploaded file.")
+                return jsonify({"message": "Failed to update profile picture in database."}), 500
+
+        except Exception as e:
+            current_app.logger.error(f"Error processing profile pic update for user {user_id}: {e}", exc_info=True)
+            return jsonify({"message": f"Error uploading file: {str(e)}"}), 500
+    else:
+        current_app.logger.warning(f"File type not allowed for user {user_id}: {file.filename}")
+        return jsonify({"message": "File type not allowed"}), 400
