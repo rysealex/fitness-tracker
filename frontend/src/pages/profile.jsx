@@ -110,32 +110,57 @@ function Profile() {
       <Navbar stats={stats} />
       <section className='profile-container'>
         <h1>Your Profile</h1>
-        <ul>
-          <li>Name: {stats.fname} {stats.lname}</li>
-          <li>Birthday: {formatDate(stats.dob)}</li>
-          <li>Occupation: {stats.occupation}</li>
-          <li>Account Created: {formatDate(stats.created_at)}</li>
-        </ul>
-        <div className='user-profile'>
-          <img 
-            src={stats.profile_pic}
-            alt='profile-img'>
-          </img>
-          {/* Hidden file input */}
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            style={{ display: 'none' }}
-            accept="image/*" // only allow images
-          />
-          {/* Edit button */}
-          <IconButton
-            color="primary"
-            onClick={handleEditClick}
-          >
-            <Edit />
-          </IconButton>
+        <div className='profile-content-wrapper'>
+          {/* Profile Picture Section */}
+          <div className='profile-picture-section'>
+            {/* New outer wrapper for positioning the button */}
+            <div className='profile-image-outer-wrapper'>
+              <div className='profile-picture-wrapper'>
+                <img
+                  src={stats.profile_pic}
+                  alt='profile-img'
+                  className='profile-image'
+                />
+              </div>
+              {/* Hidden file input */}
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                style={{ display: 'none' }}
+                accept="image/*"
+              />
+              {/* Edit Button */}
+              <IconButton
+                color="primary"
+                onClick={handleEditClick}
+                sx={{
+                  position: 'absolute',
+                  top: -15, 
+                  right: -15, 
+                  backgroundColor: 'rgba(0,0,0,0.6)',
+                  '&:hover': {
+                    backgroundColor: 'rgba(0,0,0,0.8)',
+                  },
+                  color: '#fff',
+                  borderRadius: '50%',
+                  padding: '8px',
+                  zIndex: 10,
+                }}
+              >
+                <Edit />
+              </IconButton>
+            </div>
+          </div>
+
+          {/* User Info Section */}
+          <div className='profile-info-section'>
+            <ul>
+              <li>Name: {stats.fname} {stats.lname}</li>
+              <li>Birthday: {formatDate(stats.dob)}</li>
+              <li>Occupation: {stats.occupation}</li>
+            </ul>
+          </div>
         </div>
       </section>
     </div>
