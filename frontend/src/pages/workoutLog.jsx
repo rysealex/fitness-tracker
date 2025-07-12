@@ -3,7 +3,7 @@ import { StaticDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
-import { Edit, Delete } from '@mui/icons-material';
+import { Edit, Delete, Add } from '@mui/icons-material';
 
 function WorkoutLog() {
 	const navigate = useNavigate();
@@ -14,8 +14,10 @@ function WorkoutLog() {
 	const [workoutType, setWorkoutType] = useState("");
 	const [caloriesBurned, setCaloriesBurned] = useState(0);
 	const [durationMin, setDurationMin] = useState(0);
+	const [specifiedDay, setSpecifiedDay] = useState(Date());
 	const [allWorkoutLogs, setAllWorkoutLogs] = useState({});
 	const [todayWorkoutLogs, setTodayWorkoutLogs] = useState({});
+	const [addModalOpen, setAddModalOpen] = useState(false);
 	const [editModalOpen, setEditModalOpen] = useState(false);
 	const [editEntry, setEditEntry] = useState(null);
 
@@ -209,30 +211,163 @@ function WorkoutLog() {
 		fetchWorkoutLogs();
 	}, []);
 
+	// function to calculate today's total calories burned
+	const calcTodayTotalCaloriesBurned = (entries) => {
+		return Object.values(entries).reduce((sum, entry) => {
+			const caloriesBurned = Number(entry.calories_burned) || 0;
+			return sum + caloriesBurned;
+		}, 0);
+	};
+
+	// function to check if the calendar picker is the current day
+	const isToday = (date) => {
+    const today = new Date();
+    return (
+        date.getFullYear() === today.getFullYear() &&
+        date.getMonth() === today.getMonth() &&
+        date.getDate() === today.getDate()
+		);
+	};
+
+	// function to group workouts by workout type
+	const groupEntriesByWorkoutType = (entries) => {
+		const groups = {
+			Running: [],
+			Swimming: [], 
+			Biking: [], 
+			Walking: [], 
+			Strength: [], 
+			Yoga: [], 
+			Other: [],
+		};
+		Object.values(entries).forEach(entry => {
+			if (groups[entry.workout_type]) {
+				groups[entry.workout_type].push(entry);
+			}
+		});
+		return groups;
+	};
+
+	const workoutTypes = ["Running", "Swimming", "Biking", "Walking", "Strength", "Yoga", "Other"];
+	const grouped = groupEntriesByWorkoutType(todayWorkoutLogs);
+
 	return (
-		<div>
-			<h1>Workout Log</h1>
-			<div>
-				<h2>Add New Workout Here</h2>
-				<form onSubmit={handleSubmit}>
-					<Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+		<Box sx={{
+			maxWidth: 1200,
+			mx: "auto",
+			mt: 4,
+			p: 2,
+			display: "flex",
+			gap: 4,
+			alignItems: "flex-start",
+			'@media (max-width:900px)': { flexDirection: "column", alignItems: "stretch" }
+		}}>
+			{/* Left Column */}
+			<Box sx={{ flex: 1, minWidth: 320 }}>
+				<Card sx={{ mb: 3, p: 2 }}>
+					<Typography variant="h6" align="center" gutterBottom>
+						Select Day
+					</Typography>
+					<LocalizationProvider dateAdapter={AdapterDateFns}>
+						<StaticDatePicker
+							displayStaticWrapperAs="desktop"
+							value={specifiedDay}
+							onChange={(newValue) => {
+								setSpecifiedDay(newValue);
+								const formattedDate = newValue.toISOString().split('T')[0];
+								handleSpecifiedDayChange(formattedDate);
+							}}
+							renderInput={(params) => <TextField {...params} />}
+						/>
+					</LocalizationProvider>
+				</Card>
+				<Card sx={{ p: 2, textAlign: "center" }}>
+					<Button 
+						variant="contained" 
+						color="primary" 
+						onClick={() => handleNavigate('/home')}
+						fullWidth
+					>
+						Exit
+					</Button>
+				</Card>
+			</Box>
+
+			{/* Right Column */}
+			<Box sx={{ flex: 2, minWidth: 350 }}>
+				<Card sx={{ mb: 4 }}>
+					<CardContent>
+						<Typography variant="h6" gutterBottom>
+							{isToday(new Date(specifiedDay))
+								? "Today's Workouts"
+								: `${new Date(specifiedDay).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })} Workouts`}
+						</Typography>
+						<Typography variant="subtitle1" sx={{ mb: 2 }}>
+							Total Calories Burned: <b>{calcTodayTotalCaloriesBurned(todayWorkoutLogs)}</b>
+						</Typography>
+						<Divider sx={{ mb: 2 }} />
+						{workoutTypes.map((type) => (
+							<Box key={type} sx={{ mb: 3 }}>
+								<Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+								<Typography variant="subtitle1">{type}</Typography>
+								<IconButton
+									size="small"
+									color="primary"
+									sx={{ ml: 1 }}
+									onClick={() => {
+									setWorkoutType(type);
+									setAddModalOpen(true);
+									}}
+								>
+									<Add />
+								</IconButton>
+								</Box>
+								{grouped[type].length === 0 ? (
+								<Typography color="text.secondary" sx={{ mb: 1, ml: 2 }}>
+									No {type.toLowerCase()} workouts
+								</Typography>
+								) : (
+								grouped[type].map((entry) => (
+									<Box key={entry.workout_types_id} sx={{ mb: 1, p: 1, borderRadius: 1, bgcolor: "#f9f9f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+									<Box>
+										<Typography variant="subtitle2">{entry.workout_name}</Typography>
+										<Typography variant="body2">Calories Burned: {entry.calories_burned}</Typography>
+										<Typography variant="body2">Duration (Min): {entry.duration_min}</Typography>
+										<Typography variant="body2" color="text.secondary">Date: {entry.created_at}</Typography>
+									</Box>
+									<Box>
+										<IconButton color="primary" onClick={() => openEditModal(entry)}>
+										<Edit />
+										</IconButton>
+										<IconButton
+										color="error"
+										onClick={() => {
+											const formattedDate = specifiedDay instanceof Date
+											? specifiedDay.toISOString().split('T')[0]
+											: new Date(specifiedDay).toISOString().split('T')[0];
+											handleDeleteEntry(entry.workout_id, formattedDate);
+										}}
+										>
+										<Delete />
+										</IconButton>
+									</Box>
+									</Box>
+								))
+								)}
+								<Divider sx={{ mt: 2 }} />
+							</Box>
+						))}
+					</CardContent>
+				</Card>
+			</Box>
+
+			{/* Add Workout Log Modal */}
+			<Dialog open={addModalOpen} onClose={() => setAddModalOpen(false)}>
+				<DialogTitle>Add New {workoutType ? workoutType : ""} Workout</DialogTitle>
+				<DialogContent>
+					<Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
 						<TextField
-							label="Workout Type"
-							variant="outlined"
-							value={workoutType}
-							onChange={(e) => setWorkoutType(e.target.value)}
-							select
-							fullWidth
-						>
-							<MenuItem value="Running">Running</MenuItem>
-							<MenuItem value="Biking">Biking</MenuItem>
-							<MenuItem value="Walking">Walking</MenuItem>
-							<MenuItem value="Strength">Strength</MenuItem>
-							<MenuItem value="Yoga">Yoga</MenuItem>
-							<MenuItem value="Other">Other</MenuItem>
-						</TextField>
-						<TextField
-							label="Calories Burned"
+							label="Calories Burned "
 							variant="outlined"
 							type="number"
 							value={caloriesBurned}
@@ -241,7 +376,7 @@ function WorkoutLog() {
 							fullWidth
 						/>
 						<TextField
-							label="Duration (Mins)"
+							label="Duration (Min)"
 							variant="outlined"
 							type="number"
 							value={durationMin}
@@ -250,75 +385,25 @@ function WorkoutLog() {
 							fullWidth
 						/>
 					</Box>
-					<Button type="submit" variant="contained" color="primary" fullWidth>
-						Add Workout
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={() => setAddModalOpen(false)}>Cancel</Button>
+					<Button
+						onClick={(e) => {
+							const formattedDate = specifiedDay instanceof Date
+								? specifiedDay.toISOString().split('T')[0]
+								: new Date(specifiedDay).toISOString().split('T')[0];
+							handleSubmit(e, formattedDate);
+							setAddModalOpen(false);
+						}}
+						variant="contained"
+					>
+						Add
 					</Button>
-				</form>
-			</div>
-			<Card sx={{ mb: 4 }}>
-				<CardContent>
-					<Typography variant="h6" gutterBottom>
-						Today's Workouts
-					</Typography>
-					<Divider sx={{ mb: 2 }} />
-					{Object.keys(todayWorkoutLogs).length === 0 ? (
-						<Typography color="text.secondary">No workouts for today.</Typography>
-					) : (
-						Object.entries(todayWorkoutLogs).map(([id, entry]) => (
-							<Box key={id} sx={{ mb: 2, p: 1, borderRadius: 1, bgcolor: "#f9f9f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-								<Box>
-									<Typography variant="subtitle1">{entry.workout_type}</Typography>
-									<Typography variant="body2">Calories Burned: {entry.calories_burned}</Typography>
-									<Typography variant="body2">Duration (Min): {entry.duration_min}</Typography>
-									<Typography variant="body2" color="text.secondary">Date: {entry.created_at}</Typography>
-								</Box>
-								<Box>
-									<IconButton color="primary" onClick={() => openEditModal(entry)}>
-										<Edit />
-									</IconButton>
-									<IconButton color="error" onClick={() => handleDeleteEntry(entry.workout_id)}>
-										<Delete />
-									</IconButton>
-								</Box>
-							</Box>
-						))
-					)}
-				</CardContent>
-			</Card>
+				</DialogActions>
+			</Dialog>
 
-			{/* <Card>
-				<CardContent>
-					<Typography variant="h6" gutterBottom>
-						All Workouts
-					</Typography>
-					<Divider sx={{ mb: 2 }} />
-					{Object.keys(allWorkoutLogs).length === 0 ? (
-							<Typography color="text.secondary">No workouts found.</Typography>
-					) : (
-						Object.entries(allWorkoutLogs).map(([id, entry]) => (
-							<Box key={id} sx={{ mb: 2, p: 1, borderRadius: 1, bgcolor: "#f9f9f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-								<Box>
-									<Typography variant="subtitle1">{entry.workout_type}</Typography>
-									<Typography variant="body2">Calories Burned: {entry.calories_burned}</Typography>
-									<Typography variant="body2">Duration (Min): {entry.duration_min}</Typography>
-									<Typography variant="body2" color="text.secondary">Date: {entry.created_at}</Typography>
-								</Box>
-								<Box>
-									<IconButton color="primary" onClick={() => openEditModal(entry)}>
-										<Edit />
-									</IconButton>
-									<IconButton color="error" onClick={() => handleDeleteEntry(entry.workout_id)}>
-										<Delete />
-									</IconButton>
-								</Box>
-							</Box>
-						))
-					)}
-				</CardContent>
-			</Card> */}
-			<button onClick={() => handleNavigate('/home')}>
-				Exit
-			</button>
+			{/* Edit Workout Log Modal */}
 			<Dialog open={editModalOpen} onClose={closeEditModal}>
 				<DialogTitle>Edit Workout</DialogTitle>
 				<DialogContent>
@@ -327,13 +412,13 @@ function WorkoutLog() {
 							<TextField
 								label="Workout Type"
 								name="workout_type"
-								variant="outlined"
 								value={editEntry.workout_type}
 								onChange={handleEditChange}
 								select
 								fullWidth
 							>
 								<MenuItem value="Running">Running</MenuItem>
+								<MenuItem value="Swimming">Swimming</MenuItem>
 								<MenuItem value="Biking">Biking</MenuItem>
 								<MenuItem value="Walking">Walking</MenuItem>
 								<MenuItem value="Strength">Strength</MenuItem>
@@ -343,7 +428,6 @@ function WorkoutLog() {
 							<TextField
 								label="Calories Burned"
 								name="calories_burned"
-								variant="outlined"
 								type="number"
 								value={editEntry.calories_burned}
 								onChange={handleEditChange}
@@ -351,9 +435,8 @@ function WorkoutLog() {
 								fullWidth
 							/>
 							<TextField
-								label="Duration (Mins)"
+								label="Duration (Min)"
 								name="duration_min"
-								variant="outlined"
 								type="number"
 								value={editEntry.duration_min}
 								onChange={handleEditChange}
@@ -365,10 +448,194 @@ function WorkoutLog() {
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={closeEditModal}>Cancel</Button>
-					<Button onClick={handleEditSubmit} variant="contained">Save</Button>
+					<Button
+						onClick={() => {
+							const formattedDate = specifiedDay instanceof Date
+								? specifiedDay.toISOString().split('T')[0]
+								: new Date(specifiedDay).toISOString().split('T')[0];
+							handleEditSubmit(formattedDate);
+						}}
+						variant="contained"
+					>
+						Save
+					</Button>
 				</DialogActions>
 			</Dialog>
-		</div>
+		</Box>
+		// <div>
+		// 	<h1>Workout Log</h1>
+		// 	<div>
+		// 		<Typography variant="h6" align="center" gutterBottom>
+		// 			Select Day
+		// 		</Typography>
+		// 		<LocalizationProvider dateAdapter={AdapterDateFns}>
+		// 			<StaticDatePicker
+		// 				displayStaticWrapperAs="desktop"
+		// 				value={specifiedDay}
+		// 				onChange={(newValue) => {
+		// 					setSpecifiedDay(newValue);
+		// 					const formattedDate = newValue.toISOString().split('T')[0];
+		// 					handleSpecifiedDayChange(formattedDate);
+		// 				}}
+		// 				renderInput={(params) => <TextField {...params} />}
+		// 			/>
+		// 		</LocalizationProvider>
+		// 		<h2>Add New Workout Here</h2>
+		// 		<form onSubmit={handleSubmit(e, specifiedDay)}>
+		// 			<Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+		// 				<TextField
+		// 					label="Workout Type"
+		// 					variant="outlined"
+		// 					value={workoutType}
+		// 					onChange={(e) => setWorkoutType(e.target.value)}
+		// 					select
+		// 					fullWidth
+		// 				>
+		// 					<MenuItem value="Running">Running</MenuItem>
+		// 					<MenuItem value="Biking">Biking</MenuItem>
+		// 					<MenuItem value="Walking">Walking</MenuItem>
+		// 					<MenuItem value="Strength">Strength</MenuItem>
+		// 					<MenuItem value="Yoga">Yoga</MenuItem>
+		// 					<MenuItem value="Other">Other</MenuItem>
+		// 				</TextField>
+		// 				<TextField
+		// 					label="Calories Burned"
+		// 					variant="outlined"
+		// 					type="number"
+		// 					value={caloriesBurned}
+		// 					onChange={(e) => setCaloriesBurned(e.target.value)}
+		// 					inputProps={{ step: 1, min: 0 }}
+		// 					fullWidth
+		// 				/>
+		// 				<TextField
+		// 					label="Duration (Mins)"
+		// 					variant="outlined"
+		// 					type="number"
+		// 					value={durationMin}
+		// 					onChange={(e) => setDurationMin(e.target.value)}
+		// 					inputProps={{ step: 1, min: 0 }}
+		// 					fullWidth
+		// 				/>
+		// 			</Box>
+		// 			<Button type="submit" variant="contained" color="primary" fullWidth>
+		// 				Add Workout
+		// 			</Button>
+		// 		</form>
+		// 	</div>
+		// 	<Card sx={{ mb: 4 }}>
+		// 		<CardContent>
+		// 			<Typography variant="h6" gutterBottom>
+		// 				Today's Workouts
+		// 			</Typography>
+		// 			<Divider sx={{ mb: 2 }} />
+		// 			{Object.keys(todayWorkoutLogs).length === 0 ? (
+		// 				<Typography color="text.secondary">No workouts for today.</Typography>
+		// 			) : (
+		// 				Object.entries(todayWorkoutLogs).map(([id, entry]) => (
+		// 					<Box key={id} sx={{ mb: 2, p: 1, borderRadius: 1, bgcolor: "#f9f9f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+		// 						<Box>
+		// 							<Typography variant="subtitle1">{entry.workout_type}</Typography>
+		// 							<Typography variant="body2">Calories Burned: {entry.calories_burned}</Typography>
+		// 							<Typography variant="body2">Duration (Min): {entry.duration_min}</Typography>
+		// 							<Typography variant="body2" color="text.secondary">Date: {entry.created_at}</Typography>
+		// 						</Box>
+		// 						<Box>
+		// 							<IconButton color="primary" onClick={() => openEditModal(entry)}>
+		// 								<Edit />
+		// 							</IconButton>
+		// 							<IconButton color="error" onClick={() => handleDeleteEntry(entry.workout_id)}>
+		// 								<Delete />
+		// 							</IconButton>
+		// 						</Box>
+		// 					</Box>
+		// 				))
+		// 			)}
+		// 		</CardContent>
+		// 	</Card>
+
+		// 	{/* <Card>
+		// 		<CardContent>
+		// 			<Typography variant="h6" gutterBottom>
+		// 				All Workouts
+		// 			</Typography>
+		// 			<Divider sx={{ mb: 2 }} />
+		// 			{Object.keys(allWorkoutLogs).length === 0 ? (
+		// 					<Typography color="text.secondary">No workouts found.</Typography>
+		// 			) : (
+		// 				Object.entries(allWorkoutLogs).map(([id, entry]) => (
+		// 					<Box key={id} sx={{ mb: 2, p: 1, borderRadius: 1, bgcolor: "#f9f9f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+		// 						<Box>
+		// 							<Typography variant="subtitle1">{entry.workout_type}</Typography>
+		// 							<Typography variant="body2">Calories Burned: {entry.calories_burned}</Typography>
+		// 							<Typography variant="body2">Duration (Min): {entry.duration_min}</Typography>
+		// 							<Typography variant="body2" color="text.secondary">Date: {entry.created_at}</Typography>
+		// 						</Box>
+		// 						<Box>
+		// 							<IconButton color="primary" onClick={() => openEditModal(entry)}>
+		// 								<Edit />
+		// 							</IconButton>
+		// 							<IconButton color="error" onClick={() => handleDeleteEntry(entry.workout_id)}>
+		// 								<Delete />
+		// 							</IconButton>
+		// 						</Box>
+		// 					</Box>
+		// 				))
+		// 			)}
+		// 		</CardContent>
+		// 	</Card> */}
+		// 	<button onClick={() => handleNavigate('/home')}>
+		// 		Exit
+		// 	</button>
+		// 	<Dialog open={editModalOpen} onClose={closeEditModal}>
+		// 		<DialogTitle>Edit Workout</DialogTitle>
+		// 		<DialogContent>
+		// 			{editEntry && (
+		// 				<Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
+		// 					<TextField
+		// 						label="Workout Type"
+		// 						name="workout_type"
+		// 						variant="outlined"
+		// 						value={editEntry.workout_type}
+		// 						onChange={handleEditChange}
+		// 						select
+		// 						fullWidth
+		// 					>
+		// 						<MenuItem value="Running">Running</MenuItem>
+		// 						<MenuItem value="Biking">Biking</MenuItem>
+		// 						<MenuItem value="Walking">Walking</MenuItem>
+		// 						<MenuItem value="Strength">Strength</MenuItem>
+		// 						<MenuItem value="Yoga">Yoga</MenuItem>
+		// 						<MenuItem value="Other">Other</MenuItem>
+		// 					</TextField>
+		// 					<TextField
+		// 						label="Calories Burned"
+		// 						name="calories_burned"
+		// 						variant="outlined"
+		// 						type="number"
+		// 						value={editEntry.calories_burned}
+		// 						onChange={handleEditChange}
+		// 						inputProps={{ step: 1, min: 0 }}
+		// 						fullWidth
+		// 					/>
+		// 					<TextField
+		// 						label="Duration (Mins)"
+		// 						name="duration_min"
+		// 						variant="outlined"
+		// 						type="number"
+		// 						value={editEntry.duration_min}
+		// 						onChange={handleEditChange}
+		// 						inputProps={{ step: 1, min: 0 }}
+		// 						fullWidth
+		// 					/>
+		// 				</Box>
+		// 			)}
+		// 		</DialogContent>
+		// 		<DialogActions>
+		// 			<Button onClick={closeEditModal}>Cancel</Button>
+		// 			<Button onClick={handleEditSubmit} variant="contained">Save</Button>
+		// 		</DialogActions>
+		// 	</Dialog>
+		// </div>
 	);
 }
 
