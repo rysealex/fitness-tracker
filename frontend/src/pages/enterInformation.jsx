@@ -170,8 +170,7 @@ function EnterInformation() {
               id="height"
               label="Height (feet)"
               variant="outlined"
-              type="number"
-              step="0.1"
+              type="text"
               onChange={(e) => setHeight(e.target.value)}
               style={{padding: '10px',
                 marginTop: '25px',
@@ -187,8 +186,7 @@ function EnterInformation() {
               id="weight"
               label="Weight (lbs)"
               variant="outlined"
-              type="number"
-              step="0.1"
+              type="text"
               onChange={(e) => setWeight(e.target.value)}
               style={{padding: '10px',
                 marginTop: '25px',

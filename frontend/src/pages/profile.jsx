@@ -101,8 +101,15 @@ function Profile() {
 
   // function to convert birthday and account creation date to a more readable format
   const formatDate = (dateString) => {
+    if (!dateString) return ''; 
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+    const date = new Date(dateString);
+    // extract the UTC if in GMT format
+    if (dateString.includes("00:00:00 GMT")) { 
+      return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
+             .toLocaleDateString(undefined, options);
+    }
+    return date.toLocaleDateString(undefined, options);
   };
 
   return (
@@ -159,6 +166,7 @@ function Profile() {
               <li>Name: {stats.fname} {stats.lname}</li>
               <li>Birthday: {formatDate(stats.dob)}</li>
               <li>Occupation: {stats.occupation}</li>
+              <li>Account Created: {formatDate(stats.created_at)}</li>
             </ul>
           </div>
         </div>
