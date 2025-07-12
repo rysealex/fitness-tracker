@@ -1,4 +1,6 @@
 import { Button, Dialog, DialogContent, DialogActions, DialogTitle, TextField, Card, CardContent, Typography, Box, Divider, IconButton, MenuItem } from "@mui/material";
+import { StaticDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import { Edit, Delete } from '@mui/icons-material';
@@ -38,8 +40,35 @@ function WorkoutLog() {
 		}));
 	};
 
+	// function to handle the specified day change
+	const handleSpecifiedDayChange = async (specifiedDay) => {
+		// get the current users user_id from local storage
+		const userId = localStorage.getItem('userId');
+		if (!userId) {
+			console.error("User ID not found in local storage.");
+			return;
+		}
+		// fetch workout logs for the user for the specified day
+		try {
+			const response = await fetch(`http://localhost:5000/workout/entries/specific/${userId}/${specifiedDay}`);
+			if (response.ok) {
+				const data = await response.json();
+				if (!data) {
+					setTodayWorkoutLogs({});
+				} else {
+					setTodayWorkoutLogs(data);
+				}
+				console.log("User workout logs for the specified day fetched successfully:", data);
+			} else {
+				console.error("Failed to fetch user workout logs for the specified day:", response.statusText);
+			}
+		} catch (error) {
+			console.error("Error fetching user workout logs for the specified day:", error);
+		}
+	};
+
 	// function to handle the workout log submission attempt
-	const handleSubmit = async (e) => {
+	const handleSubmit = async (e, specifiedDay) => {
 		e.preventDefault();
 
 		// perform input validation
@@ -60,14 +89,19 @@ function WorkoutLog() {
 						workout_type: workoutType,
 						calories_burned: caloriesBurned,
 						duration_min: durationMin,
+						created_at: specifiedDay
 					}),
 				});
 				// check if the response is ok
 				if (response.ok) {
 					const data = await response.json();
 					console.log("Workout log submitted successfully:", data);
-					// fetch the updated workout logs after submission
-					fetchWorkoutLogs();
+					// fetch the specified day change results
+					handleSpecifiedDayChange(specifiedDay);
+					// clear the input fields
+					setWorkoutType("");
+					setCaloriesBurned(0);
+					setDurationMin(0);
 				} else {
 					console.log("Failed to submit workout log:", response.statusText);
 					return;
@@ -80,7 +114,7 @@ function WorkoutLog() {
 	};
 
 	// function to handle the workout log edit submission
-	const handleEditSubmit = async () => {
+	const handleEditSubmit = async (specifiedDay) => {
 		try {
 			const response = await fetch(`http://localhost:5000/workout/edit/${editEntry.workout_id}`, {
 				method: 'PUT',
@@ -91,6 +125,7 @@ function WorkoutLog() {
 						workout_type: editEntry.workout_type,
 						calories_burned: editEntry.calories_burned,
 						duration_min: editEntry.duration_min,
+						created_at: specifiedDay
 				}),
 			});
 			if (response.ok) {
@@ -98,7 +133,8 @@ function WorkoutLog() {
 				console.log("Workout log edited successfully: ", data);
 				// close the edit modal and fetch updated workout logs
 				closeEditModal();
-				fetchWorkoutLogs();
+				// fetch the specified day change results
+				handleSpecifiedDayChange(specifiedDay);
 			} else {
 				console.error("Failed to update workout log:", response.statusText);
 				return;
@@ -110,7 +146,7 @@ function WorkoutLog() {
 	};
 
 	// function to handle the deletion of a workout log
-	const handleDeleteEntry = async (workout_id) => {
+	const handleDeleteEntry = async (workout_id, specifiedDay) => {
 		try {
 			const response = await fetch(`http://localhost:5000/workout/delete/${workout_id}`, {
 				method: 'DELETE',
@@ -121,8 +157,8 @@ function WorkoutLog() {
 			if (response.ok) {
 				const data = await response.json();
 				console.log("Workout log deleted successfully:", data);
-				// fetch the updated workout log after deletion
-				fetchWorkoutLogs();
+				// fetch the specified day change results
+				handleSpecifiedDayChange(specifiedDay);
 			} else {
 				console.error("Failed to delete workout log:", response.statusText);
 			}
@@ -132,7 +168,7 @@ function WorkoutLog() {
 	};
 
 
-	// function to fetch all workout logs for the user
+	// function to fetch workout logs for the user
 	const fetchWorkoutLogs = async () => {
 		// get the current users user_id from local storage
 		const userId = localStorage.getItem('userId');
@@ -140,19 +176,19 @@ function WorkoutLog() {
 			console.error("User ID not found in local storage.");
 			return;
 		}
-		// first fetch all workout logs for the user
-		try {
-			const response = await fetch(`http://localhost:5000/workout/entries/${userId}`);
-			if (response.ok) {
-				const data = await response.json();
-				setAllWorkoutLogs(data);
-				console.log("All user workout logs fetched successfully:", data);
-			} else {
-				console.error("Failed to fetch all user workout logs:", response.statusText);
-			}
-		} catch (error) {
-			console.error("Error fetching all user workout logs:", error);
-		}
+		// // first fetch all workout logs for the user
+		// try {
+		// 	const response = await fetch(`http://localhost:5000/workout/entries/${userId}`);
+		// 	if (response.ok) {
+		// 		const data = await response.json();
+		// 		setAllWorkoutLogs(data);
+		// 		console.log("All user workout logs fetched successfully:", data);
+		// 	} else {
+		// 		console.error("Failed to fetch all user workout logs:", response.statusText);
+		// 	}
+		// } catch (error) {
+		// 	console.error("Error fetching all user workout logs:", error);
+		// }
 		// second fetch today's workout logs for the user
 		try {
 			const response = await fetch(`http://localhost:5000/workout/entries/today/${userId}`);
@@ -250,7 +286,7 @@ function WorkoutLog() {
 				</CardContent>
 			</Card>
 
-			<Card>
+			{/* <Card>
 				<CardContent>
 					<Typography variant="h6" gutterBottom>
 						All Workouts
@@ -279,7 +315,7 @@ function WorkoutLog() {
 						))
 					)}
 				</CardContent>
-			</Card>
+			</Card> */}
 			<button onClick={() => handleNavigate('/home')}>
 				Exit
 			</button>

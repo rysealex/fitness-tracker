@@ -26,11 +26,12 @@ def add_workout_log():
     workout_type = data.get('workout_type')
     calories_burned = data.get('calories_burned')
     duration_min = data.get('duration_min')
+    created_at = data.get('created_at')
 
-    if not all([user_id, workout_type, calories_burned, duration_min]):
+    if not all([user_id, workout_type, calories_burned, duration_min, created_at]):
         return jsonify({"error": "All fields are required"}), 400
 
-    workout_id = workout_model.add_workout_log(user_id, workout_type, calories_burned, duration_min)
+    workout_id = workout_model.add_workout_log(user_id, workout_type, calories_burned, duration_min, created_at)
 
     if workout_id:
         return jsonify({"message": "Workout log added successfully", "workout_id": workout_id}), 201
@@ -48,11 +49,12 @@ def edit_workout_log(workout_id):
     workout_type = data.get('workout_type')
     calories_burned = data.get('calories_burned')
     duration_min = data.get('duration_min')
+    created_at = data.get('created_at')
 
-    if not all([workout_type, calories_burned, duration_min]):
+    if not all([workout_type, calories_burned, duration_min, created_at]):
         return jsonify({"error": "All fields are required"}), 400
 
-    updated_rows = workout_model.edit_workout_log(workout_id, workout_type, calories_burned, duration_min)
+    updated_rows = workout_model.edit_workout_log(workout_id, workout_type, calories_burned, duration_min, created_at)
 
     if updated_rows is not None:
         return jsonify({"message": "Workout log updated successfully"}), 200

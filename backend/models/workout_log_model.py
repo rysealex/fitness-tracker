@@ -30,7 +30,7 @@ class WorkoutLogModel:
                 conn.close()
 
     """Function to add a workout log to the database"""
-    def add_workout_log(self, user_id, workout_type, calories_burned, duration_min, created_at=datetime.now()):
+    def add_workout_log(self, user_id, workout_type, calories_burned, duration_min, created_at):
         conn = None
         cursor = None
         try:
@@ -60,7 +60,7 @@ class WorkoutLogModel:
                 conn.close()
 
     """Function to edit a workout log in the database"""
-    def edit_workout_log(self, workout_id, workout_type, calories_burned, duration_min, created_at=datetime.now()):
+    def edit_workout_log(self, workout_id, workout_type, calories_burned, duration_min, created_at):
         conn = None
         cursor = None
         try:
