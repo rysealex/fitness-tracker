@@ -88,3 +88,10 @@ def get_todays_workout_logs_by_user(user_id):
         return jsonify(workout_logs), 200
     else:
         return jsonify({"error": "Failed to fetch today's workout logs for user"}), 500
+    
+@workout_bp.route('/entries/specific/<int:user_id>/<specified_day>', methods=['GET'])
+def get_specified_days_wrokout_logs_by_user(user_id, specified_day):
+    """Endpoint to get all of specified day's workout logs for a specific user"""
+    workout_logs = workout_model.get_specified_days_workout_logs_by_user_id(user_id, specified_day)
+
+    return jsonify(workout_logs if workout_logs is not None else []), 200

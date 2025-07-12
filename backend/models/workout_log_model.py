@@ -168,3 +168,30 @@ class WorkoutLogModel:
                 cursor.close()
             if conn:
                 conn.close()
+
+    """Function to get the specified day's workout logs for a user by user_id"""
+    def get_specified_days_workout_logs_by_user_id(self, user_id, specified_day):
+        conn = None
+        cursor = None
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor(dictionary=True)
+
+            sql = """
+            SELECT * FROM Workout_Logs
+            WHERE user_id = %s AND DATE(created_at) = %s
+            """
+
+            cursor.execute(sql, (user_id, specified_day,))
+            workout_logs = cursor.fetchall()
+            return workout_logs
+        except Error as e:
+            print(f"Error fetching specified day's workout logs for user {user_id}: {e}")
+            if conn:
+                conn.rollback()
+            return None
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
