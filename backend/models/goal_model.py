@@ -30,7 +30,7 @@ class GoalModel:
                 conn.close()
 
     """Function to add a goal to the database"""
-    def add_goal(self, user_id, goal_title, goal_type, start_date, end_date, status):
+    def add_goal(self, user_id, goal_title, goal_type, start_date=datetime.now(), end_date=None, status="Active"):
         conn = None
         cursor = None
         try:

@@ -10,9 +10,9 @@ function Goals() {
 
 	const [goalTitle, setGoalTitle] = useState("");
 	const [goalType, setGoalType] = useState("");
-	const [startDate, setStartDate] = useState(Date());
-	const [endDate, setEndDate] = useState(Date());
-	const [status, setStatus] = useState("");
+	// const [startDate, setStartDate] = useState(Date());
+	// const [endDate, setEndDate] = useState(Date());
+	// const [status, setStatus] = useState("");
 	const [goals, setGoals] = useState({});
 
 	// function to handle the goal submission attempt
@@ -20,7 +20,7 @@ function Goals() {
 		e.preventDefault();
 
 		// perform input validation
-		if (!goalTitle || !goalType || !startDate || !endDate || !status) {
+		if (!goalTitle || !goalType) {
 			alert("Please fill in all fields.");
 			return;
 		} else {
@@ -35,10 +35,10 @@ function Goals() {
 					body: JSON.stringify({
 						user_id: localStorage.getItem('userId'), // get user id from local storage
 						goal_title: goalTitle,
-						goal_type: goalType,
-						start_date: startDate,
-						end_date: endDate,
-						status: status
+						goal_type: goalType
+						// start_date: startDate,
+						// end_date: endDate,
+						// status: status
 					}),
 				});
 				// check if the response is ok
@@ -50,9 +50,9 @@ function Goals() {
 					// clear the input fields
 					setGoalTitle("");
 					setGoalType("");
-					setStartDate(Date());
-					setEndDate(Date());
-					setStatus("");
+					// setStartDate(Date());
+					// setEndDate(Date());
+					// setStatus("");
 
 				} else {
 					console.log("Failed to submit goal:", response.statusText);
@@ -114,7 +114,7 @@ function Goals() {
 						onChange={(e) => setGoalType(e.target.value)}
 						fullWidth
 					/>
-					<TextField
+					{/* <TextField
 						label="Start Date"
 						variant="outlined"
 						value={startDate}
@@ -136,7 +136,7 @@ function Goals() {
 						value={status}
 						onChange={(e) => setStatus(e.target.value)}
 						fullWidth
-					/>
+					/> */}
 					<button type="submit">
 						Add
 					</button>
@@ -149,7 +149,7 @@ function Goals() {
               <h3>{goal.goal_title}</h3>
               <p>Type: {goal.goal_type}</p>
               <p>Start Date: {goal.start_date}</p>
-              <p>End Date: {goal.end_date}</p>
+              <p>End Date: {goal.end_date ? goal.end_date : "N/A"}</p>
               <p>Status: {goal.status}</p>
             </li>
           ))

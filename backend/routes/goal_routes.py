@@ -25,14 +25,14 @@ def add_goal():
     user_id = data.get('user_id')
     goal_title = data.get('goal_title')
     goal_type = data.get('goal_type')
-    start_date = data.get('start_date')
-    end_date = data.get('end_date')
-    status = data.get('status')
+    # start_date = data.get('start_date')
+    # end_date = data.get('end_date')
+    # status = data.get('status')
 
-    if not all([user_id, goal_title, goal_type, start_date, end_date, status]):
+    if not all([user_id, goal_title, goal_type]):
         return jsonify({"error": "All fields are required"}), 400
 
-    goal_id = goal_model.add_goal(user_id, goal_title, goal_type, start_date, end_date, status)
+    goal_id = goal_model.add_goal(user_id, goal_title, goal_type)
 
     if goal_id:
         return jsonify({"message": "Goal added successfully", "goal_id": goal_id}), 201
