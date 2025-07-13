@@ -65,6 +65,28 @@ function Goals() {
 		}
 	};
 
+	// function to handle the deletion of a goal
+	const handleDeleteGoal = async (goal_id) => {
+		try {
+			const response = await fetch(`http://localhost:5000/goal/delete/${goal_id}`, {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			});
+			if (response.ok) {
+				const data = await response.json();
+				console.log("Food entry deleted successfully:", data);
+				// fetch the goals to update UI for new goal deleted
+				fetchGoals();
+			} else {
+				console.error("Failed to delete goal:", response.statusText);
+			}
+		} catch (error) {
+			console.error("Error deleting goal:", error);
+		}
+	};
+
 	// function to fetch goals for the current user
 	const fetchGoals = async () => {
 		// get the current users user_id from local storage
@@ -151,6 +173,9 @@ function Goals() {
               <p>Start Date: {goal.start_date}</p>
               <p>End Date: {goal.end_date ? goal.end_date : "N/A"}</p>
               <p>Status: {goal.status}</p>
+							<button onClick={() => handleDeleteGoal(goal.goal_id)}>
+								Delete
+							</button>
             </li>
           ))
         ) : (

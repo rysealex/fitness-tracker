@@ -105,7 +105,7 @@ class GoalModel:
             cursor = conn.cursor()
 
             sql = """
-            DELETE FROM Goal WHERE goal_id = %s
+            DELETE FROM Goals WHERE goal_id = %s
             """
 
             cursor.execute(sql, (goal_id,))
