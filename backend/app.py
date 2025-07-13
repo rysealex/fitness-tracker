@@ -139,6 +139,7 @@ from flask_cors import CORS
 from routes.auth_routes import auth_bp
 from routes.food_routes import food_bp
 from routes.workout_routes import workout_bp
+from routes.goal_routes import goal_bp
 import database
 
 app = Flask(__name__)
@@ -156,6 +157,7 @@ database.init_db_pool()
 app.register_blueprint(auth_bp)
 app.register_blueprint(food_bp)
 app.register_blueprint(workout_bp)
+app.register_blueprint(goal_bp)
 
 # Route to serve uploaded profile pictures
 @app.route('/images/<filename>')
