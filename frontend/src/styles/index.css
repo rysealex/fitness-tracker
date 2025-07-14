@@ -566,3 +566,249 @@ body {
 }
 
 
+/* Styling for the goals page */
+.goals-container {
+    min-height: 100vh;
+    background-color: #f3f4f6; /* gray-100 */
+    padding: 24px; /* p-6 */
+}
+
+.max-w-7xl {
+    max-width: 1280px; /* max-w-7xl */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px; /* mb-8 */
+}
+
+.page-title {
+    color: #1a202c; /* gray-900 */
+    font-weight: 700; /* font-bold */
+    font-size: 2.25rem; /* h4 equivalent */
+}
+
+.exit-button {
+    background-color: #ef4444; /* red-500 */
+    color: white;
+    border-radius: 0.375rem; /* rounded-md */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+    padding: 8px 16px; /* py-2 px-4 */
+    transition: background-color 0.2s ease-in-out;
+}
+
+.exit-button:hover {
+    background-color: #dc2626; /* red-600 */
+}
+
+.add-goal-section {
+    background-color: #ffffff;
+    padding: 24px; /* p-6 */
+    border-radius: 0.5rem; /* rounded-lg */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+    margin-bottom: 32px; /* mb-8 */
+}
+
+.add-goal-title {
+    font-size: 1.5rem; /* text-2xl */
+    font-weight: 700; /* font-bold */
+    color: #1a202c; /* gray-800 */
+    margin-bottom: 16px; /* mb-4 */
+}
+
+.add-goal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px; /* space-y-4 */
+}
+
+.add-goal-form .MuiTextField-root {
+    border-radius: 0.375rem; /* rounded-md */
+}
+
+.add-goal-button {
+    background-color: #2563eb; /* blue-600 */
+    color: white;
+    font-weight: 600; /* font-semibold */
+    padding: 8px 24px; /* py-2 px-6 */
+    border-radius: 0.375rem; /* rounded-md */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+    transition: background-color 0.2s ease-in-out;
+}
+
+.add-goal-button:hover {
+    background-color: #1d4ed8; /* blue-700 */
+}
+
+.goal-status-sections {
+    display: flex;
+    flex-direction: column; /* flex-col */
+    gap: 24px; /* space-y-6 */
+}
+
+@media (min-width: 768px) { /* md breakpoint */
+    .goal-status-sections {
+        flex-direction: row; /* md:flex-row */
+        gap: 24px; /* md:space-x-6 */
+        margin-bottom: 0; /* md:space-y-0 */
+    }
+}
+
+.goal-section {
+    flex: 1; /* flex-1 */
+    padding: 16px; /* p-4 */
+    background-color: #f9fafb; /* gray-50 */
+    border-radius: 0.5rem; /* rounded-lg */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+    min-width: 300px; /* min-w-[300px] */
+}
+
+.goal-section-title {
+    font-size: 1.5rem; /* text-2xl */
+    font-weight: 700; /* font-bold */
+    color: #1a202c; /* gray-800 */
+    margin-bottom: 16px; /* mb-4 */
+    border-bottom: 1px solid #e2e8f0; /* border-b pb-2 */
+    padding-bottom: 8px;
+}
+
+.goal-type-group {
+    margin-bottom: 24px; /* mb-6 */
+}
+
+.goal-type-title {
+    font-size: 1.25rem; /* text-xl */
+    font-weight: 600; /* font-semibold */
+    color: #4a5568; /* gray-700 */
+    margin-bottom: 8px; /* mb-2 */
+    border-left: 4px solid #3b82f6; /* border-l-4 border-blue-500 */
+    padding-left: 8px; /* pl-2 */
+}
+
+.goal-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px; /* space-y-4 */
+}
+
+.goal-card {
+    background-color: #ffffff;
+    padding: 16px; /* p-4 */
+    border-radius: 0.5rem; /* rounded-lg */
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+    border: 1px solid #e2e8f0; /* border border-gray-200 */
+}
+
+.goal-card-title {
+    font-size: 1.125rem; /* text-lg */
+    font-weight: 500; /* font-medium */
+    color: #1a202c; /* gray-900 */
+}
+
+.goal-card-text {
+    font-size: 0.875rem; /* text-sm */
+    color: #4a5568; /* gray-600 */
+}
+
+.goal-status-active {
+    font-weight: 600; /* font-semibold */
+    color: #16a34a; /* green-600 */
+}
+
+.goal-status-completed {
+    font-weight: 600; /* font-semibold */
+    color: #2563eb; /* blue-600 */
+}
+
+.goal-status-abandoned {
+    font-weight: 600; /* font-semibold */
+    color: #dc2626; /* red-600 */
+}
+
+.goal-card-actions {
+    display: flex;
+    gap: 8px; /* space-x-2 */
+    margin-top: 12px; /* mt-3 */
+}
+
+.edit-button {
+    color: #3b82f6; /* blue-500 */
+    border-color: #3b82f6; /* border-blue-500 */
+    transition: background-color 0.2s ease-in-out;
+}
+
+.edit-button:hover {
+    background-color: #eff6ff; /* blue-50 */
+}
+
+.delete-button {
+    color: #ef4444; /* red-500 */
+    border-color: #ef4444; /* border-red-500 */
+    transition: background-color 0.2s ease-in-out;
+}
+
+.delete-button:hover {
+    background-color: #fef2f2; /* red-50 */
+}
+
+.no-goals-message {
+    color: #6b7280; /* gray-500 */
+    font-style: italic;
+}
+
+/* Dialog specific styles */
+.MuiDialog-paper {
+    border-radius: 0.5rem; /* rounded-lg */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-xl */
+}
+
+.MuiDialogTitle-root {
+    font-size: 1.25rem; /* text-xl */
+    font-weight: 700; /* font-bold */
+    color: #1a202c; /* gray-800 */
+    border-bottom: 1px solid #e2e8f0; /* border-b pb-3 */
+    padding-bottom: 12px;
+}
+
+.MuiDialogContent-root {
+    padding-top: 24px !important; /* pt-6 */
+}
+
+.MuiDialogActions-root {
+    padding: 16px; /* p-4 */
+    border-top: 1px solid #e2e8f0; /* border-t pt-4 */
+}
+
+.MuiDialogActions-root .MuiButton-root {
+    border-radius: 0.375rem; /* rounded-md */
+    padding: 8px 16px; /* px-4 py-2 */
+}
+
+.MuiDialogActions-root .MuiButton-root.MuiButton-containedPrimary {
+    background-color: #2563eb; /* blue-600 */
+    color: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+}
+.MuiDialogActions-root .MuiButton-root.MuiButton-containedPrimary:hover {
+    background-color: #1d4ed8; /* blue-700 */
+}
+
+.MuiDialogActions-root .MuiButton-root.MuiButton-containedError {
+    background-color: #16a34a; /* green-600 */
+    color: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+}
+.MuiDialogActions-root .MuiButton-root.MuiButton-containedError:hover {
+    background-color: #15803d; /* green-700 */
+}
+
+.MuiDialogActions-root .MuiButton-root.MuiButton-text {
+    color: #4a5568; /* gray-600 */
+}
+.MuiDialogActions-root .MuiButton-root.MuiButton-text:hover {
+    background-color: #f7fafc; /* gray-100 */
+}
