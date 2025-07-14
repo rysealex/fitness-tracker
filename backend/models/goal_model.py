@@ -63,7 +63,7 @@ class GoalModel:
                 conn.close()
 
     """Function to edit a goal in the database"""
-    def edit_goal(self, goal_id, goal_title, goal_type, start_date, end_date, status):
+    def edit_goal(self, goal_id, goal_title, goal_type, end_date, status):
         conn = None
         cursor = None
         try:
@@ -72,17 +72,17 @@ class GoalModel:
 
             sql = """
             UPDATE Goals
-            SET goal_title = %s, goal_type = %s, start_date = %s, end_date = %s, status = %s
+            SET goal_title = %s, goal_type = %s, end_date = %s, status = %s
             WHERE goal_id = %s
             """
 
-            if isinstance(start_date, str):
-                start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+            # if isinstance(start_date, str):
+            #     start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
 
             if isinstance(end_date, str):
                 end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
 
-            cursor.execute(sql, (goal_title, goal_type, start_date, end_date, status, goal_id))
+            cursor.execute(sql, (goal_title, goal_type, end_date, status, goal_id))
             conn.commit()
             return cursor.rowcount
         except Error as e:
