@@ -569,7 +569,6 @@ body {
 /* Styling for the goals page */
 .goals-container {
     min-height: 100vh;
-    background-color: #f3f4f6; /* gray-100 */
     padding: 24px; /* p-6 */
 }
 

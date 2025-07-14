@@ -76,9 +76,6 @@ class GoalModel:
             WHERE goal_id = %s
             """
 
-            # if isinstance(start_date, str):
-            #     start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
-
             if isinstance(end_date, str):
                 end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
 

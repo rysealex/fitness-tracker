@@ -50,8 +50,6 @@ def edit_goal(goal_id):
 
     goal_title = data.get('goal_title')
     goal_type = data.get('goal_type')
-    # start_date = data.get('start_date')
-    # end_date = data.get('end_date')
     status = data.get('status')
 
     if not all([goal_title, goal_type, status]):
