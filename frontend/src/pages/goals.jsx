@@ -12,6 +12,7 @@ function Goals() {
 	const [goalTitle, setGoalTitle] = useState("");
 	const [goalType, setGoalType] = useState("");
 	const [goals, setGoals] = useState([]);
+    const [addModalOpen, setAddModalOpen] = useState(false);
 	const [editModalOpen, setEditModalOpen] = useState(false);
 	const [editGoal, setEditGoal] = useState(null);
 
@@ -239,6 +240,12 @@ function Goals() {
                     </Typography>
                     <Button
                         variant="contained"
+                        onClick={() => setAddModalOpen(true)}
+                    >
+                        Add New Goal
+                    </Button>
+                    <Button
+                        variant="contained"
                         onClick={() => handleNavigate('/home')}
                         className="exit-button"
                     >
@@ -247,7 +254,7 @@ function Goals() {
                 </div>
 
                 {/* Add New Goal Section */}
-                <div className="add-goal-section">
+                {/* <div className="add-goal-section">
                     <h2 className="add-goal-title">Add New Goal</h2>
                     <form onSubmit={handleSubmit} className="add-goal-form">
                         <TextField
@@ -281,7 +288,7 @@ function Goals() {
                             Add Goal
                         </Button>
                     </form>
-                </div>
+                </div> */}
 
                 {/* Goal Status Sections */}
                 <div className="goal-status-sections">
@@ -290,6 +297,49 @@ function Goals() {
                     {renderGoalSection("Abandoned Goals", groupedAbandonedGoals)}
                 </div>
             </div>
+
+            {/* Add goal modal */}
+            <Dialog open={addModalOpen} onClose={() => setAddModalOpen(false)} PaperProps={{ className: "MuiDialog-paper" }}>
+                <DialogTitle className="MuiDialogTitle-root">Add Goal</DialogTitle>
+                <DialogContent className="MuiDialogContent-root">
+                    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                        <TextField
+                            label="Goal Title"
+                            name="goal_title"
+                            value={goalTitle}
+                            onChange={(e) => setGoalTitle(e.target.value)}
+                            fullWidth
+                            variant="outlined"
+                        />
+                        <TextField
+                            label="Goal Type"
+                            name="goal_type"
+                            value={goalType}
+                            onChange={(e) => setGoalType(e.target.value)}
+                            select
+                            fullWidth
+                            variant="outlined"
+                        >
+                            <MenuItem value="Weight Loss">Weight Loss</MenuItem>
+                            <MenuItem value="Strength Gain">Strength Gain</MenuItem>
+                            <MenuItem value="Cardio Endurance">Cardio Endurance</MenuItem>
+                            <MenuItem value="Flexibility">Flexibility</MenuItem>
+                            <MenuItem value="Nutrition">Nutrition</MenuItem>
+                            <MenuItem value="Overall Health">Overall Health</MenuItem>
+                            <MenuItem value="Other">Other</MenuItem>
+                        </TextField>
+                    </Box>
+                </DialogContent>
+                <DialogActions className="MuiDialogActions-root">
+                    <Button onClick={() => setAddModalOpen(false)}>Cancel</Button>
+                    <Button
+                        onClick={(e) => {handleSubmit(e); setAddModalOpen(false);}}
+                        variant="contained"
+                    >
+                        Add
+                    </Button>
+                </DialogActions>
+            </Dialog>
 
             {/* Edit goal modal */}
             <Dialog open={editModalOpen} onClose={closeEditModal} PaperProps={{ className: "MuiDialog-paper" }}>

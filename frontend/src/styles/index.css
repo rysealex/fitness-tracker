@@ -586,9 +586,11 @@ body {
 }
 
 .page-title {
-    color: #1a202c; /* gray-900 */
-    font-weight: 700; /* font-bold */
-    font-size: 2.25rem; /* h4 equivalent */
+    color: #C51D34;
+    margin-top: 30px;
+    margin-bottom: -20px;
+    font-size: 35px;
+    text-shadow: 1px 1px 2px #C51D34, 0 0 1em rgb(0, 0, 0), 0 0 0.2em rgb(0, 0, 0);
 }
 
 .exit-button {
