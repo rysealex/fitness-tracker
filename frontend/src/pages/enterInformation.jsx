@@ -1,17 +1,14 @@
 import React, { useState } from 'react';
-import { useUser } from '../userContext';
+import { useNavigate } from 'react-router-dom';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
-import Calendar from '../calendar';
 import FormControl from '@mui/material/FormControl';
-import { useNavigate } from 'react-router-dom';
-import { FormHelperText, InputLabel } from '@mui/material';
-import { useAudio } from '../AudioContext';
-import { create } from '@mui/material/styles/createTransitions';
+import InputLabel from '@mui/material/InputLabel';
+import FormHelperText from '@mui/material/FormHelperText';
 
 function EnterInformation() {
   const navigate = useNavigate();
@@ -29,14 +26,34 @@ function EnterInformation() {
   //const [profilePic, setProfilePic] = useState(""); // optional
   const [occupation, setOccupation] = useState("Unemployed"); // optional
 
+  // error usestates
+  const [fnameError, setFnameError] = useState("");
+  const [lnameError, setLnameError] = useState("");
+  const [heightError, setHeightError] = useState("");
+  const [weightError, setWeightError] = useState("");
+  const [dobError, setDobError] = useState("");
+  const [genderError, setGenderError] = useState(""); 
+  const [profilePicError, setProfilePicError] = useState("");
+  const [generalError, setGeneralError] = useState("");
+
+  // handle the redirect to login page
+  const handleLoginRedirect = () => {
+    // clear user data from local storage
+    localStorage.removeItem('username');
+		localStorage.removeItem('password');
+    handleNavigate('/login');
+  };
+
   // handle the file change event for the profile pic
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setProfilePicFile(file);
+      setProfilePicError("");
     } else {
       setProfilePicFile(null);
       setProfilePicUrl("/images/default-profile-icon.jpg"); // reset to default
+      setProfilePicError("Error uploading profile picture.");
     }
   };
 
@@ -57,9 +74,10 @@ function EnterInformation() {
         return data.imageUrl;
       } else {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Profile picture upload failed.');
+        setProfilePicError(errorData.message || 'Profile picture upload failed.');
       }
     } catch (error) {
+      setProfilePicError("Error uploading profile picture.");
       console.error('Error uploading profile picture:', error);
       return null;
     }
@@ -69,13 +87,42 @@ function EnterInformation() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // clear previous errors
+    setFnameError("");
+    setLnameError("");
+    setHeightError("");
+    setWeightError("");
+    setDobError("");
+    setGenderError("");
+    setProfilePicError("");
+
+    let hasError = false;
+
     // perform input validation
-    if (fname === "") { console.log("First name is required"); return; }
-    if (lname === "") { console.log("Last name is required"); return; }
-    if (height === "") { console.log("Height is required"); return; }  
-    if (weight === "") { console.log("Weight is required"); return; }
-    if (dob === "") { console.log("Date of birth is required"); return; }
-    if (gender === "") { console.log("Gender is required"); return; }
+    if (fname === "") { setFnameError("Enter your first name."); hasError = true; }
+    if (lname === "") { setLnameError("Enter your last name."); hasError = true; }
+    // height validation
+    const parsedHeight = parseFloat(height);
+    if (height === "") {
+      setHeightError("Enter your height.");
+      hasError = true;
+    } else if (isNaN(parsedHeight) || !/^\d+\.?\d{0,1}$/.test(height)) {
+      setHeightError("Height must be a decimal to the tenth place (e.g., 5.9).");
+      hasError = true;
+    }
+    // weight validation
+    const parsedWeight = parseFloat(weight);
+    if (weight === "") {
+      setWeightError("Enter your weight.");
+      hasError = true;
+    } else if (isNaN(parsedWeight) || !/^\d+\.?\d{0,2}$/.test(weight)) {
+      setWeightError("Weight must be a decimal to the hundredth place (e.g., 150.75).");
+      hasError = true;
+    }
+    if (dob === "") { setDobError("Enter your date of birth."); hasError = true; }
+    if (gender === "") { setGenderError("Enter your gender."); hasError = true; }
+
+    if (hasError) return; // stop if input validation failed
 
     // initialize with current profilePicUrl (default or previously set)
     let finalProfilePicUrl = profilePicUrl; 
@@ -86,6 +133,7 @@ function EnterInformation() {
       if (uploadedUrl) {
         finalProfilePicUrl = uploadedUrl; // use the URL if successful
       } else {
+        setProfilePicError("Profile picture upload failed.")
         console.log("Profile picture upload failed, cannot submit user information.");
         return;
       }
@@ -105,8 +153,8 @@ function EnterInformation() {
           fname: fname,
           lname: lname,
           dob: dob,
-          height_ft: height,
-          weight_lbs: weight,
+          height_ft: parseFloat(height),
+          weight_lbs: parseFloat(weight),
           gender: gender,
           profile_pic: finalProfilePicUrl,
           occupation: occupation,
@@ -121,12 +169,12 @@ function EnterInformation() {
         console.log('User ID stored in local storage:', data.user_id);
         handleNavigate("/home");
       } else {
+        setGeneralError("Account information submission failed.");
         console.log('Account information submission failed:', response.statusText);
-        return;
       }
     } catch (error) {
+      setGeneralError("Error during account information submission.");
       console.error('Error during account information submission:', error);
-      return;
     }
   };
 
@@ -138,10 +186,16 @@ function EnterInformation() {
           <form onSubmit={handleSubmit}>
             <TextField
               className='textfield'
-              id="fname"
+              error={!!fnameError}
+              id="fname-input"
               label="First Name"
               variant="outlined"
-              onChange={(e) => setFname(e.target.value)}
+              value={fname}
+              onChange={(e) => {
+                setFname(e.target.value);
+                setFnameError(""); // clear error when user starts typing
+              }}
+              helperText={fnameError}
               style={{padding: '10px',
                 marginTop: '25px',
                 border: 'none',
@@ -153,9 +207,15 @@ function EnterInformation() {
             />
             <TextField
               className='textfield'
-              id="lname"
+              error={!!lnameError}
+              id="lname-input"
               label="Last Name"
-              onChange={(e) => setLname(e.target.value)}
+              value={lname}
+              onChange={(e) => {
+                setLname(e.target.value);
+                setLnameError(""); // clear error when user starts typing
+              }}
+              helperText={lnameError}
               style={{padding: '10px',
                 marginTop: '25px',
                 border: 'none',
@@ -167,11 +227,17 @@ function EnterInformation() {
             />
             <TextField
               className='textfield'
-              id="height"
+              error={!!heightError}
+              id="height-input"
               label="Height (feet)"
               variant="outlined"
               type="text"
-              onChange={(e) => setHeight(e.target.value)}
+              value={height}
+              onChange={(e) => {
+                setHeight(e.target.value);
+                setHeightError(""); // clear error when user starts typing
+              }}
+              helperText={heightError}
               style={{padding: '10px',
                 marginTop: '25px',
                 border: 'none',
@@ -183,11 +249,17 @@ function EnterInformation() {
             />
             <TextField
               className='textfield'
-              id="weight"
+              error={!!weightError}
+              id="weight-input"
               label="Weight (lbs)"
               variant="outlined"
               type="text"
-              onChange={(e) => setWeight(e.target.value)}
+              value={weight}
+              onChange={(e) => {
+                setWeight(e.target.value);
+                setWeightError(""); // clear error when user starts typing
+              }}
+              helperText={weightError}
               style={{padding: '10px',
                 marginTop: '25px',
                 border: 'none',
@@ -199,11 +271,17 @@ function EnterInformation() {
             />
             <TextField
               className='textfield'
-              id="dob"
+              error={!!dobError}
+              id="dob-input"
               label="Date of Birth (YYYY-MM-DD)"
               variant="outlined"
               type="date"
-              onChange={(e) => setDob(e.target.value)}
+              value={dob}
+              onChange={(e) => {
+                setDob(e.target.value);
+                setDobError(""); // clear error when user starts typing
+              }}
+              helperText={dobError}
               style={{padding: '10px',
                 marginTop: '25px',
                 border: 'none',
@@ -213,13 +291,19 @@ function EnterInformation() {
                 color: '#fff',
                 fontSize: '13px'}}
             />
-            <TextField
+            {/* <TextField
               className='textfield'
-              id="gender"
+              error={!!genderError}
+              id="gender-input"
               label="Gender"
               variant="outlined"
               type="text"
-              onChange={(e) => setGender(e.target.value)}
+              value={gender}
+              onChange={(e) => {
+                setGender(e.target.value);
+                setGenderError(""); // clear error when user starts typing
+              }}
+              helperText={genderError}
               style={{padding: '10px',
                 marginTop: '25px',
                 border: 'none',
@@ -228,14 +312,45 @@ function EnterInformation() {
                 border: '1px solid #fff',
                 color: '#fff',
                 fontSize: '13px'}}
-            />
+            /> */}
+            <FormControl
+              variant="outlined"
+              error={!!genderError}
+            >
+              <InputLabel id="gender-label">Gender</InputLabel>
+              <Select
+                labelId="gender-label"
+                id="gender-select"
+                value={gender}
+                label="Gender"
+                onChange={(e) => {
+                  setGender(e.target.value);
+                  setGenderError("");
+                }}
+                style={{padding: '10px',
+                  marginTop: '25px',
+                  border: 'none',
+                  borderRadius: '10px',
+                  background: 'transparent',
+                  border: '1px solid #fff',
+                  color: '#fff',
+                  fontSize: '13px'}}
+              >
+                <MenuItem value="Male">Male</MenuItem>
+                <MenuItem value="Female">Female</MenuItem>
+                <MenuItem value="Other">Other</MenuItem>
+              </Select>
+              {genderError && <FormHelperText sx={{ color: '#d32f2f' }}>{genderError}</FormHelperText>}
+            </FormControl>
             <TextField
               className='textfield'
-              id="profile-pic"
+              error={!!profilePicError}
+              id="profile-pic-input"
               label="Profile Picture (optional)"
               variant="outlined"
               type="file"
               onChange={handleFileChange}
+              helperText={profilePicError}
               style={{padding: '10px',
                 marginTop: '25px',
                 border: 'none',
@@ -247,7 +362,7 @@ function EnterInformation() {
             />
             <TextField
               className='textfield'
-              id="occupation"
+              id="occupation-input"
               label="Occupation (optional)"
               variant="outlined"
               type="text"
@@ -261,6 +376,11 @@ function EnterInformation() {
                 color: '#fff',
                 fontSize: '13px'}}
             />
+            {generalError && (
+              <Box sx={{ color: '#C51D34', mt: 2, textAlign: 'center' }}>
+                {generalError}
+              </Box>
+            )}
             <Button 
               variant="contained" 
               type="submit"
@@ -271,6 +391,9 @@ function EnterInformation() {
               Continue
             </Button>
           </form>
+          <p>Already have an account? 
+            <a href="" onClick={handleLoginRedirect}>    Login</a>
+          </p>
         </div>
       </div>
     </div>

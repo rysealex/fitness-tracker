@@ -32,16 +32,19 @@ function CreateAccount() {
 
     // perform input validation
     if (username === "") {
-      setUsernameError("Enter a Username");
+      setUsernameError("Enter a username.");
       hasError = true;
-    } else if (password === "") {
-      setPasswordError("Enter a Password");
+    } 
+    if (password === "") {
+      setPasswordError("Enter a password.");
       hasError = true;
-    } else if (confirmPassword === "") {
+    } 
+    if (confirmPassword === "") {
       setPasswordConfirmError("Confirm your password.");
       hasError = true;
-    } else if (password !== confirmPassword) {
-      setPasswordConfirmError("Passwords don't match.");
+    } 
+    if (password !== confirmPassword) {
+      setPasswordConfirmError("Passwords must match.");
       hasError = true;
     }
     if (hasError) return; // stop if input validation failed

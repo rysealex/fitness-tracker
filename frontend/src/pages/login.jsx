@@ -30,10 +30,11 @@ function Login() {
     
     // perform input validation
     if (username === "") {
-      setUsernameError("Enter a Username");
+      setUsernameError("Enter your username.");
       hasError = true;
-    } else if (password === "") {
-      setPasswordError("Enter a Password");
+    } 
+    if (password === "") {
+      setPasswordError("Enter your password.");
       hasError = true;
     } 
     if (hasError) return; // stop if input validation failed
