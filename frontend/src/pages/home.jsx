@@ -16,6 +16,7 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import Navbar from '../navbar';
+import CalorieCounterMini from '../calorieCounterMini';
 
 function Home() {
   const navigate = useNavigate();
@@ -270,11 +271,12 @@ function Home() {
               </CardActions>
             </Card>
             <Card sx={{ maxWidth: 345 }}>
-              <CardMedia
+              {/* <CardMedia
                 sx={{ height: 140 }}
                 image="/images/calorie-counter.jpeg"
                 title="workout-log"
-              />
+              /> */}
+              <CardMedia><CalorieCounterMini/></CardMedia>
               <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
                   Calorie Counter

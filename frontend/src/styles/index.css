@@ -813,3 +813,41 @@ body {
 .MuiDialogActions-root .MuiButton-root.MuiButton-text:hover {
     background-color: #f7fafc; /* gray-100 */
 }
+
+/* Styling for the calorie counter mini component */
+.calorie-counter-mini-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background-color: #333; /* Dark background for contrast */
+  /*border-radius: 15px;*/
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  color: #fff; /* White text */
+  font-family: 'Arial', sans-serif;
+  max-width: 350px;
+  /*margin: 20px auto;*/
+  gap: 10px; /* Space between items */
+}
+
+.calorie-counter-mini-container.error {
+  background-color: #ffe0e0;
+  color: #cc0000;
+}
+
+.calorie-counter-mini-flame-icon {
+  font-size: 3em; /* Big flame icon */
+  color: #ff6600; /* Fiery orange color */
+  filter: drop-shadow(0 0 5px rgba(255, 102, 0, 0.7)); /* Subtle glow */
+}
+
+.calorie-counter-mini-text {
+  font-size: 1.4em;
+  font-weight: bold;
+}
+
+.calorie-counter-mini-calories-value {
+  font-size: 1.6em;
+  font-weight: bold;
+  color: #00ff7f; /* Bright green for calories */
+}
