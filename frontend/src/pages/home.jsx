@@ -18,6 +18,7 @@ import Typography from '@mui/material/Typography';
 import Navbar from '../navbar';
 import CalorieCounterMini from '../calorieCounterMini';
 import WorkoutLogMini from '../workoutLogMini';
+import GoalsMini from '../goalsMini';
 
 function Home() {
   const navigate = useNavigate();
@@ -218,11 +219,12 @@ function Home() {
         <div className='cards-container'>
           <Stack direction="row" spacing={2}>
             <Card sx={{ maxWidth: 345 }}>
-              <CardMedia
+              {/* <CardMedia
                 sx={{ height: 140 }}
                 image="/images/goals.png"
                 title="goals"
-              />
+              /> */}
+              <CardMedia><GoalsMini/></CardMedia>
               <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
                   Goals
@@ -256,7 +258,7 @@ function Home() {
                   Workout Log
                 </Typography>
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                  Enter your workouts here! That way you can track your progress!
+                  Enter your workouts here!
                 </Typography>
               </CardContent>
               <CardActions>
@@ -284,7 +286,7 @@ function Home() {
                   Calorie Counter
                 </Typography>
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                  Track your daily calories here! This is the best way to reach your goals!
+                  Track your daily calories here!
                 </Typography>
               </CardContent>
               <CardActions>

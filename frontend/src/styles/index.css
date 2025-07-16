@@ -868,3 +868,59 @@ body {
   font-size: 1.4em;
   font-weight: bold;
 }
+
+/* Styling for the Goal Mini Component */
+.goals-mini-trophy-icon {
+    font-size: 4.5em; /* Make it consistent with other icons */
+    color: #ffd700; /* Gold color for the trophy */
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.7)); /* Golden glow */
+}
+
+.goals-mini-text-value-group {
+    /* Override gap for goals to allow more horizontal space for multiple entries */
+    gap: 15px; /* Adjust as needed for horizontal spacing between goal status pairs */
+    flex-direction: row; /* Set to row to arrange goal types horizontally initially */
+    flex-wrap: wrap; /* Allow items to wrap to the next line if space is limited */
+    justify-content: center; /* Center the goal type pairs */
+    align-items: flex-start; /* Align pairs to the top within their wrap lines */
+    text-align: center; /* Center text within each individual goal type's display */
+}
+
+/* Style for each individual goal type's text-value pair */
+.goals-mini-text {
+    font-size: 1em; /* Smaller font for multiple lines */
+    font-weight: bold;
+    margin-bottom: 0; /* Remove bottom margin here, as value is now next to it */
+    display: block; /* Make the text take its own line within the pair */
+}
+
+/* Individual goal value specific colors */
+.goals-mini-active-value {
+    color: #8bc34a; /* Green for active goals */
+    font-size: 1.2em; /* Slightly smaller for compactness */
+}
+
+.goals-mini-completed-value {
+    color: #00bcd4; /* Cyan for completed goals */
+    font-size: 1.2em;
+}
+
+.goals-mini-abandoned-value {
+    color: #ef5350; /* Red for abandoned goals */
+    font-size: 1.2em;
+}
+
+/* To ensure each "text" and "value" pair stacks vertically within the horizontal flow */
+.goals-mini-text + .mini-value { /* Selects a .mini-value immediately following a .goals-mini-text */
+    margin-bottom: 10px; /* Space between each goal type pair when wrapped */
+    display: block; /* Ensure the value also takes its own line */
+}
+
+/* A container for each individual goal type (e.g., Active Goals + count) */
+.goals-mini-text-value-group > span {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px; /* Ensure a minimum width for each goal type's display */
+}
