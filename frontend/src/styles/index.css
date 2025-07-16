@@ -815,7 +815,7 @@ body {
 }
 
 /* Styling for the calorie counter mini component */
-.calorie-counter-mini-container {
+.mini-container {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -824,10 +824,21 @@ body {
   /*border-radius: 15px;*/
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
   color: #fff; /* White text */
-  font-family: 'Arial', sans-serif;
   max-width: 350px;
   /*margin: 20px auto;*/
   gap: 10px; /* Space between items */
+}
+
+.mini-text-value-group {
+    display: flex; /* Make this a flex container itself */
+    flex-direction: column; 
+    gap: 5px; /* Small gap between the text and the number */
+}
+
+.mini-value {
+  font-size: 1.6em;
+  font-weight: bold;
+  color: #00ff7f; /* Bright green */
 }
 
 .calorie-counter-mini-container.error {
@@ -836,7 +847,7 @@ body {
 }
 
 .calorie-counter-mini-flame-icon {
-  font-size: 3em; /* Big flame icon */
+  font-size: 4.5em; /* Big flame icon */
   color: #ff6600; /* Fiery orange color */
   filter: drop-shadow(0 0 5px rgba(255, 102, 0, 0.7)); /* Subtle glow */
 }
@@ -846,8 +857,14 @@ body {
   font-weight: bold;
 }
 
-.calorie-counter-mini-calories-value {
-  font-size: 1.6em;
+/* Styling for the Workout Logs Mini Component */
+.workout-log-mini-weight-lifting-icon {
+  font-size: 4.5em; 
+  color: #ffeb3b; 
+  filter: drop-shadow(0 0 5px rgba(255, 235, 59, 0.7)); 
+}
+
+.workout-log-mini-text {
+  font-size: 1.4em;
   font-weight: bold;
-  color: #00ff7f; /* Bright green for calories */
 }

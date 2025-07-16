@@ -44,11 +44,13 @@ function CalorieCounterMini() {
 
     const totalCalories = calcTodayTotalCalories(todayFoodEntries);
 
-    return(
-        <div className="calorie-counter-mini-container">
+    return (
+        <div className="mini-container">
             <FaFire className="calorie-counter-mini-flame-icon" />
-            <span className="calorie-counter-mini-text">Today's Calories: </span>
-            <span className="calorie-counter-mini-calories-value">{totalCalories}</span>
+            <div className="mini-text-value-group">
+                <span className="calorie-counter-mini-text">Today's Calories</span>
+                <span className="mini-value">{totalCalories}</span>
+            </div>
         </div>
     )
 };
