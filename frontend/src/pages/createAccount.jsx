@@ -13,52 +13,69 @@ function CreateAccount() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordConfirmError, setPasswordConfirmError] = useState("");
+  const [generalError, setGeneralError] = useState("");
 
   // handle the account creation attempt
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // clear previous errors
+    setUsernameError("");
+    setPasswordError("");
+    setPasswordConfirmError("");
+    setGeneralError("");
+
+    let hasError = false;
+
     // perform input validation
     if (username === "") {
-      return;
+      setUsernameError("Enter a Username");
+      hasError = true;
     } else if (password === "") {
-      return;
+      setPasswordError("Enter a Password");
+      hasError = true;
     } else if (confirmPassword === "") {
-      return;
+      setPasswordConfirmError("Confirm your password.");
+      hasError = true;
     } else if (password !== confirmPassword) {
-      return;
-    } else {
-      // proceed to account creation with API call
-      try {
-        const response = await fetch('http://localhost:5000/auth/username-exists', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ username }),
-        });
-        // check if the response is ok
-        if (response.ok) {
-          const data = await response.json();
-          // check if username is taken
-          if (data.exists) {
-            console.log('Username is taken:', data);
-            return;
-          } else {
-            console.log('Username is not taken:', data);
-            // store the username and password in local storage
-            localStorage.setItem('username', username);
-            localStorage.setItem('password', password);
-            handleNavigate("/enter-info");
-          }
+      setPasswordConfirmError("Passwords don't match.");
+      hasError = true;
+    }
+    if (hasError) return; // stop if input validation failed
+    // proceed to account creation with API call
+    try {
+      const response = await fetch('http://localhost:5000/auth/username-exists', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username }),
+      });
+      // check if the response is ok
+      if (response.ok) {
+        const data = await response.json();
+        // check if username is taken
+        if (data.exists) {
+          console.log('Username is taken:', data);
+          setGeneralError("Username is taken.");
         } else {
-          console.log('Account creation failed:', response.statusText);
-          return;
+          console.log('Username is not taken:', data);
+          // store the username and password in local storage
+          localStorage.setItem('username', username);
+          localStorage.setItem('password', password);
+          handleNavigate("/enter-info");
         }
-      } catch (error) {
-        console.error('Error during username check:', error);
-        return;
+      } else {
+        const errorData = await response.json();
+        setGeneralError(errorData.message || "Account creation failed. Please check your credentials.");
+        console.log('Account creation failed:', response.statusText);
       }
+    } catch (error) {
+      console.error('Error during username check:', error);
+      setGeneralError("Network error. Please try again later.");
     };
   };
 
@@ -70,10 +87,16 @@ function CreateAccount() {
           <form onSubmit={handleSubmit}>
             <TextField
               className='textfield'
-              id="outlined-basic"
+              error={!!usernameError}
+              id="username-input"
               label="Username"
               variant="outlined"
-              onChange={(e) => setUsername(e.target.value)}
+              value={username}
+              onChange={(e) => {
+                setUsername(e.target.value);
+                setUsernameError(""); // clear error when user starts typing
+              }}
+              helperText={usernameError}
               style={{padding: '10px',
                 marginTop: '25px',
                 border: 'none',
@@ -85,11 +108,17 @@ function CreateAccount() {
             />
             <TextField
               className='textfield'
-              id="outlined-basic"
+              error={!!passwordError}
+              id="password-input"
               label="Password"
               variant="outlined"
               type="password"
-              onChange={(e) => setPassword(e.target.value)}
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setPasswordError(""); // clear error when user starts typing
+              }}
+              helperText={passwordError}
               style={{padding: '10px',
                 marginTop: '25px',
                 border: 'none',
@@ -101,11 +130,17 @@ function CreateAccount() {
             />
             <TextField
               className='textfield'
-              id="outlined-basic"
-              label="Re-type Password"
+              error={!!passwordConfirmError}
+              id="confirm-password-input"
+              label="Confirm Password"
               variant="outlined"
               type="password"
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              value={confirmPassword}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                setPasswordConfirmError(""); // clear error when user starts typing
+              }}
+              helperText={passwordConfirmError}
               style={{padding: '10px',
                 marginTop: '25px',
                 border: 'none',
@@ -115,6 +150,11 @@ function CreateAccount() {
                 color: '#fff',
                 fontSize: '13px'}}
             />
+            {generalError && (
+              <Box sx={{ color: '#C51D34', mt: 2, textAlign: 'center' }}>
+                {generalError}
+              </Box>
+            )}
             <Button 
               variant="contained" 
               type="submit"
@@ -124,6 +164,9 @@ function CreateAccount() {
                 Create
             </Button>
           </form>
+          <p>Already have an account? 
+            <a href="" onClick={() => handleNavigate("/login")}>    Login</a>
+          </p>
         </div>
       </div>
     </div>

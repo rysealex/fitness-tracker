@@ -91,7 +91,7 @@ body {
 /* Styles for the create account page*/
 .register-container {
     width: 300px;
-    height: 450px;
+    height: 470px;
     position: relative;
     z-index: 1;
     background: #808080;
@@ -120,6 +120,16 @@ body {
     margin-bottom: -20px;
     font-size: 35px;
     text-shadow: 1px 1px 2px #C51D34, 0 0 1em rgb(0, 0, 0), 0 0 0.2em rgb(0, 0, 0);
+}
+.register-box p {
+    font-size: 12px;
+    color: #000000;
+    margin-top: 15px;
+}
+.register-box p a {
+    text-decoration: none;
+    color: #C51D34;
+    font-weight: bold;
 }
 
 /* Styles for the enter information page*/

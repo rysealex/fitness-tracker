@@ -15,42 +15,52 @@ function Login() {
   const [password, setPassword] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [generalError, setGeneralError] = useState("");
 
   // handle the login attempt
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // clear previous errors
+    setUsernameError("");
+    setPasswordError("");
+    setGeneralError("");
+
+    let hasError = false;
     
     // perform input validation
     if (username === "") {
       setUsernameError("Enter a Username");
+      hasError = true;
     } else if (password === "") {
       setPasswordError("Enter a Password");
-    } else {
-      setUsernameError("");
-      setPasswordError("");
-      // proceed to login with API call
-      try {
-        const response = await fetch('http://localhost:5000/auth/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ username, password }),
-        });
-        // check if the response is ok
-        if (response.ok) {
-          const data = await response.json();
-          console.log('Login successful:', data);
-          // store the user id in local storage
-          localStorage.setItem('userId', data.user.user_id);
-          handleNavigate("/home");
-        } else {
-          console.log('Login failed:', response.statusText);
-        }
-      } catch (error) {
-        console.error('Error during login:', error);
-        return;
+      hasError = true;
+    } 
+    if (hasError) return; // stop if input validation failed
+    // proceed to login with API call
+    try {
+      const response = await fetch('http://localhost:5000/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+      // check if the response is ok
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Login successful:', data);
+        // store the user id in local storage
+        localStorage.setItem('userId', data.user.user_id);
+        handleNavigate("/home");
+      } else {
+        const errorData = await response.json();
+        setGeneralError(errorData.message || "Login failed. Please check your credentials.");
+        console.log('Login failed:', response.statusText);
       }
+    } catch (error) {
+      console.error('Error during login:', error);
+      setGeneralError("Network error. Please try again later.");
     }
   };
 
@@ -62,12 +72,16 @@ function Login() {
             <form onSubmit={handleSubmit}>
               <TextField
                 className='textfield'
-                error={usernameError}
-                id="outlined-basic"
+                error={!!usernameError}
+                id="username-input"
                 label="Username"
                 variant="outlined"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  setUsernameError(""); // clear error when user starts typing
+                }}
+                helperText={usernameError}
                 style={{padding: '10px',
                   marginTop: '25px',
                   border: 'none',
@@ -79,13 +93,17 @@ function Login() {
               />
               <TextField
                 className='textfield'
-                error={passwordError}
-                id="outlined-basic"
+                error={!!passwordError}
+                id="password-input"
                 label="Password"
                 variant="outlined"
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setPasswordError(""); // clear error when user starts typing
+                }}
+                helperText={passwordError}
                 style={{padding: '10px',
                   marginTop: '25px',
                   border: 'none',
@@ -95,6 +113,11 @@ function Login() {
                   color: '#fff',
                   fontSize: '13px'}}
               />
+              {generalError && (
+                <Box sx={{ color: '#C51D34', mt: 2, textAlign: 'center' }}>
+                  {generalError}
+                </Box>
+              )}
               <Button 
                 variant="contained" 
                 type="submit"
