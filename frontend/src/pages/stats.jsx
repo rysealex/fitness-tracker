@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
@@ -12,6 +12,10 @@ function Stats() {
   const [weightError, setWeightError] = useState("");
   const [heightError, setHeightError] = useState("");
   const [generalError, setGeneralError] = useState("");
+
+  // refs for the input fields
+  const heightInputRef = useRef(null);
+  const weightInputRef = useRef(null);
 
   // fetch user stats function
   const fetchStats = async () => {
@@ -61,10 +65,12 @@ function Stats() {
       if (height === "") {
         setHeightError("Enter your new height.");
         hasError = true;
+        heightInputRef.current.focus();
       } else if (isNaN(parsedHeight) || !/^\d+\.?\d{0,1}$/.test(height)) {
         setHeight("");
         setHeightError("New height must be a decimal to the tenth place (e.g., 5.9).");
         hasError = true;
+        heightInputRef.current.focus();
       }
     } 
     else if (attributeInput === "weight_lbs") {
@@ -73,10 +79,12 @@ function Stats() {
       if (weight === "") {
         setWeightError("Enter your new weight.");
         hasError = true;
+        weightInputRef.current.focus();
       } else if (isNaN(parsedWeight) || !/^\d+\.?\d{0,2}$/.test(weight)) {
         setWeight("");
         setWeightError("New weight must be a decimal to the hundredth place (e.g., 150.75).");
         hasError = true;
+        weightInputRef.current.focus();
       }
     } 
     else {
@@ -110,10 +118,14 @@ function Stats() {
         setHeight("");
         setWeight("");
       } else {
+        setHeight("");
+        setWeight("");
         setGeneralError("Stats update submission failed.");
         console.log("Failed to update user stats:", response.statusText);
       }
     } catch (error) {
+      setHeight("");
+      setWeight("");
       setGeneralError("Error updating user stats.");
       console.error("Error updating user stats:", error);
     }
@@ -153,6 +165,7 @@ function Stats() {
                 setHeightError(""); // clear error when user starts typing
               }}
               helperText={heightError}
+              inputRef={heightInputRef}
             />
             <button type="button" onClick={() => handleSubmit('height_ft', parseFloat(height))}>Update Height</button>
           </li>
@@ -170,6 +183,7 @@ function Stats() {
                 setWeightError(""); // clear error when user starts typing
               }}
               helperText={weightError}
+              inputRef={weightInputRef}
             />
             <button type="button" onClick={() => handleSubmit('weight_lbs', parseFloat(weight))}>Update Weight</button>
           </li>

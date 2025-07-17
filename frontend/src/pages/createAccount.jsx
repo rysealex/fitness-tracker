@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
@@ -18,6 +18,11 @@ function CreateAccount() {
   const [passwordConfirmError, setPasswordConfirmError] = useState("");
   const [generalError, setGeneralError] = useState("");
 
+  // refs for the input fields
+  const usernameInputRef = useRef(null);
+  const passwordInputRef = useRef(null);
+  const confirmPasswordInputRef = useRef(null);
+
   // handle the account creation attempt
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,18 +39,23 @@ function CreateAccount() {
     if (username === "") {
       setUsernameError("Enter a username.");
       hasError = true;
+      usernameInputRef.current.focus();
     } 
-    if (password === "") {
+    else if (password === "") {
       setPasswordError("Enter a password.");
       hasError = true;
+      passwordInputRef.current.focus();
     } 
-    if (confirmPassword === "") {
+    else if (confirmPassword === "") {
       setPasswordConfirmError("Confirm your password.");
       hasError = true;
+      confirmPasswordInputRef.current.focus();
     } 
-    if (password !== confirmPassword) {
+    else if (password !== confirmPassword) {
+      setConfirmPassword("");
       setPasswordConfirmError("Passwords must match.");
       hasError = true;
+      confirmPasswordInputRef.current.focus();
     }
     if (hasError) return; // stop if input validation failed
     // proceed to account creation with API call
@@ -62,6 +72,10 @@ function CreateAccount() {
         const data = await response.json();
         // check if username is taken
         if (data.exists) {
+          setUsername("");
+          setPassword("");
+          setConfirmPassword("");
+          usernameInputRef.current.focus();
           console.log('Username is taken:', data);
           setGeneralError("Username is taken.");
         } else {
@@ -72,11 +86,19 @@ function CreateAccount() {
           handleNavigate("/enter-info");
         }
       } else {
+        setUsername("");
+        setPassword("");
+        setConfirmPassword("");
+        usernameInputRef.current.focus();
         const errorData = await response.json();
         setGeneralError(errorData.message || "Account creation failed. Please check your credentials.");
         console.log('Account creation failed:', response.statusText);
       }
     } catch (error) {
+      setUsername("");
+      setPassword("");
+      setConfirmPassword("");
+      usernameInputRef.current.focus();
       console.error('Error during username check:', error);
       setGeneralError("Network error. Please try again later.");
     };
@@ -100,6 +122,7 @@ function CreateAccount() {
                 setUsernameError(""); // clear error when user starts typing
               }}
               helperText={usernameError}
+              inputRef={usernameInputRef}
               style={{padding: '10px',
                 marginTop: '25px',
                 border: 'none',
@@ -122,6 +145,7 @@ function CreateAccount() {
                 setPasswordError(""); // clear error when user starts typing
               }}
               helperText={passwordError}
+              inputRef={passwordInputRef}
               style={{padding: '10px',
                 marginTop: '25px',
                 border: 'none',
@@ -144,6 +168,7 @@ function CreateAccount() {
                 setPasswordConfirmError(""); // clear error when user starts typing
               }}
               helperText={passwordConfirmError}
+              inputRef={confirmPasswordInputRef}
               style={{padding: '10px',
                 marginTop: '25px',
                 border: 'none',

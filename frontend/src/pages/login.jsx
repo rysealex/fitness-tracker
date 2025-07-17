@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
@@ -17,6 +17,10 @@ function Login() {
   const [passwordError, setPasswordError] = useState("");
   const [generalError, setGeneralError] = useState("");
 
+  // refs for the input fields
+  const usernameInputRef = useRef(null);
+  const passwordInputRef = useRef(null);
+
   // handle the login attempt
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,10 +36,12 @@ function Login() {
     if (username === "") {
       setUsernameError("Enter your username.");
       hasError = true;
+      usernameInputRef.current.focus();
     } 
-    if (password === "") {
+    else if (password === "") {
       setPasswordError("Enter your password.");
       hasError = true;
+      passwordInputRef.current.focus();
     } 
     if (hasError) return; // stop if input validation failed
     // proceed to login with API call
@@ -55,11 +61,17 @@ function Login() {
         localStorage.setItem('userId', data.user.user_id);
         handleNavigate("/home");
       } else {
+        setUsername("");
+        setPassword("");
+        usernameInputRef.current.focus();
         const errorData = await response.json();
         setGeneralError(errorData.message || "Login failed. Please check your credentials.");
         console.log('Login failed:', response.statusText);
       }
     } catch (error) {
+      setUsername("");
+      setPassword("");
+      usernameInputRef.current.focus();
       console.error('Error during login:', error);
       setGeneralError("Network error. Please try again later.");
     }
@@ -83,6 +95,7 @@ function Login() {
                   setUsernameError(""); // clear error when user starts typing
                 }}
                 helperText={usernameError}
+                inputRef={usernameInputRef}
                 style={{padding: '10px',
                   marginTop: '25px',
                   border: 'none',
@@ -105,6 +118,7 @@ function Login() {
                   setPasswordError(""); // clear error when user starts typing
                 }}
                 helperText={passwordError}
+                inputRef={passwordInputRef}
                 style={{padding: '10px',
                   marginTop: '25px',
                   border: 'none',

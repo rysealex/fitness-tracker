@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -35,6 +35,14 @@ function EnterInformation() {
   const [genderError, setGenderError] = useState(""); 
   const [profilePicError, setProfilePicError] = useState("");
   const [generalError, setGeneralError] = useState("");
+
+  // refs for the input fields
+  const fnameInputRef = useRef(null);
+  const lnameInputRef = useRef(null);
+  const heightInputRef = useRef(null);
+  const weightInputRef = useRef(null);
+  const dobInputRef = useRef(null);
+  const genderInputRef = useRef(null);
 
   // handle the redirect to login page
   const handleLoginRedirect = () => {
@@ -99,28 +107,48 @@ function EnterInformation() {
     let hasError = false;
 
     // perform input validation
-    if (fname === "") { setFnameError("Enter your first name."); hasError = true; }
-    if (lname === "") { setLnameError("Enter your last name."); hasError = true; }
+    if (fname === "") { 
+      setFnameError("Enter your first name."); 
+      hasError = true; 
+      fnameInputRef.current.focus(); 
+    }
+    else if (lname === "") { 
+      setLnameError("Enter your last name."); 
+      hasError = true; 
+      lnameInputRef.current.focus(); 
+    }
     // height validation
-    const parsedHeight = parseFloat(height);
-    if (height === "") {
+    else if (height === "") {
       setHeightError("Enter your height.");
       hasError = true;
-    } else if (isNaN(parsedHeight) || !/^\d+\.?\d{0,1}$/.test(height)) {
+      heightInputRef.current.focus();
+    } else if (isNaN(parseFloat(height)) || !/^\d+\.?\d{0,1}$/.test(height)) {
+      setHeight("");
       setHeightError("Height must be a decimal to the tenth place (e.g., 5.9).");
       hasError = true;
+      heightInputRef.current.focus();
     }
     // weight validation
-    const parsedWeight = parseFloat(weight);
-    if (weight === "") {
+    else if (weight === "") {
       setWeightError("Enter your weight.");
       hasError = true;
-    } else if (isNaN(parsedWeight) || !/^\d+\.?\d{0,2}$/.test(weight)) {
+      weightInputRef.current.focus();
+    } else if (isNaN(parseFloat(weight)) || !/^\d+\.?\d{0,2}$/.test(weight)) {
+      setWeight("");
       setWeightError("Weight must be a decimal to the hundredth place (e.g., 150.75).");
       hasError = true;
+      weightInputRef.current.focus();
     }
-    if (dob === "") { setDobError("Enter your date of birth."); hasError = true; }
-    if (gender === "") { setGenderError("Enter your gender."); hasError = true; }
+    else if (dob === "") { 
+      setDobError("Enter your date of birth."); 
+      hasError = true; 
+      dobInputRef.current.focus(); 
+    }
+    else if (gender === "") { 
+      setGenderError("Enter your gender.");
+      hasError = true; 
+      genderInputRef.current.focus(); 
+    }
 
     if (hasError) return; // stop if input validation failed
 
@@ -169,10 +197,24 @@ function EnterInformation() {
         console.log('User ID stored in local storage:', data.user_id);
         handleNavigate("/home");
       } else {
+        setFname("");
+        setLname("");
+        setHeight("");
+        setWeight("");
+        setDob("");
+        setGender("");
+        fnameInputRef.current.focus();
         setGeneralError("Account information submission failed.");
         console.log('Account information submission failed:', response.statusText);
       }
     } catch (error) {
+      setFname("");
+      setLname("");
+      setHeight("");
+      setWeight("");
+      setDob("");
+      setGender("");
+      fnameInputRef.current.focus();
       setGeneralError("Error during account information submission.");
       console.error('Error during account information submission:', error);
     }
@@ -196,6 +238,7 @@ function EnterInformation() {
                 setFnameError(""); // clear error when user starts typing
               }}
               helperText={fnameError}
+              inputRef={fnameInputRef}
               style={{padding: '10px',
                 marginTop: '25px',
                 border: 'none',
@@ -216,6 +259,7 @@ function EnterInformation() {
                 setLnameError(""); // clear error when user starts typing
               }}
               helperText={lnameError}
+              inputRef={lnameInputRef}
               style={{padding: '10px',
                 marginTop: '25px',
                 border: 'none',
@@ -238,6 +282,7 @@ function EnterInformation() {
                 setHeightError(""); // clear error when user starts typing
               }}
               helperText={heightError}
+              inputRef={heightInputRef}
               style={{padding: '10px',
                 marginTop: '25px',
                 border: 'none',
@@ -260,6 +305,7 @@ function EnterInformation() {
                 setWeightError(""); // clear error when user starts typing
               }}
               helperText={weightError}
+              inputRef={weightInputRef}
               style={{padding: '10px',
                 marginTop: '25px',
                 border: 'none',
@@ -281,6 +327,7 @@ function EnterInformation() {
                 setDobError(""); // clear error when user starts typing
               }}
               helperText={dobError}
+              inputRef={dobInputRef}
               style={{padding: '10px',
                 marginTop: '25px',
                 border: 'none',
@@ -326,6 +373,7 @@ function EnterInformation() {
                   setGender(e.target.value);
                   setGenderError("");
                 }}
+                inputRef={genderInputRef}
                 style={{padding: '10px',
                   marginTop: '25px',
                   border: 'none',
