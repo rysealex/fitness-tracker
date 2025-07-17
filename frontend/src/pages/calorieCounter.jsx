@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogContent, DialogActions, DialogTitle, TextField, Card, CardContent, Typography, Box, Divider, IconButton, MenuItem } from "@mui/material";
 import { StaticDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
 import { Edit, Delete, Add } from '@mui/icons-material';
 
@@ -21,9 +21,34 @@ function CalorieCounter() {
 	const [editModalOpen, setEditModalOpen] = useState(false);
 	const [editEntry, setEditEntry] = useState(null);
 
+	// error states for add modal
+    const [addFoodNameError, setAddFoodNameError] = useState("");
+    const [addCaloriesError, setAddCaloriesError] = useState("");
+	const [addGeneralError, setAddGeneralError] = useState("");
+
+    // error states for edit modal
+    const [editFoodNameError, setEditFoodNameError] = useState("");
+    const [editCaloriesError, setEditCaloriesError] = useState("");
+    const [editMealTypeError, setEditMealTypeError] = useState("");
+    const [editGeneralError, setEditGeneralError] = useState("");
+
+    // refs for add modal inputs
+    const addFoodNameRef = useRef(null);
+    const addCaloriesRef = useRef(null);
+
+    // refs for edit modal inputs
+    const editFoodNameRef = useRef(null);
+    const editCaloriesRef = useRef(null);
+    const editMealTypeRef = useRef(null);
+
 	// open modal and set entry to edit
 	const openEditModal = (entry) => {
 		setEditEntry({ ...entry });
+		// clear previous edit errors when opening the modal
+        setEditFoodNameError("");
+        setEditCaloriesError("");
+        setEditMealTypeError("");
+        setEditGeneralError("");
 		setEditModalOpen(true);
 	};
 
@@ -31,6 +56,11 @@ function CalorieCounter() {
 	const closeEditModal = () => {
 		setEditModalOpen(false);
 		setEditEntry(null);
+		// clear edit errors when closing the modal
+        setEditFoodNameError("");
+        setEditCaloriesError("");
+        setEditMealTypeError("");
+        setEditGeneralError("");
 	};
 
 	// handle input changes in the edit modal
@@ -40,6 +70,10 @@ function CalorieCounter() {
 			...prev,
 			[name]: value,
 		}));
+		// clear specific error when user starts typing in edit modal
+        if (name === "food_name") setEditFoodNameError("");
+        if (name === "total_calories") setEditCaloriesError("");
+        if (name === "meal_type") setEditMealTypeError("");
 	};
 
 	// function to handle the specified day change
@@ -71,6 +105,36 @@ function CalorieCounter() {
 
 	// function to handle the food entry edit submission
 	const handleEditSubmit = async (specifiedDay) => {
+
+		// clear previous errors
+		setEditFoodNameError("");
+        setEditCaloriesError("");
+        setEditMealTypeError("");
+        setEditGeneralError("");
+
+		let hasError = false;
+
+		// perform input validation
+		if (editEntry.food_name === "") {
+			setEditFoodNameError("Food name is required.");
+			hasError = true;
+			editFoodNameRef.current.focus();
+		}
+		else if (editEntry.total_calories === "" 
+				|| isNaN(parseInt(editEntry.total_calories)) 
+				|| parseInt(editEntry.total_calories) <= 0
+				|| !/^\d+$/.test(editEntry.total_calories)) {
+			setEditCaloriesError("Calories must be a positive whole number.");
+            hasError = true;
+            editCaloriesRef.current.focus();
+		}
+		else if (editEntry.meal_type === "") {
+			setEditMealTypeError("Meal type is required.");
+            hasError = true;
+            editMealTypeRef.current?.focus();
+		}
+		if (hasError) return; // stop if input validation failed
+
 		try {
 			const response = await fetch(`http://localhost:5000/food/edit/${editEntry.food_entries_id}`, {
 				method: 'PUT',
@@ -79,7 +143,7 @@ function CalorieCounter() {
 				},
 				body: JSON.stringify({
 						food_name: editEntry.food_name,
-						total_calories: editEntry.total_calories,
+						total_calories: parseInt(editEntry.total_calories),
 						meal_type: editEntry.meal_type,
 						created_at: specifiedDay
 				}),
@@ -92,12 +156,12 @@ function CalorieCounter() {
 				// fetch the specified day change results
 				handleSpecifiedDayChange(specifiedDay);
 			} else {
+				setEditGeneralError("Failed to update food entry. Please try again.");
 				console.error("Failed to update food entry:", response.statusText);
-				return;
 			}
 		} catch (error) {
+			setEditGeneralError("Error updating food entry. Please try again.");
 			console.error("Error updating food entry:", error);
-			return;
 		}
 	};
 
@@ -105,46 +169,66 @@ function CalorieCounter() {
 	const handleSubmit = async (e, specifiedDay) => {
 		e.preventDefault();
 
-		// perform input validation
-		if (!foodName || !totalCalories || !mealType) {
-			alert("Please fill in all fields.");
-			return;
-		} else {
-			// proceed with form submission
-			try {
-				console.log("Submitting food entry now!");
-				const response = await fetch('http://localhost:5000/food/add', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({
-						user_id: localStorage.getItem('userId'), // get user id from local storage
-						food_name: foodName,
-						total_calories: totalCalories,
-						meal_type: mealType,
-						created_at: specifiedDay
-					}),
-				});
-				// check if the response is ok
-				if (response.ok) {
-					const data = await response.json();
-					console.log("Food entry submitted successfully:", data);
-					// fetch the specified day change results
-					handleSpecifiedDayChange(specifiedDay);
-					// clear the input fields
-					setFoodName("");
-					setTotalCalories(0);
-					setMealType("");
+		// clear previous errors
+        setAddFoodNameError("");
+        setAddCaloriesError("");
+        setAddGeneralError("");
 
-				} else {
-					console.log("Failed to submit food entry:", response.statusText);
-					return;
-				}
-			} catch (error) {
-				console.error("Error submitting food entry:", error);
-				return;
+		let hasError = false;
+
+		// perform input validation
+		if (foodName === "") {
+			setAddFoodNameError("Food name is required.");
+			hasError = true;
+			addFoodNameRef.current.focus();
+		}
+		else if (totalCalories === "" 
+				|| isNaN(parseInt(totalCalories)) 
+				|| parseInt(totalCalories) <= 0
+				|| !/^\d+$/.test(totalCalories)) {
+			setAddCaloriesError("Calories must be a positive whole number.");
+			hasError = true;
+			addCaloriesRef.current.focus();
+		}
+		else if (mealType === "") {
+			setAddGeneralError("An unexpected error has occurred.");
+			hasError = true;
+		}
+		if (hasError) return; // stop if input validation failed
+		// proceed with form submission
+		try {
+			console.log("Submitting food entry now!");
+			const response = await fetch('http://localhost:5000/food/add', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					user_id: localStorage.getItem('userId'), // get user id from local storage
+					food_name: foodName,
+					total_calories: parseInt(totalCalories),
+					meal_type: mealType,
+					created_at: specifiedDay
+				}),
+			});
+			// check if the response is ok
+			if (response.ok) {
+				const data = await response.json();
+				console.log("Food entry submitted successfully:", data);
+				// fetch the specified day change results
+				handleSpecifiedDayChange(specifiedDay);
+				// clear the input fields
+				setFoodName("");
+				setTotalCalories(0);
+				setMealType("");
+				setAddModalOpen(false); // close modal on success
+			} else {
+				setAddGeneralError("Failed to add food entry. Please try again.");
+				console.log("Failed to submit food entry:", response.statusText);
 			}
+		} catch (error) {
+			setAddGeneralError("Error adding food entry. Please try again.");
+			console.error("Error submitting food entry:", error);
 		}
 	};
 
@@ -313,6 +397,9 @@ function CalorieCounter() {
 									sx={{ ml: 1 }}
 									onClick={() => {
 									setMealType(type);
+									setAddFoodNameError("");
+									setAddCaloriesError("");
+									setAddGeneralError("");
 									setAddModalOpen(true);
 									}}
 								>
@@ -366,17 +453,29 @@ function CalorieCounter() {
 							label="Food Name"
 							variant="outlined"
 							value={foodName}
-							onChange={(e) => setFoodName(e.target.value)}
-							fullWidth
+							onChange={(e) => {
+								setFoodName(e.target.value);
+								setAddFoodNameError("");
+							}}
+							error={!!addFoodNameError}
+                            helperText={addFoodNameError}
+                            fullWidth
+                            inputRef={addFoodNameRef}
 						/>
 						<TextField
 							label="Calories"
 							variant="outlined"
 							type="number"
 							value={totalCalories}
-							onChange={(e) => setTotalCalories(e.target.value)}
-							inputProps={{ step: 1, min: 0 }}
-							fullWidth
+							onChange={(e) => {
+								setTotalCalories(e.target.value);
+								setAddCaloriesError("");
+							}}
+							error={!!addCaloriesError}
+                            helperText={addCaloriesError}
+                            inputProps={{ step: 1, min: 0 }}
+                            fullWidth
+                            inputRef={addCaloriesRef}
 						/>
 						{/* <TextField
 							label="Meal Type"
@@ -391,17 +490,29 @@ function CalorieCounter() {
 							<MenuItem value="Dinner">Dinner</MenuItem>
 							<MenuItem value="Snack">Snack</MenuItem>
 						</TextField> */}
+						{addGeneralError && (
+                            <Typography color="error" variant="body2" sx={{ textAlign: 'center' }}>
+                                {addGeneralError}
+                            </Typography>
+                        )}
 					</Box>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={() => setAddModalOpen(false)}>Cancel</Button>
+					<Button onClick={() => {
+						setAddModalOpen(false);
+						setFoodName("");
+                        setTotalCalories("");
+                        setMealType("");
+                        setAddFoodNameError("");
+                        setAddCaloriesError("");
+                        setAddGeneralError("");
+					}}>Cancel</Button>
 					<Button
 						onClick={(e) => {
 							const formattedDate = specifiedDay instanceof Date
 								? specifiedDay.toISOString().split('T')[0]
 								: new Date(specifiedDay).toISOString().split('T')[0];
 							handleSubmit(e, formattedDate);
-							setAddModalOpen(false);
 						}}
 						variant="contained"
 					>
@@ -421,7 +532,10 @@ function CalorieCounter() {
                                 name="food_name"
                                 value={editEntry.food_name}
                                 onChange={handleEditChange}
+                                error={!!editFoodNameError}
+                                helperText={editFoodNameError}
                                 fullWidth
+                                inputRef={editFoodNameRef}
                             />
                             <TextField
                                 label="Total Calories"
@@ -429,22 +543,33 @@ function CalorieCounter() {
                                 type="number"
                                 value={editEntry.total_calories}
                                 onChange={handleEditChange}
+                                error={!!editCaloriesError}
+                                helperText={editCaloriesError}
                                 inputProps={{ step: 1, min: 0 }}
                                 fullWidth
+                                inputRef={editCaloriesRef}
                             />
                             <TextField
                                 label="Meal Type"
                                 name="meal_type"
                                 value={editEntry.meal_type}
                                 onChange={handleEditChange}
+                                error={!!editMealTypeError}
+                                helperText={editMealTypeError}
                                 select
                                 fullWidth
+                                inputRef={editMealTypeRef}
                             >
                                 <MenuItem value="Breakfast">Breakfast</MenuItem>
                                 <MenuItem value="Lunch">Lunch</MenuItem>
                                 <MenuItem value="Dinner">Dinner</MenuItem>
                                 <MenuItem value="Snack">Snack</MenuItem>
                             </TextField>
+							{editGeneralError && (
+                                <Typography color="error" variant="body2" sx={{ textAlign: 'center' }}>
+                                    {editGeneralError}
+                                </Typography>
+                            )}
                         </Box>
                     )}
                 </DialogContent>
