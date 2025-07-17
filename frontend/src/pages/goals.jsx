@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
 import { Button, Dialog, DialogContent, DialogActions, DialogTitle, TextField, Box, MenuItem, Typography } from "@mui/material";
 import '../styles/index.css'
@@ -16,15 +16,41 @@ function Goals() {
 	const [editModalOpen, setEditModalOpen] = useState(false);
 	const [editGoal, setEditGoal] = useState(null);
 
+    // error states for add modal
+    const [addGoalTitleError, setAddGoalTitleError] = useState("");
+    const [addGoalTypeError, setAddGoalTypeError] = useState("");
+    const [addGeneralError, setAddGeneralError] = useState("");
+
+    // error states for edit modal
+    const [editGoalTitleError, setEditGoalTitleError] = useState("");
+    const [editGoalTypeError, setEditGoalTypeError] = useState("");
+    const [editStatusError, setEditStatusError] = useState("");
+    const [editGeneralError, setEditGeneralError] = useState("");
+
+    // refs for add modal inputs
+	const addGoalTitleRef = useRef(null);
+	const addGoalTypeRef = useRef(null);
+
+	// refs for edit modal inputs
+	const editGoalTitleRef = useRef(null);
+	const editGoalTypeRef = useRef(null);
+	const editStatusRef = useRef(null);
+
 	// open the edit modal and set entry to edit
 	const openEditModal = (entry) => {
 		setEditGoal({ ...entry });
+        setEditGoalTitleError("");
+        setEditGoalTypeError("");
+        setEditStatusError("");
 		setEditModalOpen(true);
 	};
 
 	// close the edit modal
 	const closeEditModal = () => {
 		setEditModalOpen(false);
+        setEditGoalTitleError("");
+        setEditGoalTypeError("");
+        setEditStatusError("");
 		setEditGoal(null);
 	};
 
@@ -35,54 +61,98 @@ function Goals() {
 			...prev,
 			[name]: value,
 		}));
+        // clear specific error when user starts typing in edit modal
+        if (name === "goal_title") setEditGoalTitleError("");
+        if (name === "goal_type") setEditGoalTypeError("");
+        if (name === "status") setEditStatusError("");
 	};
 
 	// function to handle the goal submission attempt
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
-		// perform input validation
-		if (!goalTitle || !goalType) {
-			alert("Please fill in all fields.");
-			return;
-		} else {
-			// proceed with form submission
-			try {
-				console.log("Submitting goal now!");
-				const response = await fetch('http://localhost:5000/goal/add', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({
-						user_id: localStorage.getItem('userId'), // get user id from local storage
-						goal_title: goalTitle,
-						goal_type: goalType
-					}),
-				});
-				// check if the response is ok
-				if (response.ok) {
-					const data = await response.json();
-					console.log("Goal submitted successfully:", data);
-					// fetch the goals to update UI for new goal added
-					fetchGoals();
-					// clear the input fields
-					setGoalTitle("");
-					setGoalType("");
+        // clear previous errors
+        setAddGoalTitleError("");
+        setAddGoalTypeError("");
+        setAddGeneralError("");
 
-				} else {
-					console.log("Failed to submit goal:", response.statusText);
-					return;
-				}
-			} catch (error) {
-				console.error("Error submitting goal:", error);
-				return;
-			}
-		}
+        let hasError = false;
+
+		// perform input validation
+        if (goalTitle === "") {
+            setAddGoalTitleError("Goal title is required.");
+            hasError = true;
+            addGoalTitleRef.current.focus();
+        }
+        else if (goalType === "") {
+            setAddGoalTypeError("Goal type is required.");
+            hasError = true;
+            addGoalTypeRef.current.focus();
+        }
+        if (hasError) return; // stop if input validation failed
+        // proceed with form submission
+        try {
+            console.log("Submitting goal now!");
+            const response = await fetch('http://localhost:5000/goal/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: localStorage.getItem('userId'), // get user id from local storage
+                    goal_title: goalTitle,
+                    goal_type: goalType
+                }),
+            });
+            // check if the response is ok
+            if (response.ok) {
+                const data = await response.json();
+                console.log("Goal submitted successfully:", data);
+                // fetch the goals to update UI for new goal added
+                fetchGoals();
+                // clear the input fields
+                setGoalTitle("");
+                setGoalType("");
+                setAddModalOpen(false); // close modal on success
+            } else {
+                setAddGeneralError("Failed to add goal. Please try again.");
+                console.log("Failed to submit goal:", response.statusText);
+            }
+        } catch (error) {
+            setAddGeneralError("Error adding goal. Please try again.");
+            console.error("Error submitting goal:", error);
+        }
 	};
 
 	// function to handle the edit of a goal
 	const handleEditGoal = async (goal_id) => {
+
+        // clear previous errors
+        setEditGoalTitleError("");
+        setEditGoalTypeError("");
+        setEditStatusError("");
+        setEditGeneralError("");
+
+        let hasError = false;
+
+        // perform input validation
+        if (editGoal.goal_title === "") {
+            setEditGoalTitleError("Goal title is required.");
+            hasError = true;
+            editGoalTitleRef.current.focus();
+        }
+        else if (editGoal.goal_type === "") {
+            setEditGoalTypeError("Goal type is required.");
+            hasError = true;
+            editGoalTypeRef.current.focus();
+        }
+        else if (editGoal.status === "") {
+            setEditStatusError("Status is required.");
+            hasError = true;
+            editStatusRef.current.focus();
+        }
+        if (hasError) return; // stop if input validation failed
+        // continue with the API call
 		try {
 			const response = await fetch(`http://localhost:5000/goal/edit/${goal_id}`, {
 				method: 'PUT',
@@ -103,12 +173,12 @@ function Goals() {
 				// fetch the goals to update UI for goal edited
 				fetchGoals();
 			} else {
+                setEditGeneralError("Failed to update goal. Please try again.");
 				console.error("Failed to update goal:", response.statusText);
-				return;
 			}
 		} catch (error) {
+            setEditGeneralError("Error updating goal. Please try again.");
 			console.error("Error updating goal:", error);
-			return;
 		}
 	};
 
@@ -300,14 +370,20 @@ function Goals() {
 
             {/* Add goal modal */}
             <Dialog open={addModalOpen} onClose={() => setAddModalOpen(false)} PaperProps={{ className: "MuiDialog-paper" }}>
-                <DialogTitle className="MuiDialogTitle-root">Add Goal</DialogTitle>
+                <DialogTitle className="MuiDialogTitle-root">Add New Goal</DialogTitle>
                 <DialogContent className="MuiDialogContent-root">
                     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                         <TextField
                             label="Goal Title"
                             name="goal_title"
                             value={goalTitle}
-                            onChange={(e) => setGoalTitle(e.target.value)}
+                            onChange={(e) => {
+                                setGoalTitle(e.target.value);
+                                setAddGoalTitleError("");
+                            }}
+                            error={!!addGoalTitleError}
+                            helperText={addGoalTitleError}
+                            inputRef={addGoalTitleRef}
                             fullWidth
                             variant="outlined"
                         />
@@ -315,8 +391,14 @@ function Goals() {
                             label="Goal Type"
                             name="goal_type"
                             value={goalType}
-                            onChange={(e) => setGoalType(e.target.value)}
+                            onChange={(e) => {
+                                setGoalType(e.target.value);
+                                setAddGoalTitleError("");
+                            }}
                             select
+                            error={!!addGoalTypeError}
+                            helperText={addGoalTypeError}
+                            inputRef={addGoalTypeRef}
                             fullWidth
                             variant="outlined"
                         >
@@ -328,12 +410,24 @@ function Goals() {
                             <MenuItem value="Overall Health">Overall Health</MenuItem>
                             <MenuItem value="Other">Other</MenuItem>
                         </TextField>
+                        {addGeneralError && (
+                            <Typography color="error" variant="body2" sx={{ textAlign: 'center' }}>
+                                {addGeneralError}
+                            </Typography>
+                        )}
                     </Box>
                 </DialogContent>
                 <DialogActions className="MuiDialogActions-root">
-                    <Button onClick={() => setAddModalOpen(false)}>Cancel</Button>
+                    <Button onClick={() => {
+                        setAddModalOpen(false);
+                        setGoalTitle("");
+                        setGoalType("");
+                        setAddGoalTitleError("");
+                        setAddGoalTypeError("");
+                        setAddGeneralError("");
+                    }}>Cancel</Button>
                     <Button
-                        onClick={(e) => {handleSubmit(e); setAddModalOpen(false);}}
+                        onClick={(e) => handleSubmit(e)}
                         variant="contained"
                     >
                         Add
@@ -352,6 +446,9 @@ function Goals() {
                                 name="goal_title"
                                 value={editGoal.goal_title}
                                 onChange={handleEditChange}
+                                error={!!editGoalTitleError}
+                                helperText={editGoalTitleError}
+                                inputRef={editGoalTitleRef}
                                 fullWidth
                                 variant="outlined"
                             />
@@ -360,6 +457,9 @@ function Goals() {
                                 name="goal_type"
                                 value={editGoal.goal_type}
                                 onChange={handleEditChange}
+                                error={!!editGoalTypeError}
+                                helperText={editGoalTypeError}
+                                inputRef={editGoalTypeRef}
                                 select
                                 fullWidth
                                 variant="outlined"
@@ -377,6 +477,9 @@ function Goals() {
                                 name="status"
                                 value={editGoal.status}
                                 onChange={handleEditChange}
+                                error={!!editStatusError}
+                                helperText={editStatusError}
+                                inputRef={editStatusRef}
                                 select
                                 fullWidth
                                 variant="outlined"
@@ -385,6 +488,11 @@ function Goals() {
                                 <MenuItem value="Completed">Completed</MenuItem>
                                 <MenuItem value="Abandoned">Abandoned</MenuItem>
                             </TextField>
+                            {editGeneralError && (
+                                <Typography color="error" variant="body2" sx={{ textAlign: 'center' }}>
+                                    {editGeneralError}
+                                </Typography>
+                            )}
                         </Box>
                     )}
                 </DialogContent>
@@ -395,7 +503,7 @@ function Goals() {
                         variant="contained"
                         color="error" // Using color="error" to map to the green save button style
                     >
-                        Save Changes
+                        Save
                     </Button>
                 </DialogActions>
             </Dialog>
