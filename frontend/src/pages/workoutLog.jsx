@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogContent, DialogActions, DialogTitle, TextField, Card, CardContent, Typography, Box, Divider, IconButton, MenuItem } from "@mui/material";
 import { StaticDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
 import { Edit, Delete, Add } from '@mui/icons-material';
 
@@ -21,9 +21,33 @@ function WorkoutLog() {
 	const [editModalOpen, setEditModalOpen] = useState(false);
 	const [editEntry, setEditEntry] = useState(null);
 
+	// error states for add modal
+	const [addCaloriesBurnedError, setAddCaloriesBurnedError] = useState("");
+	const [addDurationMinError, setAddDurationMinError] = useState("");
+	const [addGeneralError, setAddGeneralError] = useState("");
+
+	// error states for edit modal
+	const [editCaloriesBurnedError, setEditCaloriesBurnedError] = useState("");
+	const [editDurationMinError, setEditDurationMinError] = useState("");
+	const [editWorkoutTypeError, setEditWorkoutTypeError] = useState("");
+	const [editGeneralError, setEditGeneralError] = useState("");
+
+	// refs for add modal inputs
+	const addCaloriesBurnedRef = useRef(null);
+	const addDurationMinRef = useRef(null);
+
+	// refs for edit modal inputs
+	const editCaloriesBurnedRef = useRef(null);
+	const editDurationMinRef = useRef(null);
+	const editWorkoutTypeRef = useRef(null);
+
 	// open modal and set entry to edit
 	const openEditModal = (entry) => {
 		setEditEntry({ ...entry });
+		setEditCaloriesBurnedError("");
+		setEditDurationMinError("");
+		setEditWorkoutTypeError("");
+		setEditGeneralError("");
 		setEditModalOpen(true);
 	};
 
@@ -31,6 +55,11 @@ function WorkoutLog() {
 	const closeEditModal = () => {
 		setEditModalOpen(false);
 		setEditEntry(null);
+		// clear edit errors when closing the modal
+        setEditCaloriesBurnedError("");
+		setEditDurationMinError("");
+		setEditWorkoutTypeError("");
+		setEditGeneralError("");
 	};
 
 	// handle input changes in the edit modal
@@ -40,6 +69,10 @@ function WorkoutLog() {
 			...prev,
 			[name]: value,
 		}));
+		// clear specific error when user starts typing in edit modal
+        if (name === "calories_burned") setEditCaloriesBurnedError("");
+        if (name === "duration_min") setEditDurationMinError("");
+        if (name === "workout_type") setEditWorkoutTypeError("");
 	};
 
 	// function to handle the specified day change
@@ -73,50 +106,103 @@ function WorkoutLog() {
 	const handleSubmit = async (e, specifiedDay) => {
 		e.preventDefault();
 
+		// clear previous errors
+		setAddCaloriesBurnedError("");
+		setAddDurationMinError("");
+		setAddGeneralError("");
+
+		let hasError = false;
+
 		// perform input validation
-		if (!workoutType || !caloriesBurned || !durationMin) {
-			alert("Please fill in all fields.");
-			return;
-		} else {
-			// proceed with form submission
-			try {
-				console.log("Submitting workout log now!");
-				const response = await fetch('http://localhost:5000/workout/add', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({
-						user_id: localStorage.getItem('userId'), // get user id from local storage
-						workout_type: workoutType,
-						calories_burned: caloriesBurned,
-						duration_min: durationMin,
-						created_at: specifiedDay
-					}),
-				});
-				// check if the response is ok
-				if (response.ok) {
-					const data = await response.json();
-					console.log("Workout log submitted successfully:", data);
-					// fetch the specified day change results
-					handleSpecifiedDayChange(specifiedDay);
-					// clear the input fields
-					setWorkoutType("");
-					setCaloriesBurned(0);
-					setDurationMin(0);
-				} else {
-					console.log("Failed to submit workout log:", response.statusText);
-					return;
-				}
-			} catch (error) {
-				console.error("Error submitting workout log:", error);
-				return;
+		if (caloriesBurned === "" 
+				|| isNaN(parseInt(caloriesBurned)) 
+				|| parseInt(caloriesBurned) <= 0
+				|| !/^\d+$/.test(caloriesBurned)) {
+			setAddCaloriesBurnedError("Calories burned must be a positive whole number.");
+			hasError = true;
+			addCaloriesBurnedRef.current.focus();
+		} else if (durationMin === "" 
+				|| isNaN(parseInt(durationMin)) 
+				|| parseInt(durationMin) <= 0
+				|| !/^\d+$/.test(durationMin)) {
+			setAddDurationMinError("Duration must be a positive whole number.");
+			hasError = true;
+			addDurationMinRef.current.focus();
+		} else if (workoutType === "") {
+			setAddGeneralError("An unexpected error has occurred.");
+			hasError = true;
+		}
+		if (hasError) return; // stop if input validation failed
+		// proceed with form submission
+		try {
+			console.log("Submitting workout log now!");
+			const response = await fetch('http://localhost:5000/workout/add', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					user_id: localStorage.getItem('userId'), // get user id from local storage
+					workout_type: workoutType,
+					calories_burned: parseInt(caloriesBurned),
+					duration_min: parseInt(durationMin),
+					created_at: specifiedDay
+				}),
+			});
+			// check if the response is ok
+			if (response.ok) {
+				const data = await response.json();
+				console.log("Workout log submitted successfully:", data);
+				// fetch the specified day change results
+				handleSpecifiedDayChange(specifiedDay);
+				// clear the input fields
+				setWorkoutType("");
+				setCaloriesBurned(0);
+				setDurationMin(0);
+				setAddModalOpen(false); // close modal on success
+			} else {
+				setAddGeneralError("Failed to add workout. Please try again.");
+				console.log("Failed to submit workout log:", response.statusText);
 			}
+		} catch (error) {
+			setAddGeneralError("Error adding workout. Please try again.");
+			console.error("Error submitting workout log:", error);
 		}
 	};
 
 	// function to handle the workout log edit submission
 	const handleEditSubmit = async (specifiedDay) => {
+
+		// clear previous errors
+		setEditCaloriesBurnedError("");
+		setEditDurationMinError("");
+		setEditWorkoutTypeError("");
+		setEditGeneralError("");
+
+		let hasError = false;
+
+		// perform input validation
+		if (editEntry.calories_burned === "" 
+				|| isNaN(parseInt(editEntry.calories_burned)) 
+				|| parseInt(editEntry.calories_burned) <= 0
+				|| !/^\d+$/.test(editEntry.calories_burned)) {
+			setEditCaloriesBurnedError("Calories burned must be a positive number.");
+			hasError = true;
+			editCaloriesBurnedRef.current.focus();
+		} else if (editEntry.duration_min === "" 
+				|| isNaN(parseInt(editEntry.duration_min)) 
+				|| parseInt(editEntry.duration_min) <= 0
+				|| !/^\d+$/.test(editEntry.duration_min)) {
+			setEditDurationMinError("Calories burned must be a positive number.");
+			hasError = true;
+			editDurationMinRef.current.focus();
+		} else if (editEntry.workout_type === "") {
+			setEditWorkoutTypeError("Workout type is required.");
+			hasError = true;
+			editWorkoutTypeRef.current.focus();
+		}
+		if (hasError) return; // stop if input validation failed
+
 		try {
 			const response = await fetch(`http://localhost:5000/workout/edit/${editEntry.workout_id}`, {
 				method: 'PUT',
@@ -125,8 +211,8 @@ function WorkoutLog() {
 				},
 				body: JSON.stringify({
 						workout_type: editEntry.workout_type,
-						calories_burned: editEntry.calories_burned,
-						duration_min: editEntry.duration_min,
+						calories_burned: parseInt(editEntry.calories_burned),
+						duration_min: parseInt(editEntry.duration_min),
 						created_at: specifiedDay
 				}),
 			});
@@ -138,12 +224,12 @@ function WorkoutLog() {
 				// fetch the specified day change results
 				handleSpecifiedDayChange(specifiedDay);
 			} else {
+				setEditGeneralError("Failed to update workout. Please try again.");
 				console.error("Failed to update workout log:", response.statusText);
-				return;
 			}
 		} catch (error) {
+			setEditGeneralError("Error updating workout. Please try again.");
 			console.error("Error updating workout log:", error);
-			return;
 		}
 	};
 
@@ -316,6 +402,9 @@ function WorkoutLog() {
 									sx={{ ml: 1 }}
 									onClick={() => {
 									setWorkoutType(type);
+									setAddCaloriesBurnedError("");
+									setAddDurationMinError("");
+									setAddGeneralError("");
 									setAddModalOpen(true);
 									}}
 								>
@@ -371,30 +460,54 @@ function WorkoutLog() {
 							variant="outlined"
 							type="number"
 							value={caloriesBurned}
-							onChange={(e) => setCaloriesBurned(e.target.value)}
+							onChange={(e) => {
+								setCaloriesBurned(e.target.value);
+								setAddCaloriesBurnedError("");
+							}}
+							error={!!addCaloriesBurnedError}
+							helperText={addCaloriesBurnedError}
 							inputProps={{ step: 1, min: 0 }}
 							fullWidth
+							inputRef={addCaloriesBurnedRef}
 						/>
 						<TextField
 							label="Duration (Min)"
 							variant="outlined"
 							type="number"
 							value={durationMin}
-							onChange={(e) => setDurationMin(e.target.value)}
+							onChange={(e) => {
+								setDurationMin(e.target.value);
+								setAddDurationMinError("");
+							}}
+							error={!!addDurationMinError}
+							helperText={addDurationMinError}
 							inputProps={{ step: 1, min: 0 }}
 							fullWidth
+							inputRef={addDurationMinRef}
 						/>
+						{addGeneralError && (
+							<Typography color="error" variant="body2" sx={{ textAlign: 'center' }}>
+								{addGeneralError}
+							</Typography>
+						)}
 					</Box>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={() => setAddModalOpen(false)}>Cancel</Button>
+					<Button onClick={() => {
+						setAddModalOpen(false);
+						setCaloriesBurned("");
+						setDurationMin("");
+						setWorkoutType("");
+						setAddCaloriesBurnedError("");
+						setAddDurationMinError("");
+						setAddGeneralError("");
+					}}>Cancel</Button>
 					<Button
 						onClick={(e) => {
 							const formattedDate = specifiedDay instanceof Date
 								? specifiedDay.toISOString().split('T')[0]
 								: new Date(specifiedDay).toISOString().split('T')[0];
 							handleSubmit(e, formattedDate);
-							setAddModalOpen(false);
 						}}
 						variant="contained"
 					>
@@ -410,12 +523,39 @@ function WorkoutLog() {
 					{editEntry && (
 						<Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
 							<TextField
+								label="Calories Burned"
+								name="calories_burned"
+								type="number"
+								value={editEntry.calories_burned}
+								onChange={handleEditChange}
+								error={!!editCaloriesBurnedError}
+								helperText={editCaloriesBurnedError}
+								inputProps={{ step: 1, min: 0 }}
+								fullWidth
+								inputRef={editCaloriesBurnedRef}
+							/>
+							<TextField
+								label="Duration (Min)"
+								name="duration_min"
+								type="number"
+								value={editEntry.duration_min}
+								onChange={handleEditChange}
+								error={!!editDurationMinError}
+								helperText={editDurationMinError}
+								inputProps={{ step: 1, min: 0 }}
+								fullWidth
+								inputRef={editDurationMinRef}
+							/>
+							<TextField
 								label="Workout Type"
 								name="workout_type"
 								value={editEntry.workout_type}
 								onChange={handleEditChange}
-								select
-								fullWidth
+								error={!!editWorkoutTypeError}
+                                helperText={editWorkoutTypeError}
+                                select
+                                fullWidth
+                                inputRef={editWorkoutTypeRef}
 							>
 								<MenuItem value="Running">Running</MenuItem>
 								<MenuItem value="Swimming">Swimming</MenuItem>
@@ -425,24 +565,11 @@ function WorkoutLog() {
 								<MenuItem value="Yoga">Yoga</MenuItem>
 								<MenuItem value="Other">Other</MenuItem>
 							</TextField>
-							<TextField
-								label="Calories Burned"
-								name="calories_burned"
-								type="number"
-								value={editEntry.calories_burned}
-								onChange={handleEditChange}
-								inputProps={{ step: 1, min: 0 }}
-								fullWidth
-							/>
-							<TextField
-								label="Duration (Min)"
-								name="duration_min"
-								type="number"
-								value={editEntry.duration_min}
-								onChange={handleEditChange}
-								inputProps={{ step: 1, min: 0 }}
-								fullWidth
-							/>
+							{editGeneralError && (
+								<Typography color="error" variant="body2" sx={{ textAlign: 'center' }}>
+									{editGeneralError}
+								</Typography>
+							)}
 						</Box>
 					)}
 				</DialogContent>
