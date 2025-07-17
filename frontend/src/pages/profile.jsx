@@ -1,13 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { IconButton, Typography } from "@mui/material";
+import { Edit } from '@mui/icons-material';
 import '../styles/index.css'
 import Navbar from '../navbar';
-import { IconButton } from "@mui/material";
-import { Edit } from '@mui/icons-material';
 
 function Profile() {
   const [stats, setStats] = useState({});
   const [displayedProfilePicUrl, setDisplayedProfilePicUrl] = useState("/images/default-profile-icon.jpg");
   const [profilePicFile, setProfilePicFile] = useState(null);
+  const [profilePicError, setProfilePicError] = useState("");
 
   // ref for hidden file input
   const fileInputRef = useRef(null);
@@ -32,7 +33,9 @@ function Profile() {
 
   // function to upload the new profile pic to the backend server and update user data
   const uploadNewProfilePic = async (file) => {
-    
+    // reset the error message
+    setProfilePicError("");
+
     // get the current user ID from local storage
     const userId = localStorage.getItem('userId');
 
@@ -62,13 +65,15 @@ function Profile() {
           ...prevStats,
           profile_pic: data.imageUrl
         }));
+        setProfilePicError("");
       } else {
+        setProfilePicError("Failed to update profile picture. Please try again.");
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to update profile picture.');
+        console.error(errorData.message || 'Failed to update profile picture.');
       }
     } catch (error) {
+      setProfilePicError("Error updating profile picture. Please try again.");
       console.error('Error updating profile picture:', error);
-      return;
     }
   };
 
@@ -170,6 +175,11 @@ function Profile() {
             </ul>
           </div>
         </div>
+        {profilePicError && (
+          <Typography color="error" variant="body2" sx={{ textAlign: 'center' }}>
+            {profilePicError}
+          </Typography>
+        )}
       </section>
     </div>
   );
