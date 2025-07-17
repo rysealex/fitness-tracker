@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import Box from '@mui/material/Box';
 import '../styles/index.css'
 import Navbar from '../navbar';
 
@@ -8,6 +9,9 @@ function Stats() {
   const [stats, setStats] = useState({});
   const [weight, setWeight] = useState('');
   const [height, setHeight] = useState('');
+  const [weightError, setWeightError] = useState("");
+  const [heightError, setHeightError] = useState("");
+  const [generalError, setGeneralError] = useState("");
 
   // fetch user stats function
   const fetchStats = async () => {
@@ -43,6 +47,48 @@ function Stats() {
       console.error("User ID not found in local storage.");
       return;
     }
+    // clear previous errors
+    setWeightError("");
+    setHeightError("");
+    setGeneralError("");
+
+    let hasError = false;
+
+    // check which attribute is being updated
+    if (attributeInput === "height_ft") {
+      // perform height validation
+      const parsedHeight = parseFloat(height);
+      if (height === "") {
+        setHeightError("Enter your new height.");
+        hasError = true;
+      } else if (isNaN(parsedHeight) || !/^\d+\.?\d{0,1}$/.test(height)) {
+        setHeight("");
+        setHeightError("New height must be a decimal to the tenth place (e.g., 5.9).");
+        hasError = true;
+      }
+    } 
+    else if (attributeInput === "weight_lbs") {
+      // perform weight validation
+      const parsedWeight = parseFloat(weight);
+      if (weight === "") {
+        setWeightError("Enter your new weight.");
+        hasError = true;
+      } else if (isNaN(parsedWeight) || !/^\d+\.?\d{0,2}$/.test(weight)) {
+        setWeight("");
+        setWeightError("New weight must be a decimal to the hundredth place (e.g., 150.75).");
+        hasError = true;
+      }
+    } 
+    else {
+      // stop the submission now
+      setHeight("");
+      setWeight("");
+      setGeneralError("An unexpected error occurred.");
+      return;
+    }
+
+    if (hasError) return; // stop if input validation failed
+    
     try {
       // try to update the user stats with current attribute and value
       const response = await fetch(`http://localhost:5000/auth/update-attribute/${userId}`, {
@@ -60,13 +106,16 @@ function Stats() {
         const data = await response.json();
         console.log("User stats updated successfully:", data);
         fetchStats(); // fetch the updated stats
+        // clear the inputs
+        setHeight("");
+        setWeight("");
       } else {
+        setGeneralError("Stats update submission failed.");
         console.log("Failed to update user stats:", response.statusText);
-        return;
       }
     } catch (error) {
+      setGeneralError("Error updating user stats.");
       console.error("Error updating user stats:", error);
-      return;
     }
   };
 
@@ -92,16 +141,45 @@ function Stats() {
           <li>Gender: {stats.gender}</li>
           <li>
             Height: {stats.height_ft} ft
-            <input type="number" required={true} value={height} onChange={(e) => setHeight(e.target.value)} placeholder="Enter new height" />
+            <TextField
+              className='textfield'
+              error={!!heightError}
+              id="height-input"
+              label="New height"
+              variant="outlined"
+              value={height}
+              onChange={(e) => {
+                setHeight(e.target.value);
+                setHeightError(""); // clear error when user starts typing
+              }}
+              helperText={heightError}
+            />
             <button type="button" onClick={() => handleSubmit('height_ft', parseFloat(height))}>Update Height</button>
           </li>
           <li>
             Weight: {stats.weight_lbs} lbs
-            <input type="number" required={true} value={weight} onChange={(e) => setWeight(e.target.value)} placeholder="Enter new weight" />
+            <TextField
+              className='textfield'
+              error={!!weightError}
+              id="weight-input"
+              label="New weight"
+              variant="outlined"
+              value={weight}
+              onChange={(e) => {
+                setWeight(e.target.value);
+                setWeightError(""); // clear error when user starts typing
+              }}
+              helperText={weightError}
+            />
             <button type="button" onClick={() => handleSubmit('weight_lbs', parseFloat(weight))}>Update Weight</button>
           </li>
         </ul>
       </section>
+      {generalError && (
+        <Box sx={{ color: '#C51D34', mt: 2, textAlign: 'center' }}>
+          {generalError}
+        </Box>
+      )}
     </div>
   );
 };

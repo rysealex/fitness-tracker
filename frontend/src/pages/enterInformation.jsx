@@ -273,7 +273,6 @@ function EnterInformation() {
               className='textfield'
               error={!!dobError}
               id="dob-input"
-              label="Date of Birth (YYYY-MM-DD)"
               variant="outlined"
               type="date"
               value={dob}
@@ -346,7 +345,6 @@ function EnterInformation() {
               className='textfield'
               error={!!profilePicError}
               id="profile-pic-input"
-              label="Profile Picture (optional)"
               variant="outlined"
               type="file"
               onChange={handleFileChange}
@@ -363,7 +361,7 @@ function EnterInformation() {
             <TextField
               className='textfield'
               id="occupation-input"
-              label="Occupation (optional)"
+              label="Occupation"
               variant="outlined"
               type="text"
               onChange={(e) => setOccupation(e.target.value)}
