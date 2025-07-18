@@ -9,6 +9,7 @@ function Stats() {
   const [stats, setStats] = useState({});
   const [weight, setWeight] = useState('');
   const [height, setHeight] = useState('');
+  const [successMessage, setSuccessMessage] = useState("");
   const [weightError, setWeightError] = useState("");
   const [heightError, setHeightError] = useState("");
   const [generalError, setGeneralError] = useState("");
@@ -51,10 +52,11 @@ function Stats() {
       console.error("User ID not found in local storage.");
       return;
     }
-    // clear previous errors
+    // clear previous errors and success messages
     setWeightError("");
     setHeightError("");
     setGeneralError("");
+    setSuccessMessage("");
 
     let hasError = false;
 
@@ -117,15 +119,24 @@ function Stats() {
         // clear the inputs
         setHeight("");
         setWeight("");
+        // display success message
+        setSuccessMessage("Successfuly updated stats!");
+        // clear the success message after 3 sec
+        setTimeout(() => {
+          setSuccessMessage("");
+        }, 3000);
+        
       } else {
         setHeight("");
         setWeight("");
+        setSuccessMessage("");
         setGeneralError("Stats update submission failed.");
         console.log("Failed to update user stats:", response.statusText);
       }
     } catch (error) {
       setHeight("");
       setWeight("");
+      setSuccessMessage("");
       setGeneralError("Error updating user stats.");
       console.error("Error updating user stats:", error);
     }
@@ -189,6 +200,11 @@ function Stats() {
           </li>
         </ul>
       </section>
+      {successMessage && (
+        <Box sx={{ color: '#1dc51dff', mt: 2, textAlign: 'center' }}>
+          {successMessage}
+        </Box>
+      )}
       {generalError && (
         <Box sx={{ color: '#C51D34', mt: 2, textAlign: 'center' }}>
           {generalError}

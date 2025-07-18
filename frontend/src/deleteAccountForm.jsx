@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TextField, Button, Typography } from '@mui/material';
+import { TextField, Button, Typography, Box } from '@mui/material';
 
 // form dialog for the delete account feature
 export default function DeleteAccountForm() {
@@ -10,6 +10,7 @@ export default function DeleteAccountForm() {
   };
 
   const [password, setPassword] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [generalError, setGeneralError] = useState("");
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -17,6 +18,7 @@ export default function DeleteAccountForm() {
 
   const handleClickOpen = () => {
     setPassword("");
+    setSuccessMessage("");
     setPasswordError("");
     setGeneralError("");
     setDeleteModalOpen(true);
@@ -24,6 +26,7 @@ export default function DeleteAccountForm() {
 
   const handleClose = () => {
     setPassword("");
+    setSuccessMessage("");
     setPasswordError("");
     setGeneralError("");
     setDeleteModalOpen(false);
@@ -33,9 +36,10 @@ export default function DeleteAccountForm() {
   const handleDelete = async (e) => {
     e.preventDefault();
 
-    // clear previous error
+    // clear previous errors and success messages
     setPasswordError("");
     setGeneralError("");
+    setSuccessMessage("");
 
    // perform input validation
     if (password === "") {
@@ -69,15 +73,22 @@ export default function DeleteAccountForm() {
         localStorage.removeItem('userId');
         localStorage.removeItem('password');
         localStorage.removeItem('username');
-        handleNavigate('/');
+        setSuccessMessage("Successfuly deleted account! You will be redirected shortly.");
+        // clear success message and redirect to landing page after 3 sec
+        setTimeout(() => {
+          setSuccessMessage("");
+          handleNavigate('/');
+        }, 3000);
       } else {
         setPassword("");
+        setSuccessMessage("");
         passwordRef.current.focus();
         setGeneralError("Failed to delete user account. Please try again.");
         console.error("Failed to delete user account:", response.statusText);
       }
     } catch (error) {
       setPassword("");
+      setSuccessMessage("");
       passwordRef.current.focus();
       setGeneralError("Error deleting user account. Please try again.");
       console.error("Error deleting user account:", error);
@@ -118,6 +129,11 @@ export default function DeleteAccountForm() {
                 fullWidth
                 inputRef={passwordRef}
               />
+              {successMessage && (
+                <Box sx={{ color: '#1dc51dff', mt: 2, textAlign: 'center' }}>
+                  {successMessage}
+                </Box>
+              )}
               {generalError && (
                 <Typography color="error" variant="body2" sx={{ textAlign: 'center' }}>
                   {generalError}
