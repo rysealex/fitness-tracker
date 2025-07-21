@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
+import { useStats } from '../StatsContext';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -7,44 +8,23 @@ import '../styles/index.css'
 import Navbar from '../navbar';
 
 function Stats() {
-  const [stats, setStats] = useState({});
   const [weight, setWeight] = useState('');
   const [height, setHeight] = useState('');
   const [successMessage, setSuccessMessage] = useState("");
   const [weightError, setWeightError] = useState("");
   const [heightError, setHeightError] = useState("");
   const [generalError, setGeneralError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingStats, setIsLoadingStats] = useState(false);
 
   // refs for the input fields
   const heightInputRef = useRef(null);
   const weightInputRef = useRef(null);
 
-  // fetch user stats function
-  const fetchStats = async () => {
-    // get the current users user_id from local storage
-    const userId = localStorage.getItem('userId');
-    if (!userId) {
-      console.error("User ID not found in local storage.");
-      return;
-    }
-    try {
-      const response = await fetch(`http://localhost:5000/auth/user/${userId}`);
-      if (response.ok) {
-        const data = await response.json();
-        setStats(data);
-        console.log("User stats fetched successfully:", data);
-      } else {
-        console.error("Failed to fetch user stats:", response.statusText);
-      }
-    } catch (error) {
-      console.error("Error fetching user stats:", error);
-    }
-  };
-  // fetch user stats on component mount
-  useEffect(() => {
-    fetchStats();
-  }, []);
+  // get the stats from context
+  const { stats, isLoading, error, setStats } = useStats();
+  if (isLoading) return <div>Loading home page...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+  if (!stats) return <div>No stats available.</div>;
 
   // handle the update stats form submission
   const handleSubmit = async (attributeInput, valueInput) => {
@@ -56,7 +36,7 @@ function Stats() {
     }
 
     // start loading state
-    setIsLoading(true);
+    setIsLoadingStats(true);
 
     // clear previous errors and success messages
     setWeightError("");
@@ -104,7 +84,7 @@ function Stats() {
     }
 
     if (hasError) {
-      setIsLoading(false);
+      setIsLoadingStats(false);
       return; // stop if input validation failed
     }
 
@@ -124,11 +104,15 @@ function Stats() {
       if (response.ok) {
         const data = await response.json();
         console.log("User stats updated successfully:", data);
-        fetchStats(); // fetch the updated stats
+        // update the stats state to keep it consistent with new values
+        setStats(prevStats => ({
+          ...prevStats,
+          [attributeInput]: valueInput
+        }));
         // clear the inputs
         setHeight("");
         setWeight("");
-        setIsLoading(false);
+        setIsLoadingStats(false);
         // display success message
         setSuccessMessage("Successfuly updated stats!");
         // clear the success message after 3 sec
@@ -140,7 +124,7 @@ function Stats() {
         setHeight("");
         setWeight("");
         setSuccessMessage("");
-        setIsLoading(false);
+        setIsLoadingStats(false);
         setGeneralError("Stats update submission failed.");
         console.log("Failed to update user stats:", response.statusText);
       }
@@ -148,7 +132,7 @@ function Stats() {
       setHeight("");
       setWeight("");
       setSuccessMessage("");
-      setIsLoading(false);
+      setIsLoadingStats(false);
       setGeneralError("Error updating user stats.");
       console.error("Error updating user stats:", error);
     }
@@ -168,7 +152,7 @@ function Stats() {
 
   return (
     <div className='centered-page'>
-      <Navbar stats={stats} />
+      <Navbar />
       <section className='stats-container'>
         <h1>Your Stats</h1>
         <ul>
@@ -212,7 +196,7 @@ function Stats() {
           </li>
         </ul>
       </section>
-      {isLoading && (
+      {isLoadingStats && (
         <Box sx={{ mt: 2, textAlign: 'center' }}>
           <CircularProgress sx={{ color: '#C51D34' }} />
         </Box>

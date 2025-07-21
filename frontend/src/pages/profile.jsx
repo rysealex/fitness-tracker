@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
+import { useStats } from '../StatsContext';
 import { IconButton, Typography, Box } from "@mui/material";
 import { Edit } from '@mui/icons-material';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -6,15 +7,20 @@ import '../styles/index.css'
 import Navbar from '../navbar';
 
 function Profile() {
-  const [stats, setStats] = useState({});
   const [displayedProfilePicUrl, setDisplayedProfilePicUrl] = useState("/images/default-profile-icon.jpg");
   const [profilePicFile, setProfilePicFile] = useState(null);
   const [profilePicError, setProfilePicError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingPic, setIsLoadingPic] = useState(false);
 
   // ref for hidden file input
   const fileInputRef = useRef(null);
+
+  // get the stats from context
+  const { stats, isLoading, error, setStats } = useStats();
+  if (isLoading) return <div>Loading home page...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+  if (!stats) return <div>No stats available.</div>;
 
   // function to trigger the hidden file input click
   const handleEditClick = () => {
@@ -50,7 +56,7 @@ function Profile() {
     }
 
     // start loading state
-    setIsLoading(true);
+    setIsLoadingPic(true);
 
     // attempt to upload new profile pic
     try {
@@ -74,53 +80,26 @@ function Profile() {
           profile_pic: data.imageUrl
         }));
         setProfilePicError("");
-        setIsLoading(false);
+        setIsLoadingPic(false);
         setSuccessMessage("Successfuly update profile picture!");
         // clear the success message after 3 sec
         setTimeout(() => {
           setSuccessMessage("");
         }, 3000);
       } else {
-        setIsLoading(false);
+        setIsLoadingPic(false);
         setSuccessMessage("");
         setProfilePicError("Failed to update profile picture. Please try again.");
         const errorData = await response.json();
         console.error(errorData.message || 'Failed to update profile picture.');
       }
     } catch (error) {
-      setIsLoading(false);
+      setIsLoadingPic(false);
       setSuccessMessage("");
       setProfilePicError("Error updating profile picture. Please try again.");
       console.error('Error updating profile picture:', error);
     }
   };
-
-
-  // fetch user stats on component mount
-  useEffect(() => {
-    const fetchStats = async () => {
-      // get the current users user_id from local storage
-      const userId = localStorage.getItem('userId');
-      if (!userId) {
-        console.error("User ID not found in local storage.");
-        return;
-      }
-      try {
-        const response = await fetch(`http://localhost:5000/auth/user/${userId}`);
-        if (response.ok) {
-          const data = await response.json();
-          setStats(data);
-          console.log("User stats fetched successfully:", data);
-        } else {
-          console.error("Failed to fetch user stats:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Error fetching user stats:", error);
-      }
-    };
-    // call the fetchStats function to get user stats
-    fetchStats();
-  }, []);
 
   // function to convert birthday and account creation date to a more readable format
   const formatDate = (dateString) => {
@@ -137,7 +116,7 @@ function Profile() {
 
   return (
     <div className='centered-page'>
-      <Navbar stats={stats} />
+      <Navbar />
       <section className='profile-container'>
         <h1>Your Profile</h1>
         <div className='profile-content-wrapper'>
@@ -193,7 +172,7 @@ function Profile() {
             </ul>
           </div>
         </div>
-        {isLoading && (
+        {isLoadingPic && (
           <Box sx={{ mt: 2, textAlign: 'center' }}>
             <CircularProgress sx={{ color: '#C51D34' }} />
           </Box>

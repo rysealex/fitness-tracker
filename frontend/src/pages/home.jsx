@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useStats } from '../StatsContext';
 import Button from '@mui/material/Button';
 import CurrentDate from '../currentDate';
 import Stack from '@mui/material/Stack';
@@ -19,7 +19,10 @@ function Home() {
     navigate(url);
   };
   
-  const [stats, setStats] = useState({});
+  const { stats, isLoading, error } = useStats();
+  if (isLoading) return <div>Loading home page...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+  if (!stats) return <div>No stats available.</div>;
 
   const handleClickCalorieCounter = () => {
     handleNavigate("/calorie-counter");
@@ -30,32 +33,6 @@ function Home() {
   const handleClickGoals = () => {
     handleNavigate("/goals");
   };
-  
-  // fetch user stats on component mount
-  useEffect(() => {
-    const fetchStats = async () => {
-      // get the current users user_id from local storage
-      const userId = localStorage.getItem('userId');
-      if (!userId) {
-        console.error("User ID not found in local storage.");
-        return;
-      }
-      try {
-        const response = await fetch(`http://localhost:5000/auth/user/${userId}`);
-        if (response.ok) {
-          const data = await response.json();
-          setStats(data);
-          console.log("User stats fetched successfully:", data);
-        } else {
-          console.error("Failed to fetch user stats:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Error fetching user stats:", error);
-      }
-    };
-    // call the fetchStats function to get user stats
-    fetchStats();
-  }, []);
     
   return (
     <div className='centered-page'>
