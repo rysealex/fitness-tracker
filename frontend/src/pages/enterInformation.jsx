@@ -9,6 +9,7 @@ import Select from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import FormHelperText from '@mui/material/FormHelperText';
+import CircularProgress from '@mui/material/CircularProgress';
 
 function EnterInformation() {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ function EnterInformation() {
   const [profilePicFile, setProfilePicFile] = useState(null);
   //const [profilePic, setProfilePic] = useState(""); // optional
   const [occupation, setOccupation] = useState("Unemployed"); // optional
+  const [isLoading, setIsLoading] = useState(false);
 
   // error usestates
   const [fnameError, setFnameError] = useState("");
@@ -95,6 +97,9 @@ function EnterInformation() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // set loading state
+    setIsLoading(true);
+
     // clear previous errors
     setFnameError("");
     setLnameError("");
@@ -150,7 +155,10 @@ function EnterInformation() {
       genderInputRef.current.focus(); 
     }
 
-    if (hasError) return; // stop if input validation failed
+    if (hasError) {
+      setIsLoading(false);
+      return; // stop if input validation failed
+    }
 
     // initialize with current profilePicUrl (default or previously set)
     let finalProfilePicUrl = profilePicUrl; 
@@ -161,6 +169,7 @@ function EnterInformation() {
       if (uploadedUrl) {
         finalProfilePicUrl = uploadedUrl; // use the URL if successful
       } else {
+        setIsLoading(false);
         setProfilePicError("Profile picture upload failed.")
         console.log("Profile picture upload failed, cannot submit user information.");
         return;
@@ -195,6 +204,7 @@ function EnterInformation() {
         // store the user id in local storage
         localStorage.setItem('userId', data.user_id);
         console.log('User ID stored in local storage:', data.user_id);
+        setIsLoading(false);
         handleNavigate("/home");
       } else {
         setFname("");
@@ -203,6 +213,7 @@ function EnterInformation() {
         setWeight("");
         setDob("");
         setGender("");
+        setIsLoading(false);
         fnameInputRef.current.focus();
         setGeneralError("Account information submission failed.");
         console.log('Account information submission failed:', response.statusText);
@@ -214,6 +225,7 @@ function EnterInformation() {
       setWeight("");
       setDob("");
       setGender("");
+      setIsLoading(false);
       fnameInputRef.current.focus();
       setGeneralError("Error during account information submission.");
       console.error('Error during account information submission:', error);
@@ -422,6 +434,11 @@ function EnterInformation() {
                 color: '#fff',
                 fontSize: '13px'}}
             />
+            {isLoading && (
+              <Box sx={{ mt: 2, textAlign: 'center' }}>
+                <CircularProgress sx={{ color: '#C51D34' }} />
+              </Box>
+            )}
             {generalError && (
               <Box sx={{ color: '#C51D34', mt: 2, textAlign: 'center' }}>
                 {generalError}

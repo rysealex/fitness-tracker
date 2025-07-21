@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { IconButton, Typography, Box } from "@mui/material";
 import { Edit } from '@mui/icons-material';
+import CircularProgress from '@mui/material/CircularProgress';
 import '../styles/index.css'
 import Navbar from '../navbar';
 
@@ -10,6 +11,7 @@ function Profile() {
   const [profilePicFile, setProfilePicFile] = useState(null);
   const [profilePicError, setProfilePicError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   // ref for hidden file input
   const fileInputRef = useRef(null);
@@ -34,6 +36,7 @@ function Profile() {
 
   // function to upload the new profile pic to the backend server and update user data
   const uploadNewProfilePic = async (file) => {
+
     // reset the error message and success message
     setProfilePicError("");
     setSuccessMessage("");
@@ -45,6 +48,9 @@ function Profile() {
       console.error("User ID not found. Cannot upload profile picture.");
       return;
     }
+
+    // start loading state
+    setIsLoading(true);
 
     // attempt to upload new profile pic
     try {
@@ -68,18 +74,21 @@ function Profile() {
           profile_pic: data.imageUrl
         }));
         setProfilePicError("");
+        setIsLoading(false);
         setSuccessMessage("Successfuly update profile picture!");
         // clear the success message after 3 sec
         setTimeout(() => {
           setSuccessMessage("");
         }, 3000);
       } else {
+        setIsLoading(false);
         setSuccessMessage("");
         setProfilePicError("Failed to update profile picture. Please try again.");
         const errorData = await response.json();
         console.error(errorData.message || 'Failed to update profile picture.');
       }
     } catch (error) {
+      setIsLoading(false);
       setSuccessMessage("");
       setProfilePicError("Error updating profile picture. Please try again.");
       console.error('Error updating profile picture:', error);
@@ -184,6 +193,11 @@ function Profile() {
             </ul>
           </div>
         </div>
+        {isLoading && (
+          <Box sx={{ mt: 2, textAlign: 'center' }}>
+            <CircularProgress sx={{ color: '#C51D34' }} />
+          </Box>
+        )}
         {successMessage && (
           <Box sx={{ color: '#1dc51dff', mt: 2, textAlign: 'center' }}>
             {successMessage}

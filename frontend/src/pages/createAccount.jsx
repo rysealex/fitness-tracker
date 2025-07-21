@@ -3,6 +3,7 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
+import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from 'react-router-dom';
 
 function CreateAccount() {
@@ -17,6 +18,7 @@ function CreateAccount() {
   const [passwordError, setPasswordError] = useState("");
   const [passwordConfirmError, setPasswordConfirmError] = useState("");
   const [generalError, setGeneralError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   // refs for the input fields
   const usernameInputRef = useRef(null);
@@ -26,6 +28,9 @@ function CreateAccount() {
   // handle the account creation attempt
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // start loading state
+    setIsLoading(true);
 
     // clear previous errors
     setUsernameError("");
@@ -57,7 +62,10 @@ function CreateAccount() {
       hasError = true;
       confirmPasswordInputRef.current.focus();
     }
-    if (hasError) return; // stop if input validation failed
+    if (hasError) {
+      setIsLoading(false);
+      return; // stop if input validation failed
+    }
     // proceed to account creation with API call
     try {
       const response = await fetch('http://localhost:5000/auth/username-exists', {
@@ -75,6 +83,7 @@ function CreateAccount() {
           setUsername("");
           setPassword("");
           setConfirmPassword("");
+          setIsLoading(false);
           usernameInputRef.current.focus();
           console.log('Username is taken:', data);
           setGeneralError("Username is taken.");
@@ -83,12 +92,14 @@ function CreateAccount() {
           // store the username and password in local storage
           localStorage.setItem('username', username);
           localStorage.setItem('password', password);
+          setIsLoading(false);
           handleNavigate("/enter-info");
         }
       } else {
         setUsername("");
         setPassword("");
         setConfirmPassword("");
+        setIsLoading(false);
         usernameInputRef.current.focus();
         const errorData = await response.json();
         setGeneralError(errorData.message || "Account creation failed. Please check your credentials.");
@@ -98,10 +109,11 @@ function CreateAccount() {
       setUsername("");
       setPassword("");
       setConfirmPassword("");
+      setIsLoading(false);
       usernameInputRef.current.focus();
       console.error('Error during username check:', error);
       setGeneralError("Network error. Please try again later.");
-    };
+    }
   };
 
   return (
@@ -178,6 +190,11 @@ function CreateAccount() {
                 color: '#fff',
                 fontSize: '13px'}}
             />
+            {isLoading && (
+              <Box sx={{ mt: 2, textAlign: 'center' }}>
+                <CircularProgress sx={{ color: '#C51D34' }} />
+              </Box>
+            )}
             {generalError && (
               <Box sx={{ color: '#C51D34', mt: 2, textAlign: 'center' }}>
                 {generalError}

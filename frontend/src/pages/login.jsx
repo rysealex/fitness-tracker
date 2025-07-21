@@ -3,6 +3,7 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
+import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from 'react-router-dom';
 import { useAudio } from '../AudioContext';
 
@@ -16,6 +17,7 @@ function Login() {
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [generalError, setGeneralError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   // refs for the input fields
   const usernameInputRef = useRef(null);
@@ -24,6 +26,9 @@ function Login() {
   // handle the login attempt
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // start loading state
+    setIsLoading(true);
 
     // clear previous errors
     setUsernameError("");
@@ -43,7 +48,10 @@ function Login() {
       hasError = true;
       passwordInputRef.current.focus();
     } 
-    if (hasError) return; // stop if input validation failed
+    if (hasError) {
+      setIsLoading(false);
+      return; // stop if input validation failed
+    }
     // proceed to login with API call
     try {
       const response = await fetch('http://localhost:5000/auth/login', {
@@ -59,10 +67,12 @@ function Login() {
         console.log('Login successful:', data);
         // store the user id in local storage
         localStorage.setItem('userId', data.user.user_id);
+        setIsLoading(false);
         handleNavigate("/home");
       } else {
         setUsername("");
         setPassword("");
+        setIsLoading(false);
         usernameInputRef.current.focus();
         const errorData = await response.json();
         setGeneralError(errorData.message || "Login failed. Please check your credentials.");
@@ -71,6 +81,7 @@ function Login() {
     } catch (error) {
       setUsername("");
       setPassword("");
+      setIsLoading(false);
       usernameInputRef.current.focus();
       console.error('Error during login:', error);
       setGeneralError("Network error. Please try again later.");
@@ -128,6 +139,11 @@ function Login() {
                   color: '#fff',
                   fontSize: '13px'}}
               />
+              {isLoading && (
+                <Box sx={{ mt: 2, textAlign: 'center' }}>
+                  <CircularProgress sx={{ color: '#C51D34' }} />
+                </Box>
+              )}
               {generalError && (
                 <Box sx={{ color: '#C51D34', mt: 2, textAlign: 'center' }}>
                   {generalError}

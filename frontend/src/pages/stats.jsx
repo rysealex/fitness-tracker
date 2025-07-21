@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import '../styles/index.css'
 import Navbar from '../navbar';
@@ -13,6 +14,7 @@ function Stats() {
   const [weightError, setWeightError] = useState("");
   const [heightError, setHeightError] = useState("");
   const [generalError, setGeneralError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   // refs for the input fields
   const heightInputRef = useRef(null);
@@ -52,6 +54,10 @@ function Stats() {
       console.error("User ID not found in local storage.");
       return;
     }
+
+    // start loading state
+    setIsLoading(true);
+
     // clear previous errors and success messages
     setWeightError("");
     setHeightError("");
@@ -97,8 +103,11 @@ function Stats() {
       return;
     }
 
-    if (hasError) return; // stop if input validation failed
-    
+    if (hasError) {
+      setIsLoading(false);
+      return; // stop if input validation failed
+    }
+
     try {
       // try to update the user stats with current attribute and value
       const response = await fetch(`http://localhost:5000/auth/update-attribute/${userId}`, {
@@ -119,6 +128,7 @@ function Stats() {
         // clear the inputs
         setHeight("");
         setWeight("");
+        setIsLoading(false);
         // display success message
         setSuccessMessage("Successfuly updated stats!");
         // clear the success message after 3 sec
@@ -130,6 +140,7 @@ function Stats() {
         setHeight("");
         setWeight("");
         setSuccessMessage("");
+        setIsLoading(false);
         setGeneralError("Stats update submission failed.");
         console.log("Failed to update user stats:", response.statusText);
       }
@@ -137,6 +148,7 @@ function Stats() {
       setHeight("");
       setWeight("");
       setSuccessMessage("");
+      setIsLoading(false);
       setGeneralError("Error updating user stats.");
       console.error("Error updating user stats:", error);
     }
@@ -200,6 +212,11 @@ function Stats() {
           </li>
         </ul>
       </section>
+      {isLoading && (
+        <Box sx={{ mt: 2, textAlign: 'center' }}>
+          <CircularProgress sx={{ color: '#C51D34' }} />
+        </Box>
+      )}
       {successMessage && (
         <Box sx={{ color: '#1dc51dff', mt: 2, textAlign: 'center' }}>
           {successMessage}
