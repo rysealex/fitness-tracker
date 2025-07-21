@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { AudioProvider } from './AudioContext';
 import { StatsProvider } from './StatsContext';
 import Navbar from './navbar';
 import Welcome from "./pages/welcome";

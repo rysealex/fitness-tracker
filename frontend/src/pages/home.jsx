@@ -1,14 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useAudio } from '../AudioContext';
-import { useUser } from '../userContext';
-import { Container } from '@mui/material';
-import Button from '@mui/material/Button';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import StatCard from '../statCard';
+import Button from '@mui/material/Button';
 import CurrentDate from '../currentDate';
-import axios from 'axios';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser } from '@fortawesome/free-solid-svg-icons';
 import Stack from '@mui/material/Stack';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -25,163 +18,19 @@ function Home() {
   const handleNavigate = (url) => {
     navigate(url);
   };
-  const { username, setUsername } = useUser();
+  
   const [stats, setStats] = useState({});
-  const [weightInput, setWeightInput] = useState(stats.weight);
-  const [heightInput, setHeightInput] = useState(stats.height);
-  const [profileVisible, setProfileVisible] = useState(false);
-  const [profilePicture, setProfilePicture] = useState(null);
-  const [previewPicture, setPreviewPicture] = useState(null);
-  const { startAudio, isPlaying } = useAudio();
-  // useEffect(() => {
-  //   if (!isPlaying) {
-  //     startAudio(); // Start audio if not already playing
-  //   }
-  // }, [isPlaying, startAudio]);
-  // Event handler for nav bar buttons
-  const handleSignOut = (event) => {
-    setUsername("");
-    handleNavigate('/');
-  };
-  const handleClickDashboard = () => {
-    handleNavigate('/home');
-  };
-  const handleClickStats = () => {
-    handleNavigate('/stats');
-  };
-  const handleClickProfile = () => {
-    handleNavigate('/profile');
-  };
-  const handleClickSettings = () => {
-    handleNavigate('/settings');
-  };
-  // event handler for calorie counter button
-  const handleClickCalorieCounter = () => {
-    handleNavigate('/calorie-counter');
-  };
-  // event handler for workout log button
-  const handleClickWorkoutLog = () => {
-    handleNavigate('/workout-log');
-  };
-  // event handler for goals button
-  const handleClickGoals = () => {
-    handleNavigate('/goals');
-  };
-  // Event handler for edit buttons
-  const [editModeWeight, setEditModeWeight] = useState(false);
-  const handleClickWeight = () => {
-    setEditModeWeight(!editModeWeight);
-  };
-  const [editModeHeight, setEditModeHeight] = useState(false);
-  const handleClickHeight = () => {
-    setEditModeHeight(!editModeHeight);
-  };
-  // Event handler for saving the new values
-  const handleSaveWeight = () => {
-    const updatedStats = { ...stats, weight: weightInput };
-    setStats(updatedStats);
-    // Connect to backend here
-    axios.put(`http://127.0.0.1:5000/user/${username}/stats`, {
-      weight: weightInput
-    })
-      .then(response => {
-        console.log("Weight updated successfully:", response.data);
-        axios.get(`http://127.0.0.1:5000/user/${username}/stats`)
-          .then(function (response) {
-            setStats(response.data); // Ensure we have the latest stats
-            setEditModeWeight(false);
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-      })
-      .catch(error => {
-        console.log("Error updating weight:", error);
-      });
-  };
-  const handleSaveHeight = () => {
-    const updatedStats = { ...stats, height: heightInput };
-    setStats(updatedStats);
-    // Connect to backend here
-    axios.put(`http://127.0.0.1:5000/user/${username}/stats`, {
-      height: heightInput
-    })
-      .then(response => {
-        console.log("Height updated successfully:", response.data);
-        axios.get(`http://127.0.0.1:5000/user/${username}/stats`)
-          .then(function (response) {
-            setStats(response.data); // Ensure we have the latest stats
-            setEditModeHeight(false);
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-      })
-      .catch(error => {
-        console.log("Error updating height:", error);
-      });
-  };
-  // Error checking weight input value
-  const handleWeightInputChange = (e) => {
-    const newValue = e.target.value;
-    if (!isNaN(newValue)) {
-      setWeightInput(newValue);
-    }
-  };
-  // Error checking height input value
-  const handleHeightInputChange = (e) => {
-    const newValue = e.target.value;
-    if (!isNaN(newValue)) {
-      setHeightInput(newValue);
-    }
-  };
-  // handle profile picture upload
-  const handlePictureChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const fileType = file.type.split("/")[0];
-      if (fileType === "image") {
-        setPreviewPicture(file);
-      } else {
-        alert("Please select a valid image file.");
-      }
-    }
-  };
-  const handleSaveProfilePicture = () => {
-    if (previewPicture) {
-        const formData = new FormData();
-        formData.append('file', previewPicture);
 
-        axios.put(`http://127.0.0.1:5000/user/${username}/profile-pic`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        })
-        .then(response => {
-            console.log("Profile picture updated successfully:", response.data);
-            const imageUrl = response.data.profile_pic;
-            setProfilePicture(`http://127.0.0.1:5000${imageUrl}`);  // Update the state with new profile picture URL
-            setPreviewPicture(null); // Reset the preview image
-            axios.get(`http://127.0.0.1:5000/user/${username}/stats`)
-                .then(response => {
-                    setStats(response.data);
-                })
-                .catch(error => {
-                    console.log(error);
-                });
-        })
-        .catch(error => {
-            console.log("Error updating profile picture:", error);
-        });
-    }
-};
-  const handleProfilePicClick = () => {
-    setProfileVisible(prevVisible => {
-      const newVisible = !prevVisible;
-      console.log("Profile picture clicked. New profileVisible:", newVisible);
-      return newVisible;
-    });
+  const handleClickCalorieCounter = () => {
+    handleNavigate("/calorie-counter");
   };
+  const handleClickWorkoutLog = () => {
+    handleNavigate("/workout-log");
+  };
+  const handleClickGoals = () => {
+    handleNavigate("/goals");
+  };
+  
   // fetch user stats on component mount
   useEffect(() => {
     const fetchStats = async () => {

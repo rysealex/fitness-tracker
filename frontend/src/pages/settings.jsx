@@ -1,15 +1,10 @@
 import { useState, useEffect } from 'react';
 import '../styles/index.css'
-import MediaControlCard from '../mediaControlCard';
-import { useAudio } from '../AudioContext';
 import DeleteAccountForm from '../deleteAccountForm';
 import Navbar from '../navbar';
 
 function Settings() {
   const [stats, setStats] = useState({});
-  //const [isPlaying, setIsPlaying] = useState(false);
-  //const [currentTrack, setCurrentTrack] = useState("Track 1");
-  const { isPlaying, currentSongIndex, togglePlayPause, skipNext, skipPrevious, songs, stopAudio } = useAudio();
 
   // fetch user stats on component mount
   useEffect(() => {
@@ -42,15 +37,6 @@ function Settings() {
       <Navbar stats={stats} />
       <section className='settings-container'>
         <h1>Settings</h1> 
-        {/* <h2>Change Music</h2>
-        <MediaControlCard
-          isPlaying={isPlaying}
-          currentTrack={songs[currentSongIndex]?.name}
-          togglePlayPause={togglePlayPause}
-          skipNext={skipNext}
-          skipPrevious={skipPrevious}
-        /> */}
-        {/*<audio ref={audioRef} src='audio\Luke Bergs & Waesto - Take Off (freetouse.com).mp3'/>*/}
         <DeleteAccountForm />
       </section>
     </div>

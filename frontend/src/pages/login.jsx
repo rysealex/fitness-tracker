@@ -1,11 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
-import Stack from '@mui/material/Stack';
+import { useState, useRef } from 'react';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from 'react-router-dom';
-import { useAudio } from '../AudioContext';
 
 function Login() {
   const navigate = useNavigate();
