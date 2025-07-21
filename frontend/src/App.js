@@ -1,5 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AudioProvider } from './AudioContext';
+import { StatsProvider } from './StatsContext';
+import Navbar from './navbar';
 import Welcome from "./pages/welcome";
 import Login from "./pages/login"
 import CreateAccount from "./pages/createAccount"
@@ -12,14 +14,14 @@ import CalorieCounter from './pages/calorieCounter';
 import WorkoutLog from './pages/workoutLog';
 import Goals from './pages/goals';
 import './App.css';
-import React from 'react';
 
 function App() {
 
 
   return (
-    <AudioProvider>
-      <Router>
+    <Router>
+      <StatsProvider>
+        <Navbar />
         <Routes>
           <Route path="/" element={<Welcome />} />
           <Route path="/login" element={<Login />} />
@@ -33,9 +35,8 @@ function App() {
           <Route path="/workout-log" element={<WorkoutLog />} />
           <Route path="/goals" element={<Goals />} />
         </Routes>
-      </Router>
-    </AudioProvider>
-    
+      </StatsProvider>
+    </Router>
   )
 };
 

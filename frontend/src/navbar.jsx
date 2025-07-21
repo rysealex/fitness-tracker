@@ -11,7 +11,7 @@ function Navbar({ stats }) {
 	};
 	return (
 		<div>
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 		<aside className='nav-container'>
 			<div className='nav-header'>
 				<img src='/images/muscle-logo.png' alt='logo'></img>
