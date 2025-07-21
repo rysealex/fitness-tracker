@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
 import './styles/index.css'
+import { useStats } from './StatsContext';
 
-function Navbar({ stats }) {
+function Navbar() {
+	// consume the stats from context
+	const { stats, isLoading, error } = useStats();
 	// handle the user logout
 	const handleLogout = () => {
 		// Clear user data from local storage
@@ -9,6 +12,15 @@ function Navbar({ stats }) {
 		localStorage.removeItem('username');
 		localStorage.removeItem('password');
 	};
+	if (isLoading) {
+		return <aside className='nav-container'>Loading stats...</aside>;
+	}
+	if (error) {
+		return <aside className='nav-container'>Error loading stats: {error.message}</aside>;
+	}
+	if (!stats) {
+		return <aside className='nav-container'>No stats available</aside>;
+	}
 	return (
 		<div>
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />

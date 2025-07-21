@@ -33,11 +33,11 @@ function Home() {
   const [profilePicture, setProfilePicture] = useState(null);
   const [previewPicture, setPreviewPicture] = useState(null);
   const { startAudio, isPlaying } = useAudio();
-  useEffect(() => {
-    if (!isPlaying) {
-      startAudio(); // Start audio if not already playing
-    }
-  }, [isPlaying, startAudio]);
+  // useEffect(() => {
+  //   if (!isPlaying) {
+  //     startAudio(); // Start audio if not already playing
+  //   }
+  // }, [isPlaying, startAudio]);
   // Event handler for nav bar buttons
   const handleSignOut = (event) => {
     setUsername("");
@@ -210,7 +210,7 @@ function Home() {
     
   return (
     <div className='centered-page'>
-      <Navbar stats={stats} />
+      <Navbar />
       <div className='current-date'>
         <h2>Today's Date: <CurrentDate /></h2>
       </div>

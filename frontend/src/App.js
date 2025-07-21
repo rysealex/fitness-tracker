@@ -21,7 +21,7 @@ function App() {
   return (
     <Router>
       <StatsProvider>
-        <Navbar />
+        {/* <Navbar /> */}
         <Routes>
           <Route path="/" element={<Welcome />} />
           <Route path="/login" element={<Login />} />
