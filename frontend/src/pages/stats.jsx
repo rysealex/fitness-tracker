@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { useStats } from '../StatsContext';
 import Button from '@mui/material/Button';
+import { Typography } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
@@ -151,66 +152,160 @@ function Stats() {
   };
 
   return (
+    // <div className='centered-page'>
+    //   <Navbar />
+    //   <section className='stats-container'>
+    //     <h1>Your Stats</h1>
+    //     <ul>
+    //       <li>Age: {calculateAge(stats.dob)}</li>
+    //       <li>Gender: {stats.gender}</li>
+    //       <li>
+    //         Height: {stats.height_ft} ft
+    //         <TextField
+    //           className='textfield'
+    //           error={!!heightError}
+    //           id="height-input"
+    //           label="New height"
+    //           variant="outlined"
+    //           value={height}
+    //           onChange={(e) => {
+    //             setHeight(e.target.value);
+    //             setHeightError(""); // clear error when user starts typing
+    //           }}
+    //           helperText={heightError}
+    //           inputRef={heightInputRef}
+    //         />
+    //         <button type="button" onClick={() => handleSubmit('height_ft', parseFloat(height))}>Update Height</button>
+    //       </li>
+    //       <li>
+    //         Weight: {stats.weight_lbs} lbs
+    //         <TextField
+    //           className='textfield'
+    //           error={!!weightError}
+    //           id="weight-input"
+    //           label="New weight"
+    //           variant="outlined"
+    //           value={weight}
+    //           onChange={(e) => {
+    //             setWeight(e.target.value);
+    //             setWeightError(""); // clear error when user starts typing
+    //           }}
+    //           helperText={weightError}
+    //           inputRef={weightInputRef}
+    //         />
+    //         <button type="button" onClick={() => handleSubmit('weight_lbs', parseFloat(weight))}>Update Weight</button>
+    //       </li>
+    //     </ul>
+    //   </section>
+    //   {isLoadingStats && (
+    //     <Box sx={{ mt: 2, textAlign: 'center' }}>
+    //       <CircularProgress sx={{ color: '#C51D34' }} />
+    //     </Box>
+    //   )}
+    //   {successMessage && (
+    //     <Box sx={{ color: '#1dc51dff', mt: 2, textAlign: 'center' }}>
+    //       {successMessage}
+    //     </Box>
+    //   )}
+    //   {generalError && (
+    //     <Box sx={{ color: '#C51D34', mt: 2, textAlign: 'center' }}>
+    //       {generalError}
+    //     </Box>
+    //   )}
+    // </div>
     <div className='centered-page'>
       <Navbar />
-      <section className='stats-container'>
+      <section className='profile-container'>
         <h1>Your Stats</h1>
-        <ul>
-          <li>Age: {calculateAge(stats.dob)}</li>
-          <li>Gender: {stats.gender}</li>
-          <li>
-            Height: {stats.height_ft} ft
-            <TextField
-              className='textfield'
-              error={!!heightError}
-              id="height-input"
-              label="New height"
-              variant="outlined"
-              value={height}
-              onChange={(e) => {
-                setHeight(e.target.value);
-                setHeightError(""); // clear error when user starts typing
-              }}
-              helperText={heightError}
-              inputRef={heightInputRef}
-            />
-            <button type="button" onClick={() => handleSubmit('height_ft', parseFloat(height))}>Update Height</button>
-          </li>
-          <li>
-            Weight: {stats.weight_lbs} lbs
-            <TextField
-              className='textfield'
-              error={!!weightError}
-              id="weight-input"
-              label="New weight"
-              variant="outlined"
-              value={weight}
-              onChange={(e) => {
-                setWeight(e.target.value);
-                setWeightError(""); // clear error when user starts typing
-              }}
-              helperText={weightError}
-              inputRef={weightInputRef}
-            />
-            <button type="button" onClick={() => handleSubmit('weight_lbs', parseFloat(weight))}>Update Weight</button>
-          </li>
-        </ul>
+        <div className='profile-content-wrapper'>
+          {/* User Info Section */}
+          <div className='profile-info-section'>
+            <ul>
+              <li>Age: {calculateAge(stats.dob)}</li>
+              <li>Gender: {stats.gender}</li>
+              <li>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <div>
+                    Height: {stats.height_ft} ft
+                  </div>
+                  <TextField
+                    className='textfield'
+                    error={!!heightError}
+                    id="height-input"
+                    label="New height"
+                    variant="outlined"
+                    value={height}
+                    onChange={(e) => {
+                      setHeight(e.target.value);
+                      setHeightError(""); // clear error when user starts typing
+                    }}
+                    helperText={heightError}
+                    inputRef={heightInputRef}
+                    size="small"
+                    sx={{ width: 100 }}
+                  />
+                  <Button
+                    variant="contained"
+                    style={{
+                      backgroundColor: '#C51D34'
+                    }}
+                    onClick={() => handleSubmit('height_ft', parseFloat(height))}
+                  >
+                    Update
+                  </Button>
+                </Box>
+              </li>
+              <li>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <div>
+                    Weight: {stats.weight_lbs} lbs
+                  </div>
+                  <TextField
+                    className='textfield'
+                    error={!!weightError}
+                    id="weight-input"
+                    label="New weight"
+                    variant="outlined"
+                    value={weight}
+                    onChange={(e) => {
+                      setWeight(e.target.value);
+                      setWeightError(""); // clear error when user starts typing
+                    }}
+                    helperText={weightError}
+                    inputRef={weightInputRef}
+                    size="small"
+                    sx={{ width: 100 }}
+                  />
+                  <Button
+                    variant="contained"
+                    style={{
+                      backgroundColor: '#C51D34'
+                    }}
+                    onClick={() => handleSubmit('weight_lbs', parseFloat(weight))}
+                  >
+                    Update
+                  </Button>
+                </Box>
+              </li>
+            </ul>
+          </div>
+        </div>
+        {isLoadingStats && (
+          <Box sx={{ mt: 2, textAlign: 'center' }}>
+            <CircularProgress sx={{ color: '#C51D34' }} />
+          </Box>
+        )}
+        {successMessage && (
+          <Box sx={{ color: '#1dc51dff', mt: 2, textAlign: 'center' }}>
+            {successMessage}
+          </Box>
+        )}
+        {generalError && (
+          <Box sx={{ color: '#C51D34', mt: 2, textAlign: 'center' }}>
+            {generalError}
+          </Box>
+        )}
       </section>
-      {isLoadingStats && (
-        <Box sx={{ mt: 2, textAlign: 'center' }}>
-          <CircularProgress sx={{ color: '#C51D34' }} />
-        </Box>
-      )}
-      {successMessage && (
-        <Box sx={{ color: '#1dc51dff', mt: 2, textAlign: 'center' }}>
-          {successMessage}
-        </Box>
-      )}
-      {generalError && (
-        <Box sx={{ color: '#C51D34', mt: 2, textAlign: 'center' }}>
-          {generalError}
-        </Box>
-      )}
     </div>
   );
 };
