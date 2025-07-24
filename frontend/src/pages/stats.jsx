@@ -27,8 +27,11 @@ function Stats() {
   if (!stats) return <div>No stats available.</div>;
 
   // open modal to edit
-	const openEditModal = (entry) => {
-    setEditEntry({ ...entry });
+	const openEditModal = () => {
+     setEditEntry({
+      height_ft: stats.height_ft,
+      weight_lbs: stats.weight_lbs,
+    });
 		// clear previous edit errors when opening the modal
     setWeightError("");
     setHeightError("");
@@ -59,7 +62,7 @@ function Stats() {
 	};
 
   // handle the update stats form submission
-  const handleSubmit = async (attributeInput, valueInput) => {
+  const handleSubmit = async () => {
     // get the current users user_id from local storage
     const userId = localStorage.getItem('userId');
     if (!userId) {
@@ -76,60 +79,45 @@ function Stats() {
     setGeneralError("");
     setSuccessMessage("");
 
-    let hasError = false;
-
-    // check which attribute is being updated
-    if (attributeInput === "height_ft") {
-      // perform height validation
-      const parsedHeight = parseFloat(height);
-      if (height === "") {
-        setHeightError("Enter your new height.");
-        hasError = true;
-        heightInputRef.current.focus();
-      } else if (isNaN(parsedHeight) || !/^\d+\.?\d{0,1}$/.test(height)) {
-        setHeight("");
-        setHeightError("New height must be a decimal to the tenth place (e.g., 5.9).");
-        hasError = true;
-        heightInputRef.current.focus();
-      }
-    } 
-    else if (attributeInput === "weight_lbs") {
-      // perform weight validation
-      const parsedWeight = parseFloat(weight);
-      if (weight === "") {
-        setWeightError("Enter your new weight.");
-        hasError = true;
-        weightInputRef.current.focus();
-      } else if (isNaN(parsedWeight) || !/^\d+\.?\d{0,2}$/.test(weight)) {
-        setWeight("");
-        setWeightError("New weight must be a decimal to the hundredth place (e.g., 150.75).");
-        hasError = true;
-        weightInputRef.current.focus();
-      }
-    } 
-    else {
-      // stop the submission now
+    // perform height validation
+    const parsedHeight = parseFloat(editEntry.height_ft);
+    if (editEntry.height_ft === "") {
+      setHeightError("Enter your new height.");
+      heightInputRef.current.focus();
+      setIsLoadingStats(false);
+      return;
+    } else if (isNaN(parsedHeight) || !/^\d+\.?\d{0,1}$/.test(editEntry.height_ft)) {
       setHeight("");
-      setWeight("");
-      setGeneralError("An unexpected error occurred.");
+      setHeightError("New height must be a decimal to the tenth place (e.g., 5.9).");
+      heightInputRef.current.focus();
+      setIsLoadingStats(false);
       return;
     }
-
-    if (hasError) {
+    // perform weight validation
+    const parsedWeight = parseFloat(editEntry.weight_lbs);
+    if (editEntry.weight_lbs === "") {
+      setWeightError("Enter your new weight.");
+      weightInputRef.current.focus();
       setIsLoadingStats(false);
-      return; // stop if input validation failed
+      return;
+    } else if (isNaN(parsedWeight) || !/^\d+\.?\d{0,2}$/.test(editEntry.weight_lbs)) {
+      setWeight("");
+      setWeightError("New weight must be a decimal to the hundredth place (e.g., 150.75).");
+      weightInputRef.current.focus();
+      setIsLoadingStats(false);
+      return;
     }
 
     try {
       // try to update the user stats with current attribute and value
-      const response = await fetch(`http://localhost:5000/auth/update-attribute/${userId}`, {
+      const response = await fetch(`http://localhost:5000/auth/user/${userId}/update-height-weight`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          attribute: attributeInput,
-          value: valueInput
+          height_ft: parseFloat(editEntry.height_ft),
+          weight_lbs: parseFloat(editEntry.weight_lbs)
         }),
       });
       // check if the response is ok
@@ -139,7 +127,8 @@ function Stats() {
         // update the stats state to keep it consistent with new values
         setStats(prevStats => ({
           ...prevStats,
-          [attributeInput]: valueInput
+          height_ft: editEntry.height_ft,
+          weight_lbs: editEntry.weight_lbs
         }));
         // clear the inputs
         setHeight("");
@@ -200,31 +189,6 @@ function Stats() {
                   <div>
                     Height: {stats.height_ft} ft
                   </div>
-                  {/* <TextField
-                    className='textfield'
-                    error={!!heightError}
-                    id="height-input"
-                    label="New height"
-                    variant="outlined"
-                    value={height}
-                    onChange={(e) => {
-                      setHeight(e.target.value);
-                      setHeightError(""); // clear error when user starts typing
-                    }}
-                    helperText={heightError}
-                    inputRef={heightInputRef}
-                    size="small"
-                    sx={{ width: 100 }}
-                  />
-                  <Button
-                    variant="contained"
-                    style={{
-                      backgroundColor: '#C51D34'
-                    }}
-                    onClick={() => handleSubmit('height_ft', parseFloat(height))}
-                  >
-                    Update
-                  </Button> */}
                 </Box>
               </li>
               <li>
@@ -237,36 +201,16 @@ function Stats() {
                   >
                     Edit
                   </button>
-                  {/* <TextField
-                    className='textfield'
-                    error={!!weightError}
-                    id="weight-input"
-                    label="New weight"
-                    variant="outlined"
-                    value={weight}
-                    onChange={(e) => {
-                      setWeight(e.target.value);
-                      setWeightError(""); // clear error when user starts typing
-                    }}
-                    helperText={weightError}
-                    inputRef={weightInputRef}
-                    size="small"
-                    sx={{ width: 100 }}
-                  />
-                  <Button
-                    variant="contained"
-                    style={{
-                      backgroundColor: '#C51D34'
-                    }}
-                    onClick={() => handleSubmit('weight_lbs', parseFloat(weight))}
-                  >
-                    Update
-                  </Button> */}
                 </Box>
               </li>
             </ul>
           </div>
         </div>
+        {successMessage && (
+          <Box sx={{ color: '#1dc51dff', mt: 2, textAlign: 'center' }}>
+            {successMessage}
+          </Box>
+        )}
       </section>
 
       {/* Edit Modal */}
@@ -276,12 +220,10 @@ function Stats() {
           {editEntry && (
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
               <TextField
-                margin="dense"
                 name="height_ft"
                 label="Height (ft)"
                 type="number"
                 fullWidth
-                variant="outlined"
                 value={editEntry.height_ft}
                 onChange={handleEditChange}
                 error={!!heightError}
@@ -289,12 +231,10 @@ function Stats() {
                 inputRef={heightInputRef}
               />
               <TextField
-                margin="dense"
                 name="weight_lbs"
                 label="Weight (lbs)"
                 type="number"
                 fullWidth
-                variant="outlined"
                 value={editEntry.weight_lbs}
                 onChange={handleEditChange}
                 error={!!weightError}
@@ -304,11 +244,6 @@ function Stats() {
               {isLoadingStats && (
                 <Box sx={{ mt: 2, textAlign: 'center' }}>
                   <CircularProgress sx={{ color: '#C51D34' }} />
-                </Box>
-              )}
-              {successMessage && (
-                <Box sx={{ color: '#1dc51dff', mt: 2, textAlign: 'center' }}>
-                  {successMessage}
                 </Box>
               )}
               {generalError && (
@@ -327,14 +262,13 @@ function Stats() {
             onClick={
               () => {
                 if (
-                  parseFloat(height) === stats.height_ft &&
-                  parseFloat(weight) === stats.weight_lbs
+                  parseFloat(editEntry.height_ft) === stats.height_ft &&
+                  parseFloat(editEntry.weight_lbs) === stats.weight_lbs
                 ) {
                   setGeneralError("No changes made to stats.");
                   return;
                 }
-                handleSubmit('height_ft', parseFloat(height));
-                handleSubmit('weight_lbs', parseFloat(weight));
+                handleSubmit();
               }}
             >
               Save
