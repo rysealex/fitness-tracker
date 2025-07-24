@@ -214,3 +214,20 @@ def update_profile_pic(user_id):
     else:
         current_app.logger.warning(f"File type not allowed for user {user_id}: {file.filename}")
         return jsonify({"message": "File type not allowed"}), 400
+    
+@auth_bp.route('/user/<int:user_id>/update-height-weight', methods=['PUT'])
+def update_height_weight(user_id):
+    """Endpoint to update user height and weight"""
+    data = request.get_json()
+    height_ft = data.get('height_ft')
+    weight_lbs = data.get('weight_lbs')
+
+    if height_ft is None or weight_lbs is None:
+        return jsonify({"error": "Height and weight are required"}), 400
+
+    updated = user_model.update_user_height_weight(user_id, height_ft, weight_lbs)
+
+    if updated:
+        return jsonify({"message": "User height and weight updated successfully"}), 200
+    else:
+        return jsonify({"error": "Failed to update user height and weight"}), 500

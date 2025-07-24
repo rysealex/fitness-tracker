@@ -205,3 +205,28 @@ class UserModel:
                 cursor.close()
             if conn:
                 conn.close()
+
+    """Function to update user height and weight"""
+    def update_user_height_weight(self, user_id, height_ft, weight_lbs):
+        conn = None
+        cursor = None
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+
+            sql = """
+            UPDATE Users SET height_ft = %s, weight_lbs = %s WHERE user_id = %s
+            """
+            cursor.execute(sql, (height_ft, weight_lbs, user_id))
+            conn.commit()
+            return cursor.rowcount > 0
+        except Error as e:
+            print(f"Error updating user {user_id} with height {height_ft} and weight {weight_lbs}: {e}")
+            if conn:
+                conn.rollback()
+            return False
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
