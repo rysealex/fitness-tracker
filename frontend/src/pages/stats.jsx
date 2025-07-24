@@ -1,10 +1,7 @@
 import { useState, useRef } from 'react';
 import { useStats } from '../StatsContext';
-import Button from '@mui/material/Button';
-import { Typography } from '@mui/material';
-import TextField from '@mui/material/TextField';
+import { Typography, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Box } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
-import Box from '@mui/material/Box';
 import '../styles/index.css'
 import Navbar from '../navbar';
 
@@ -16,6 +13,8 @@ function Stats() {
   const [heightError, setHeightError] = useState("");
   const [generalError, setGeneralError] = useState("");
   const [isLoadingStats, setIsLoadingStats] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editEntry, setEditEntry] = useState(null);
 
   // refs for the input fields
   const heightInputRef = useRef(null);
@@ -26,6 +25,38 @@ function Stats() {
   if (isLoading) return <div>Loading home page...</div>;
   if (error) return <div>Error: {error.message}</div>;
   if (!stats) return <div>No stats available.</div>;
+
+  // open modal to edit
+	const openEditModal = (entry) => {
+    setEditEntry({ ...entry });
+		// clear previous edit errors when opening the modal
+    setWeightError("");
+    setHeightError("");
+    setGeneralError("");
+		setEditModalOpen(true);
+	};
+
+  // close modal
+	const closeEditModal = () => {
+		setEditModalOpen(false);
+    setEditEntry(null);
+		// clear edit errors when closing the modal
+    setWeightError("");
+    setHeightError("");
+    setGeneralError("");
+	};
+
+  // handle input changes in the edit modal
+	const handleEditChange = (e) => {
+		const { name, value } = e.target;
+		setEditEntry((prev) => ({
+			...prev,
+			[name]: value,
+		}));
+		// clear specific error when user starts typing in edit modal
+    if (name === "weight_lbs") setWeightError("");
+    if (name === "height_ft") setHeightError("");
+	};
 
   // handle the update stats form submission
   const handleSubmit = async (attributeInput, valueInput) => {
@@ -114,6 +145,8 @@ function Stats() {
         setHeight("");
         setWeight("");
         setIsLoadingStats(false);
+        // close edit modal
+        closeEditModal();
         // display success message
         setSuccessMessage("Successfuly updated stats!");
         // clear the success message after 3 sec
@@ -152,67 +185,6 @@ function Stats() {
   };
 
   return (
-    // <div className='centered-page'>
-    //   <Navbar />
-    //   <section className='stats-container'>
-    //     <h1>Your Stats</h1>
-    //     <ul>
-    //       <li>Age: {calculateAge(stats.dob)}</li>
-    //       <li>Gender: {stats.gender}</li>
-    //       <li>
-    //         Height: {stats.height_ft} ft
-    //         <TextField
-    //           className='textfield'
-    //           error={!!heightError}
-    //           id="height-input"
-    //           label="New height"
-    //           variant="outlined"
-    //           value={height}
-    //           onChange={(e) => {
-    //             setHeight(e.target.value);
-    //             setHeightError(""); // clear error when user starts typing
-    //           }}
-    //           helperText={heightError}
-    //           inputRef={heightInputRef}
-    //         />
-    //         <button type="button" onClick={() => handleSubmit('height_ft', parseFloat(height))}>Update Height</button>
-    //       </li>
-    //       <li>
-    //         Weight: {stats.weight_lbs} lbs
-    //         <TextField
-    //           className='textfield'
-    //           error={!!weightError}
-    //           id="weight-input"
-    //           label="New weight"
-    //           variant="outlined"
-    //           value={weight}
-    //           onChange={(e) => {
-    //             setWeight(e.target.value);
-    //             setWeightError(""); // clear error when user starts typing
-    //           }}
-    //           helperText={weightError}
-    //           inputRef={weightInputRef}
-    //         />
-    //         <button type="button" onClick={() => handleSubmit('weight_lbs', parseFloat(weight))}>Update Weight</button>
-    //       </li>
-    //     </ul>
-    //   </section>
-    //   {isLoadingStats && (
-    //     <Box sx={{ mt: 2, textAlign: 'center' }}>
-    //       <CircularProgress sx={{ color: '#C51D34' }} />
-    //     </Box>
-    //   )}
-    //   {successMessage && (
-    //     <Box sx={{ color: '#1dc51dff', mt: 2, textAlign: 'center' }}>
-    //       {successMessage}
-    //     </Box>
-    //   )}
-    //   {generalError && (
-    //     <Box sx={{ color: '#C51D34', mt: 2, textAlign: 'center' }}>
-    //       {generalError}
-    //     </Box>
-    //   )}
-    // </div>
     <div className='centered-page'>
       <Navbar />
       <section className='profile-container'>
@@ -228,7 +200,7 @@ function Stats() {
                   <div>
                     Height: {stats.height_ft} ft
                   </div>
-                  <TextField
+                  {/* <TextField
                     className='textfield'
                     error={!!heightError}
                     id="height-input"
@@ -252,7 +224,7 @@ function Stats() {
                     onClick={() => handleSubmit('height_ft', parseFloat(height))}
                   >
                     Update
-                  </Button>
+                  </Button> */}
                 </Box>
               </li>
               <li>
@@ -260,7 +232,12 @@ function Stats() {
                   <div>
                     Weight: {stats.weight_lbs} lbs
                   </div>
-                  <TextField
+                  <button
+                    onClick={() => openEditModal()}
+                  >
+                    Edit
+                  </button>
+                  {/* <TextField
                     className='textfield'
                     error={!!weightError}
                     id="weight-input"
@@ -284,28 +261,86 @@ function Stats() {
                     onClick={() => handleSubmit('weight_lbs', parseFloat(weight))}
                   >
                     Update
-                  </Button>
+                  </Button> */}
                 </Box>
               </li>
             </ul>
           </div>
         </div>
-        {isLoadingStats && (
-          <Box sx={{ mt: 2, textAlign: 'center' }}>
-            <CircularProgress sx={{ color: '#C51D34' }} />
-          </Box>
-        )}
-        {successMessage && (
-          <Box sx={{ color: '#1dc51dff', mt: 2, textAlign: 'center' }}>
-            {successMessage}
-          </Box>
-        )}
-        {generalError && (
-          <Box sx={{ color: '#C51D34', mt: 2, textAlign: 'center' }}>
-            {generalError}
-          </Box>
-        )}
       </section>
+
+      {/* Edit Modal */}
+      <Dialog open={editModalOpen} onClose={closeEditModal}>
+        <DialogTitle>Edit Stats</DialogTitle>
+        <DialogContent>
+          {editEntry && (
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
+              <TextField
+                margin="dense"
+                name="height_ft"
+                label="Height (ft)"
+                type="number"
+                fullWidth
+                variant="outlined"
+                value={editEntry.height_ft}
+                onChange={handleEditChange}
+                error={!!heightError}
+                helperText={heightError}
+                inputRef={heightInputRef}
+              />
+              <TextField
+                margin="dense"
+                name="weight_lbs"
+                label="Weight (lbs)"
+                type="number"
+                fullWidth
+                variant="outlined"
+                value={editEntry.weight_lbs}
+                onChange={handleEditChange}
+                error={!!weightError}
+                helperText={weightError}
+                inputRef={weightInputRef}
+              />
+              {isLoadingStats && (
+                <Box sx={{ mt: 2, textAlign: 'center' }}>
+                  <CircularProgress sx={{ color: '#C51D34' }} />
+                </Box>
+              )}
+              {successMessage && (
+                <Box sx={{ color: '#1dc51dff', mt: 2, textAlign: 'center' }}>
+                  {successMessage}
+                </Box>
+              )}
+              {generalError && (
+                <Box sx={{ color: '#C51D34', mt: 2, textAlign: 'center' }}>
+                  {generalError}
+                </Box>
+              )}
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeEditModal}>
+            Cancel
+          </Button>
+          <Button 
+            onClick={
+              () => {
+                if (
+                  parseFloat(height) === stats.height_ft &&
+                  parseFloat(weight) === stats.weight_lbs
+                ) {
+                  setGeneralError("No changes made to stats.");
+                  return;
+                }
+                handleSubmit('height_ft', parseFloat(height));
+                handleSubmit('weight_lbs', parseFloat(weight));
+              }}
+            >
+              Save
+            </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
