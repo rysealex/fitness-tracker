@@ -15,6 +15,7 @@ function Stats() {
   const [isLoadingStats, setIsLoadingStats] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editEntry, setEditEntry] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   // refs for the input fields
   const heightInputRef = useRef(null);
@@ -28,7 +29,8 @@ function Stats() {
 
   // open modal to edit
 	const openEditModal = () => {
-     setEditEntry({
+    setIsEditing(false);
+    setEditEntry({
       height_ft: stats.height_ft,
       weight_lbs: stats.weight_lbs,
     });
@@ -41,6 +43,7 @@ function Stats() {
 
   // close modal
 	const closeEditModal = () => {
+    setIsEditing(false);
 		setEditModalOpen(false);
     setEditEntry(null);
 		// clear edit errors when closing the modal
@@ -51,6 +54,7 @@ function Stats() {
 
   // handle input changes in the edit modal
 	const handleEditChange = (e) => {
+    setIsEditing(true);
 		const { name, value } = e.target;
 		setEditEntry((prev) => ({
 			...prev,
@@ -109,6 +113,11 @@ function Stats() {
     }
 
     try {
+      console.log("Sending update:", {
+        userId,
+        height_ft: parseFloat(editEntry.height_ft),
+        weight_lbs: parseFloat(editEntry.weight_lbs)
+      });
       // try to update the user stats with current attribute and value
       const response = await fetch(`http://localhost:5000/auth/user/${userId}/update-height-weight`, {
         method: 'PUT',
@@ -148,7 +157,7 @@ function Stats() {
         setWeight("");
         setSuccessMessage("");
         setIsLoadingStats(false);
-        setGeneralError("Stats update submission failed.");
+        setGeneralError("Must enter a new height and weight.");
         console.log("Failed to update user stats:", response.statusText);
       }
     } catch (error) {
@@ -258,21 +267,13 @@ function Stats() {
           <Button onClick={closeEditModal}>
             Cancel
           </Button>
-          <Button 
-            onClick={
-              () => {
-                if (
-                  parseFloat(editEntry.height_ft) === stats.height_ft &&
-                  parseFloat(editEntry.weight_lbs) === stats.weight_lbs
-                ) {
-                  setGeneralError("No changes made to stats.");
-                  return;
-                }
-                handleSubmit();
-              }}
+          {isEditing && (
+            <Button 
+            onClick={ () => handleSubmit() }
             >
               Save
             </Button>
+          )}
         </DialogActions>
       </Dialog>
     </div>

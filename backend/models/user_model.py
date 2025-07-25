@@ -1,3 +1,4 @@
+import decimal
 from datetime import datetime
 from mysql.connector import Error
 from database import get_db_connection
@@ -214,10 +215,15 @@ class UserModel:
             conn = get_db_connection()
             cursor = conn.cursor()
 
+            decimal.getcontext().prec = 10 # Set a higher precision for intermediate calculations
+            
+            height_decimal = decimal.Decimal(str(height_ft)).quantize(decimal.Decimal('0.1'), rounding=decimal.ROUND_HALF_UP)
+            weight_decimal = decimal.Decimal(str(weight_lbs)).quantize(decimal.Decimal('0.01'), rounding=decimal.ROUND_HALF_UP)
+
             sql = """
             UPDATE Users SET height_ft = %s, weight_lbs = %s WHERE user_id = %s
             """
-            cursor.execute(sql, (height_ft, weight_lbs, user_id))
+            cursor.execute(sql, (height_decimal, weight_decimal, user_id))
             conn.commit()
             return cursor.rowcount > 0
         except Error as e:
