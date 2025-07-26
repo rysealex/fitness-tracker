@@ -19,22 +19,70 @@ function App() {
 
   return (
     <Router>
-      <StatsProvider>
-        {/* <Navbar /> */}
-        <Routes>
-          <Route path="/" element={<Welcome />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/create-account" element={<CreateAccount />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/enter-info" element={<EnterInformation />} />
-          <Route path="/stats" element={<Stats />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/calorie-counter" element={<CalorieCounter />} />
-          <Route path="/workout-log" element={<WorkoutLog />} />
-          <Route path="/goals" element={<Goals />} />
-        </Routes>
-      </StatsProvider>
+      <Routes>
+        {/* Public routes (no StatsProvder) */}
+        <Route path="/" element={<Welcome />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/create-account" element={<CreateAccount />} />
+        <Route path="/enter-info" element={<EnterInformation />} />
+        {/* Protected routes (with StatsProvider) */}
+        <Route
+          path="/home"
+          element={
+            <StatsProvider>
+              <Home />
+            </StatsProvider>
+          }
+        />
+        <Route
+          path="/stats"
+          element={
+            <StatsProvider>
+              <Stats />
+            </StatsProvider>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <StatsProvider>
+              <Profile />
+            </StatsProvider>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <StatsProvider>
+              <Settings />
+            </StatsProvider>
+          }
+        />
+        <Route
+          path="/calorie-counter"
+          element={
+            <StatsProvider>
+              <CalorieCounter />
+            </StatsProvider>
+          }
+        />
+        <Route
+          path="/workout-log"
+          element={
+            <StatsProvider>
+              <WorkoutLog />
+            </StatsProvider>
+          }
+        />
+        <Route
+          path="/goals"
+          element={
+            <StatsProvider>
+              <Goals />
+            </StatsProvider>
+          }
+        />
+      </Routes>
     </Router>
   )
 };

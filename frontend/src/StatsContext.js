@@ -6,18 +6,28 @@ export const StatsProvider = ({ children }) => {
   const [stats, setStats] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+	const [userId, setUserId] = useState(localStorage.getItem('userId'));
+
+	// listen for changes in local storage to update userId
+	useEffect(() => {
+    const handleStorageChange = () => {
+      setUserId(localStorage.getItem('userId'));
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   // fetch user stats on component mount
 	useEffect(() => {
-		const fetchStats = async () => {
-			// get the current users user_id from local storage
-			const userId = localStorage.getItem('userId');
-			if (!userId) {
-				console.error("User ID not found in local storage.");
-				return;
-			}
-			setIsLoading(true);
+		if (!userId) {
+      setStats(null);
+      setIsLoading(false);
       setError(null);
+      return;
+    }
+    setIsLoading(true);
+    setError(null);
+		const fetchStats = async () => {
 			try {
 				const response = await fetch(`http://localhost:5000/auth/user/${userId}`);
 				if (response.ok) {
@@ -38,7 +48,7 @@ export const StatsProvider = ({ children }) => {
 		};
 		// call the fetchStats function to get user stats
 		fetchStats();
-	}, []);
+	}, [userId]);
 
   return (
     <StatsContext.Provider value={{ stats, isLoading, error, setStats }}>

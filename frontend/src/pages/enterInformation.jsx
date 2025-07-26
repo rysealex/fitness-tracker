@@ -205,6 +205,7 @@ function EnterInformation() {
         console.log('User ID stored in local storage:', data.user_id);
         setIsLoading(false);
         handleNavigate("/home");
+        //window.location.reload(); // reload home page to reflect new user data
       } else {
         setFname("");
         setLname("");
