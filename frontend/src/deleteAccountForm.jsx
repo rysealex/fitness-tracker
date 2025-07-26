@@ -92,75 +92,10 @@ export default function DeleteAccountForm() {
       passwordRef.current.focus();
       setGeneralError("Error deleting user account. Please try again.");
       console.error("Error deleting user account:", error);
-    // } finally {
-    //   if (!passwordError && !generalError) {
-    //     handleClose(); // close the dialog after the delete action is successful
-    //   }
     }
   };
 
   return (
-    // <div>
-    //   <Button
-    //     variant='contained'
-    //     style={{
-    //       backgroundColor: '#C51D34'
-    //     }}
-    //     onClick={handleClickOpen}
-    //   >
-    //     Delete Account
-    //   </Button>
-    //   {/* Delete account modal */}
-    //   {deleteModalOpen && (
-    //     <div>
-    //       <h2>Delete Account</h2>
-    //       <p>Are you sure you want to delete your account? This action cannot be undone.
-    //          Please ensure your password to confirm.
-    //       </p>
-    //       <form onSubmit={handleDelete}>
-    //         <div>
-    //           <TextField
-    //             label="Password"
-    //             type='password'
-    //             variant='outlined'
-    //             value={password}
-    //             onChange={(e) => {
-    //               setPassword(e.target.value);
-    //               setPasswordError("");
-    //             }}
-    //             error={!!passwordError}
-    //             helperText={passwordError}
-    //             fullWidth
-    //             inputRef={passwordRef}
-    //           />
-    //           {successMessage && (
-    //             <Box sx={{ color: '#1dc51dff', mt: 2, textAlign: 'center' }}>
-    //               {successMessage}
-    //             </Box>
-    //           )}
-    //           {generalError && (
-    //             <Typography color="error" variant="body2" sx={{ textAlign: 'center' }}>
-    //               {generalError}
-    //             </Typography>
-    //           )}
-    //         </div>
-    //         <div>
-    //           <Button
-    //             type='button'
-    //             onClick={handleClose}
-    //           >
-    //             Close
-    //           </Button>
-    //           <Button
-    //             type='submit'
-    //           >
-    //             Confirm Delete
-    //           </Button>
-    //         </div>
-    //       </form>
-    //     </div>
-    //   )}
-    // </div>
     <div>
       <Button
         variant='contained'
