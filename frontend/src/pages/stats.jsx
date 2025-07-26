@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { useStats } from '../StatsContext';
-import { Typography, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Box } from '@mui/material';
+import { Edit } from '@mui/icons-material';
+import { IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Box } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import '../styles/index.css'
 import Navbar from '../navbar';
@@ -189,7 +190,27 @@ function Stats() {
         <h1>Your Stats</h1>
         <div className='profile-content-wrapper'>
           {/* User Info Section */}
-          <div className='profile-info-section'>
+          <Box sx={{ position: 'relative' }} className="profile-info-section">
+            {/* Edit Button */}
+            <IconButton
+              color="primary"
+              onClick={openEditModal}
+              sx={{
+                position: 'absolute',
+                top: -20, 
+                right: 8, 
+                backgroundColor: 'rgba(0,0,0,0.6)',
+                '&:hover': {
+                  backgroundColor: 'rgba(0,0,0,0.8)',
+                },
+                color: '#fff',
+                borderRadius: '50%',
+                padding: '8px',
+                zIndex: 10,
+              }}
+            >
+              <Edit />
+            </IconButton>
             <ul>
               <li>Age: {calculateAge(stats.dob)}</li>
               <li>Gender: {stats.gender}</li>
@@ -205,16 +226,52 @@ function Stats() {
                   <div>
                     Weight: {stats.weight_lbs} lbs
                   </div>
-                  <button
-                    onClick={() => openEditModal()}
-                  >
-                    Edit
-                  </button>
+                </Box>
+              </li>
+            </ul>
+          </Box>
+        </div>
+        {/* <div className='profile-content-wrapper'>
+          <div className='profile-info-section'>
+            <IconButton
+              color="primary"
+              onClick={openEditModal}
+              sx={{
+                position: 'absolute',
+                top: -15, 
+                right: -15, 
+                backgroundColor: 'rgba(0,0,0,0.6)',
+                '&:hover': {
+                  backgroundColor: 'rgba(0,0,0,0.8)',
+                },
+                color: '#fff',
+                borderRadius: '50%',
+                padding: '8px',
+                zIndex: 10,
+              }}
+            >
+              <Edit />
+            </IconButton>
+            <ul>
+              <li>Age: {calculateAge(stats.dob)}</li>
+              <li>Gender: {stats.gender}</li>
+              <li>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <div>
+                    Height: {stats.height_ft} ft
+                  </div>
+                </Box>
+              </li>
+              <li>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <div>
+                    Weight: {stats.weight_lbs} lbs
+                  </div>
                 </Box>
               </li>
             </ul>
           </div>
-        </div>
+        </div> */}
         {successMessage && (
           <Box sx={{ color: '#1dc51dff', mt: 2, textAlign: 'center' }}>
             {successMessage}
