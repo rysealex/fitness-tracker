@@ -150,18 +150,20 @@ export default function DeleteAccountForm() {
             </Typography>
           )}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button
-            onClick={handleDelete}
-            color="error"
-            variant="contained"
-          >
-            Confirm Delete
-          </Button>
-        </DialogActions>
+        {!isLoading && (
+          <DialogActions>
+            <Button onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleDelete}
+              color="error"
+              variant="contained"
+            >
+              Confirm Delete
+            </Button>
+          </DialogActions>
+        )}
       </Dialog>
     </div>
   );
