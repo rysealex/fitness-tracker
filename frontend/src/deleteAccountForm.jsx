@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TextField, Button, Typography, Box, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 
 // form dialog for the delete account feature
 export default function DeleteAccountForm() {
@@ -14,6 +15,7 @@ export default function DeleteAccountForm() {
   const [passwordError, setPasswordError] = useState("");
   const [generalError, setGeneralError] = useState("");
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const passwordRef = useRef(null);
 
   const handleClickOpen = () => {
@@ -45,12 +47,14 @@ export default function DeleteAccountForm() {
     if (password === "") {
       setPasswordError("Password is required.");
       passwordRef.current.focus();
+      setIsLoading(false);
       return;
     }
     // get the current users user_id from local storage
     const userId = localStorage.getItem('userId');
     if (!userId) {
       console.error("User ID not found in local storage.");
+      setIsLoading(false);
       return;
     }
     try {
@@ -74,14 +78,17 @@ export default function DeleteAccountForm() {
         localStorage.removeItem('password');
         localStorage.removeItem('username');
         setSuccessMessage("Successfuly deleted account! You will be redirected shortly.");
+        setIsLoading(true);
         // clear success message and redirect to landing page after 3 sec
         setTimeout(() => {
           setSuccessMessage("");
+          setIsLoading(false);
           handleNavigate('/');
         }, 3000);
       } else {
         setPassword("");
         setSuccessMessage("");
+        setIsLoading(false);
         passwordRef.current.focus();
         setGeneralError("Failed to delete user account. Please try again.");
         console.error("Failed to delete user account:", response.statusText);
@@ -89,6 +96,7 @@ export default function DeleteAccountForm() {
     } catch (error) {
       setPassword("");
       setSuccessMessage("");
+      setIsLoading(false);
       passwordRef.current.focus();
       setGeneralError("Error deleting user account. Please try again.");
       console.error("Error deleting user account:", error);
@@ -126,6 +134,11 @@ export default function DeleteAccountForm() {
             inputRef={passwordRef}
             sx={{ mb: 2 }}
           />
+          {isLoading && (
+            <Box sx={{ mt: 2, textAlign: 'center' }}>
+              <CircularProgress sx={{ color: '#1dc51dff' }} />
+            </Box>
+          )}
           {successMessage && (
             <Box sx={{ color: '#1dc51dff', mt: 2, textAlign: 'center' }}>
               {successMessage}
