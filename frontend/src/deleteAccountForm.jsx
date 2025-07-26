@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TextField, Button, Typography, Box } from '@mui/material';
+import { TextField, Button, Typography, Box, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 
 // form dialog for the delete account feature
 export default function DeleteAccountForm() {
@@ -100,62 +100,121 @@ export default function DeleteAccountForm() {
   };
 
   return (
+    // <div>
+    //   <Button
+    //     variant='contained'
+    //     style={{
+    //       backgroundColor: '#C51D34'
+    //     }}
+    //     onClick={handleClickOpen}
+    //   >
+    //     Delete Account
+    //   </Button>
+    //   {/* Delete account modal */}
+    //   {deleteModalOpen && (
+    //     <div>
+    //       <h2>Delete Account</h2>
+    //       <p>Are you sure you want to delete your account? This action cannot be undone.
+    //          Please ensure your password to confirm.
+    //       </p>
+    //       <form onSubmit={handleDelete}>
+    //         <div>
+    //           <TextField
+    //             label="Password"
+    //             type='password'
+    //             variant='outlined'
+    //             value={password}
+    //             onChange={(e) => {
+    //               setPassword(e.target.value);
+    //               setPasswordError("");
+    //             }}
+    //             error={!!passwordError}
+    //             helperText={passwordError}
+    //             fullWidth
+    //             inputRef={passwordRef}
+    //           />
+    //           {successMessage && (
+    //             <Box sx={{ color: '#1dc51dff', mt: 2, textAlign: 'center' }}>
+    //               {successMessage}
+    //             </Box>
+    //           )}
+    //           {generalError && (
+    //             <Typography color="error" variant="body2" sx={{ textAlign: 'center' }}>
+    //               {generalError}
+    //             </Typography>
+    //           )}
+    //         </div>
+    //         <div>
+    //           <Button
+    //             type='button'
+    //             onClick={handleClose}
+    //           >
+    //             Close
+    //           </Button>
+    //           <Button
+    //             type='submit'
+    //           >
+    //             Confirm Delete
+    //           </Button>
+    //         </div>
+    //       </form>
+    //     </div>
+    //   )}
+    // </div>
     <div>
       <Button
+        variant='contained'
+        style={{ backgroundColor: '#C51D34' }}
         onClick={handleClickOpen}
       >
         Delete Account
       </Button>
-      {/* Delete account modal */}
-      {deleteModalOpen && (
-        <div>
-          <h2>Delete Account</h2>
-          <p>Are you sure you want to delete your account? This action cannot be undone.
-             Please ensure your password to confirm.
-          </p>
-          <form onSubmit={handleDelete}>
-            <div>
-              <TextField
-                label="Password"
-                type='password'
-                variant='outlined'
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setPasswordError("");
-                }}
-                error={!!passwordError}
-                helperText={passwordError}
-                fullWidth
-                inputRef={passwordRef}
-              />
-              {successMessage && (
-                <Box sx={{ color: '#1dc51dff', mt: 2, textAlign: 'center' }}>
-                  {successMessage}
-                </Box>
-              )}
-              {generalError && (
-                <Typography color="error" variant="body2" sx={{ textAlign: 'center' }}>
-                  {generalError}
-                </Typography>
-              )}
-            </div>
-            <div>
-              <Button
-                type='button'
-                onClick={handleClose}
-              >
-                Close
-              </Button>
-              <Button
-                type='submit'
-              >
-                Confirm Delete
-              </Button>
-            </div>
-          </form>
-        </div>
-      )}
+      <Dialog open={deleteModalOpen} onClose={handleClose}>
+        <DialogTitle>Delete Account</DialogTitle>
+        <DialogContent>
+          <Typography sx={{ mb: 2 }}>
+            Are you sure you want to delete your account? This action cannot be undone.<br />
+            Please enter your password to confirm.
+          </Typography>
+          <TextField
+            label="Password"
+            type='password'
+            variant='outlined'
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setPasswordError("");
+            }}
+            error={!!passwordError}
+            helperText={passwordError}
+            fullWidth
+            inputRef={passwordRef}
+            sx={{ mb: 2 }}
+          />
+          {successMessage && (
+            <Box sx={{ color: '#1dc51dff', mt: 2, textAlign: 'center' }}>
+              {successMessage}
+            </Box>
+          )}
+          {generalError && (
+            <Typography color="error" variant="body2" sx={{ textAlign: 'center' }}>
+              {generalError}
+            </Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDelete}
+            color="error"
+            variant="contained"
+          >
+            Confirm Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }
