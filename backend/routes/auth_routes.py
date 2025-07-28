@@ -1,4 +1,4 @@
-import os
+import os, bcrypt
 from flask import Blueprint, request, jsonify, current_app
 from werkzeug.utils import secure_filename
 from models.user_model import UserModel
@@ -37,8 +37,11 @@ def register():
 
     if not all([username, password, fname, lname, dob, height_ft, weight_lbs, gender, profile_pic, occupation]):
         return jsonify({"error": "All fields are required"}), 400
+    
+    # hash the password before storing in db
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
-    user_id = user_model.create_user(username, password, fname, lname, dob, height_ft, weight_lbs, gender, profile_pic, occupation)
+    user_id = user_model.create_user(username, hashed_password, fname, lname, dob, height_ft, weight_lbs, gender, profile_pic, occupation)
 
     if user_id:
         return jsonify({"message": "User registered successfully", "user_id": user_id}), 201

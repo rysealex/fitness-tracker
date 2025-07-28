@@ -1,4 +1,4 @@
-import decimal
+import bcrypt
 from datetime import datetime
 from mysql.connector import Error
 from database import get_db_connection
@@ -72,11 +72,14 @@ class UserModel:
             cursor = conn.cursor(dictionary=True)
 
             sql = """
-            SELECT * FROM Users WHERE username = %s AND password = %s
+            SELECT * FROM Users WHERE username = %s
             """
-            cursor.execute(sql, (username, password))
+            cursor.execute(sql, (username,))
             user = cursor.fetchone()
-            return user
+            # check if password matches the hashed password in the database
+            if user and bcrypt.checkpw(password.encode('utf-8'), user['password'].encode('utf-8')):
+                return user
+            return None
         except Error as e:
             print(f"Error checking if user exists: {e}")
             return False
