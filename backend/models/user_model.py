@@ -1,4 +1,4 @@
-import bcrypt
+import decimal, bcrypt
 from datetime import datetime
 from mysql.connector import Error
 from database import get_db_connection
