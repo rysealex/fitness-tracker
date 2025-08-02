@@ -166,16 +166,31 @@ class UserModel:
         cursor = None
         try:
             conn = get_db_connection()
-            cursor = conn.cursor()
+            cursor = conn.cursor(dictionary=True)
 
+            # first, fetch the hashed password for the user from the db
             sql = """
-            DELETE FROM Users WHERE user_id = %s AND password = %s
+                SELECT password FROM Users WHERE user_id = %s
             """
-            cursor.execute(sql, (user_id, password))
+            cursor.execute(sql, (user_id,))
+            user = cursor.fetchone()
+            if not user:
+                return False
+            
+            # 2, check if provided password matches the hashed password
+            hashed_password = user['password']
+            if not bcrypt.checkpw(password.encode('utf-8'), hashed_password.encode('utf-8')):
+                return False
+            
+            # 3, delete the user
+            sql = """
+            DELETE FROM Users WHERE user_id = %s
+            """
+            cursor.execute(sql, (user_id,))
             conn.commit()
             return cursor.rowcount > 0
         except Error as e:
-            print(f"Error deleting user with ID {user_id} and password {password}: {e}")
+            print(f"Error deleting user with ID {user_id}: {e}")
             if conn:
                 conn.rollback()
             return False
