@@ -4,3 +4,6 @@ mysql-connector-python
 bcrypt
 gunicorn
 Flask-CORS
+# for connecting to AWS RDS MySQL db
+Flask-SQLAlchemy
+PyMySQL
