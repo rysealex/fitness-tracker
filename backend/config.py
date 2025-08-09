@@ -8,6 +8,11 @@ class Config:
     DATABASE_PASSWORD = os.getenv('DATABASE_PASSWORD', 'app_password')
     DATABASE_NAME = os.getenv('DATABASE_NAME', 'fitness_tracker')
 
+    # Flask-SQLAlchemy configuration
+    # This combines the above variables into a single connection string
+    SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{DATABASE_USER}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_NAME}"
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
     PORT = int(os.getenv('PORT', 5000))
 
     """User profile pic upload definitions"""

@@ -6,17 +6,15 @@ services:
       dockerfile: Dockerfile
     ports:
       - "5000:5000"
-    depends_on:
-      database:
-        condition: service_healthy
     environment:
-      DATABASE_HOST: database 
+      # Use your AWS RDS database credentials here
+      DATABASE_HOST: <your-rds-endpoint>
       DATABASE_PORT: 3306
-      DATABASE_USER: app_user
-      DATABASE_PASSWORD: app_password
-      DATABASE_NAME: fitness_tracker
+      DATABASE_USER: <your-db-username>
+      DATABASE_PASSWORD: <your-db-password>
+      DATABASE_NAME: <your-db-name>
       FLASK_APP: app.py
-      FLASK_ENV: development 
+      FLASK_ENV: development
     volumes:
       - ./backend/public/images:/app/public/images
 
@@ -28,26 +26,56 @@ services:
       - "3000:3000"
     depends_on:
       - backend
+# version: '3.8'
+# services:
+#   backend:
+#     build:
+#       context: ./backend
+#       dockerfile: Dockerfile
+#     ports:
+#       - "5000:5000"
+#     depends_on:
+#       database:
+#         condition: service_healthy
+#     environment:
+#       DATABASE_HOST: database 
+#       DATABASE_PORT: 3306
+#       DATABASE_USER: app_user
+#       DATABASE_PASSWORD: app_password
+#       DATABASE_NAME: fitness_tracker
+#       FLASK_APP: app.py
+#       FLASK_ENV: development 
+#     volumes:
+#       - ./backend/public/images:/app/public/images
 
-  database:
-    image: mysql:8.0 
-    container_name: fitness_tracker_mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: fitness_tracker   
-      MYSQL_USER: app_user                    
-      MYSQL_PASSWORD: app_password            
-    ports:
-      - "3306:3306"
-    volumes:
-      - db_data:/var/lib/mysql
-      - ./database:/docker-entrypoint-initdb.d
-    healthcheck: 
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "app_user", "-papp_password"]
-      interval: 10s
-      timeout: 10s
-      retries: 5
-      start_period: 90s
+#   frontend:
+#     build:
+#       context: ./frontend
+#       dockerfile: Dockerfile
+#     ports:
+#       - "3000:3000"
+#     depends_on:
+#       - backend
 
-volumes:
-  db_data:
+#   database:
+#     image: mysql:8.0 
+#     container_name: fitness_tracker_mysql
+#     environment:
+#       MYSQL_ROOT_PASSWORD: rootpass
+#       MYSQL_DATABASE: fitness_tracker   
+#       MYSQL_USER: app_user                    
+#       MYSQL_PASSWORD: app_password            
+#     ports:
+#       - "3306:3306"
+#     volumes:
+#       - db_data:/var/lib/mysql
+#       - ./database:/docker-entrypoint-initdb.d
+#     healthcheck: 
+#       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "app_user", "-papp_password"]
+#       interval: 10s
+#       timeout: 10s
+#       retries: 5
+#       start_period: 90s
+
+# volumes:
+#   db_data:
