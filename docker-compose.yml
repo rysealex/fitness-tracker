@@ -8,11 +8,11 @@ services:
       - "5000:5000"
     environment:
       # Use your AWS RDS database credentials here
-      DATABASE_HOST: <your-rds-endpoint>
-      DATABASE_PORT: 3306
-      DATABASE_USER: <your-db-username>
-      DATABASE_PASSWORD: <your-db-password>
-      DATABASE_NAME: <your-db-name>
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME}
       FLASK_APP: app.py
       FLASK_ENV: development
     volumes:
