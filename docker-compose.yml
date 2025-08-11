@@ -1,13 +1,15 @@
+# AWS RDS Connection
 version: '3.8'
 services:
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    env_file:
+      - .env
     ports:
       - "5000:5000"
     environment:
-      # Use your AWS RDS database credentials here
       DATABASE_HOST: ${DATABASE_HOST}
       DATABASE_PORT: ${DATABASE_PORT}
       DATABASE_USER: ${DATABASE_USER}
@@ -26,6 +28,8 @@ services:
       - "3000:3000"
     depends_on:
       - backend
+
+# Docker Container Connection
 # version: '3.8'
 # services:
 #   backend:
@@ -46,6 +50,7 @@ services:
 #       FLASK_APP: app.py
 #       FLASK_ENV: development 
 #     volumes:
+#       - ./backend/migrations:/app/migrations
 #       - ./backend/public/images:/app/public/images
 
 #   frontend:
