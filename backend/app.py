@@ -3,6 +3,7 @@ from flask import Flask, jsonify, send_from_directory
 from config import Config
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from routes.auth_routes import auth_bp
 from routes.food_routes import food_bp
 from routes.workout_routes import workout_bp
@@ -11,6 +12,9 @@ from routes.goal_routes import goal_bp
 
 # initialize SQLAlchemy
 db = SQLAlchemy()
+
+# initialize Flask-Migrate
+migrate = Migrate()
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -23,8 +27,9 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 # CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 # database.init_db_pool()
 
-# initialize the app with the db object
+# initialize the app with the db and migrate objects
 db.init_app(app)
+migrate.init_app(app, db)
 
 # Register all the blueprints
 app.register_blueprint(auth_bp)

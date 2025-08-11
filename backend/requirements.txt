@@ -6,4 +6,5 @@ gunicorn
 Flask-CORS
 # for connecting to AWS RDS MySQL db
 Flask-SQLAlchemy
+Flask-Migrate
 PyMySQL
