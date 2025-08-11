@@ -54,7 +54,10 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
 from database import init_db
-from routes.auth_routes import auth_routes
+from routes.auth_routes import auth_bp
+from routes.food_routes import food_bp
+from routes.workout_routes import workout_bp
+from routes.goal_routes import goal_bp
 
 # Load environment variables from .env file
 load_dotenv()
@@ -67,20 +70,24 @@ def create_app():
     app = Flask(__name__)
     CORS(app)  # Enable CORS for all routes
 
-    # Register the blueprints for your routes
-    app.register_blueprint(auth_routes, url_prefix='/auth')
+    print("Initializing database connection pool...")
+    init_db()
+    print("Database connection pool initialized.")
 
-    @app.before_first_request
-    def initialize_database():
-        print("Initializing database connection pool...")
-        init_db()
-        print("Database connection pool initialized.")
+    # Register the blueprints for all routes
+    app.register_blueprint(auth_bp, url_prefix='/auth')
+    app.register_blueprint(food_bp, url_prefix='/food')
+    app.register_blueprint(workout_bp, url_prefix='/workout')
+    app.register_blueprint(goal_bp, url_prefix='/goal')
 
     @app.route('/')
     def index():
         return jsonify({"message": "Welcome to the Fitness Tracker API"})
 
     return app
+
+# Gunicorn needs a top-level `app` variable to run.
+app = create_app()
 
 # If this script is run directly, create and run the app
 if __name__ == '__main__':

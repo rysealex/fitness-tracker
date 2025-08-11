@@ -57,8 +57,7 @@
 
 # AWS RDS Connection
 import os
-import psycopg2
-from psycopg2 import pool
+import mysql.connector.pooling # Use mysql.connector for MySQL
 from dotenv import load_dotenv
 
 db_pool = None
@@ -74,23 +73,25 @@ def init_db():
             load_dotenv()
             
             # Retrieve connection details from environment variables
-            db_user = os.getenv("DB_USER")
-            db_password = os.getenv("DB_PASSWORD")
-            db_host = os.getenv("DB_HOST")
-            db_port = os.getenv("DB_PORT")
-            db_name = os.getenv("DB_NAME")
+            db_user = os.getenv("DATABASE_USER")
+            db_password = os.getenv("DATABASE_PASSWORD")
+            db_host = os.getenv("DATABASE_HOST")
+            db_port = os.getenv("DATABASE_PORT", 3306)
+            db_name = os.getenv("DATABASE_NAME")
 
             # Create a simple connection pool with a minimum of 1 and maximum of 10 connections.
-            db_pool = psycopg2.pool.SimpleConnectionPool(1, 10,
-                                                       user=db_user,
-                                                       password=db_password,
-                                                       host=db_host,
-                                                       port=db_port,
-                                                       database=db_name)
+            db_pool = mysql.connector.pooling.MySQLConnectionPool(pool_name="db_pool",
+                                                                  pool_size=10,
+                                                                  pool_reset_session=True,
+                                                                  host=db_host,
+                                                                  port=db_port,
+                                                                  database=db_name,
+                                                                  user=db_user,
+                                                                  password=db_password)
             
             print("Database connection pool successfully created.")
-        except (Exception, psycopg2.DatabaseError) as error:
-            print(f"Error while connecting to PostgreSQL: {error}")
+        except Exception as error:
+            print(f"Error while connecting to MySQL: {error}")
             db_pool = None # Ensure pool is None if an error occurs
 
 def get_db_connection():
@@ -98,9 +99,8 @@ def get_db_connection():
     Gets a connection from the connection pool.
     """
     if db_pool:
-        return db_pool.getconn()
+        return db_pool.get_connection()
     else:
-        # The error you saw is coming from this line.
         raise RuntimeError("Database connection pool has not been initialized.")
 
 def put_db_connection(conn):
@@ -108,6 +108,6 @@ def put_db_connection(conn):
     Returns a connection to the pool.
     """
     if db_pool and conn:
-        db_pool.putconn(conn)
+        conn.close()
     else:
         print("Warning: Could not return connection to pool.")

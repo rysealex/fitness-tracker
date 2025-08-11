@@ -8,5 +8,5 @@ Flask-CORS
 Flask-SQLAlchemy
 Flask-Migrate
 python-dotenv
-psycopg2-binary
+mysql-connector-python
 PyMySQL
