@@ -20,9 +20,12 @@ function Home() {
   };
   
   const { stats, isLoading, error } = useStats();
-  if (isLoading) return <div>Loading home page...</div>;
-  if (error) return <div>Error: {error.message}</div>;
-  if (!stats) return <div>No stats available.</div>;
+  if (isLoading) return <div className='context-container'>
+    <h1>Loading...</h1></div>;
+  if (error) return <div className='context-container'>
+    <h1>Error</h1>: {error.message}</div>;
+  if (!stats) return <div className='context-container'>
+    <h1>No Stats Available</h1></div>;
 
   const handleClickCalorieCounter = () => {
     handleNavigate("/calorie-counter");
