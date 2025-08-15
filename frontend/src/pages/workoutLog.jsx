@@ -422,7 +422,7 @@ function WorkoutLog() {
 										<Typography variant="subtitle2">{entry.workout_name}</Typography>
 										<Typography variant="body2">Calories Burned: {entry.calories_burned}</Typography>
 										<Typography variant="body2">Duration (Min): {entry.duration_min}</Typography>
-										<Typography variant="body2" color="text.secondary">Date: {entry.created_at}</Typography>
+										{/*<Typography variant="body2" color="text.secondary">Date: {entry.created_at}</Typography>*/}
 									</Box>
 									<Box>
 										<IconButton color="primary" onClick={() => openEditModal(entry)}>

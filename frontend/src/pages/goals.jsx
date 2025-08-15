@@ -233,6 +233,12 @@ function Goals() {
 		fetchGoals();
 	}, []);
 
+    // helper function to format date
+    const formattedDate = (dateString) => {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString(undefined, options);
+    };
+
 	// helper function to group goals by type
     const groupGoalsByType = (goalsArray) => {
         return goalsArray.reduce((acc, goal) => {
@@ -267,8 +273,8 @@ function Goals() {
                             {goalsOfType.map((goal) => (
                                 <div key={goal.goal_id} className="goal-card">
                                     <h4 className="goal-card-title">{goal.goal_title}</h4>
-                                    <p className="goal-card-text">Start Date: {goal.start_date}</p>
-                                    <p className="goal-card-text">End Date: {goal.end_date ? goal.end_date : "N/A"}</p>
+                                    <p className="goal-card-text">Start Date: {formattedDate(goal.start_date)}</p>
+                                    <p className="goal-card-text">End Date: {goal.end_date ? formattedDate(goal.end_date) : "N/A"}</p>
                                     <p className="goal-card-text">Status: <span className={`goal-status-${goal.status.toLowerCase()}`}>{goal.status}</span></p>
                                     <div className="goal-card-actions">
                                         <Button

@@ -416,7 +416,7 @@ function CalorieCounter() {
 									<Box>
 										<Typography variant="subtitle2">{entry.food_name}</Typography>
 										<Typography variant="body2">Calories: {entry.total_calories}</Typography>
-										<Typography variant="body2" color="text.secondary">Date: {entry.created_at}</Typography>
+										{/*<Typography variant="body2" color="text.secondary">Date: {entry.created_at}</Typography>*/}
 									</Box>
 									<Box>
 										<IconButton color="primary" onClick={() => openEditModal(entry)}>
