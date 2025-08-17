@@ -63,8 +63,12 @@ function Login() {
       if (response.ok) {
         const data = await response.json();
         console.log('Login successful:', data);
-        // store the user id in local storage
-        localStorage.setItem('userId', data.user.user_id);
+        // // store the user id in local storage
+        // localStorage.setItem('userId', data.user.user_id);
+        // check if JWT token exists
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+        }
         setIsLoading(false);
         handleNavigate("/home");
       } else {
