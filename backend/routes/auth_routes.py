@@ -37,6 +37,19 @@ def jwt_required(f):
     decorated_function.__name__ = f.__name__
     return decorated_function
 
+@auth_bp.route('/stats', methods=['GET'])
+@jwt_required
+def get_user_stats(user_id):
+    """
+    Endpoint to get user statistics.
+    The user_id is automatically passed from the JWT token by the decorator.
+    """
+    user = user_model.get_user_by_id(user_id)
+    if user:
+        return jsonify(user), 200
+    else:
+        return jsonify({"error": "User not found"}), 404
+
 @auth_bp.route('/users', methods=['GET'])
 def get_all_users():
     """Endpoint to get all users"""

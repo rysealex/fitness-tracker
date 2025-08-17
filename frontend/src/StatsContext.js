@@ -67,7 +67,7 @@ export const StatsProvider = ({ children }) => {
 
     const fetchStats = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/stats`, {
+        const response = await fetch(`http://localhost:5000/auth/stats`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
