@@ -2,6 +2,7 @@ flask
 flask_cors
 mysql-connector-python
 bcrypt
+PyJWT
 gunicorn
 Flask-CORS
 # for connecting to AWS RDS MySQL db

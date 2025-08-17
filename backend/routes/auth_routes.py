@@ -1,10 +1,41 @@
-import os, bcrypt
+import os, bcrypt, jwt
+from datetime import datetime, timedelta
 from flask import Blueprint, request, jsonify, current_app
 from werkzeug.utils import secure_filename
 from models.user_model import UserModel
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 user_model = UserModel()
+
+# decorator to protect routes with JWT authentication
+def jwt_required(f):
+    """
+    Decorator to protect API routes, requiring a valid JWT token in the
+    'Authorization' header.
+    """
+    def decorated_function(*args, **kwargs):
+        # get the token from Authorization
+        auth_header = request.headers.get('Authorization')
+        if not auth_header:
+            return jsonify({'message': 'Authorization header is missing'}), 401
+
+        try:
+            # check for the 'Bearer' schema and split the token
+            token = auth_header.split(" ")[1]
+            # decode the token using the JWT secret from environment variables
+            payload = jwt.decode(token, os.getenv("JWT_SECRET"), algorithms=["HS256"])
+            # pass the user_id from the token payload to the decorated function
+            kwargs['user_id'] = payload['user_id']
+
+        except jwt.ExpiredSignatureError:
+            return jsonify({'message': 'Token has expired'}), 401
+        except (jwt.InvalidTokenError, IndexError):
+            return jsonify({'message': 'Invalid Token'}), 401
+        
+        return f(*args, **kwargs)
+
+    decorated_function.__name__ = f.__name__
+    return decorated_function
 
 @auth_bp.route('/users', methods=['GET'])
 def get_all_users():
@@ -50,7 +81,7 @@ def register():
     
 @auth_bp.route('/login', methods=['POST'])
 def login():
-    """Endpoint to log in a user"""
+    """Endpoint to log in a user and return a JWT token"""
     data = request.get_json()
     
     if not data:
@@ -65,7 +96,19 @@ def login():
     user = user_model.user_exists(username, password)
 
     if user:
-        return jsonify({"message": "Login successful", "user": user}), 200
+        # return jsonify({"message": "Login successful", "user": user}), 200
+        try:
+            # create a JWT payload
+            payload = {
+                'user_id': user.get('user_id'),
+                'exp': datetime.utcnow() + timedelta(hours=24) # expires after 24 hours
+            }
+            # encode the JWT token and return to the client
+            token = jwt.encode(payload, os.getenv("JWT_SECRET"), algorithm="HS256")
+            return jsonify({"message": "Login successful", "token": token}), 200
+        except Exception as e:
+            current_app.logger.error(f"Error creating JWT token: {e}")
+            return jsonify({"error": "Failed to generate token"}), 500
     else:
         return jsonify({"error": "Invalid username or password"}), 401
     

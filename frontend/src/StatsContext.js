@@ -81,12 +81,16 @@ export const StatsProvider = ({ children }) => {
           setStats(data);
           setIsLoading(false);
           console.log("User stats fetched successfully:", data);
+        } else if (response.status === 401) {
+          console.error("Unauthorized: Token is invalid or expired.");
+          localStorage.removeItem('token'); // clear the invalid token
+          setIsLoading(false);
+          setError(new Error("Session expired. Please log in again."));
         } else {
-          localStorage.removeItem('token'); // remove token if response is not ok
-					setIsLoading(false);
-					setError(new Error("Failed to fetch user stats"));
-					console.error("Failed to fetch user stats:", response.statusText);
-				}
+          setIsLoading(false);
+          setError(new Error("Failed to fetch user stats"));
+          console.error("Failed to fetch user stats:", response.statusText);
+        }
       } catch (error) {
         setIsLoading(false);
         setError(error);
