@@ -11,6 +11,7 @@ function Navbar() {
 		localStorage.removeItem('userId');
 		localStorage.removeItem('username');
 		localStorage.removeItem('password');
+		localStorage.removeItem('token');
 	};
 	if (isLoading) {
 		return <aside className='nav-container'>Loading stats...</aside>;
