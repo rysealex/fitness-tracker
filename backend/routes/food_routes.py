@@ -1,8 +1,53 @@
+import os, jwt
+from datetime import datetime, timedelta
 from flask import Blueprint, request, jsonify
 from models.food_entry_model import FoodEntryModel
 
 food_bp = Blueprint('food', __name__, url_prefix='/food')
 food_model = FoodEntryModel()
+
+# decorator to protect routes with JWT authentication
+def jwt_required(f):
+    """
+    Decorator to protect API routes, requiring a valid JWT token in the
+    'Authorization' header.
+    """
+    def decorated_function(*args, **kwargs):
+        # get the token from Authorization
+        auth_header = request.headers.get('Authorization')
+        if not auth_header:
+            return jsonify({'message': 'Authorization header is missing'}), 401
+
+        try:
+            # check for the 'Bearer' schema and split the token
+            token = auth_header.split(" ")[1]
+            # decode the token using the JWT secret from environment variables
+            payload = jwt.decode(token, os.getenv("JWT_SECRET"), algorithms=["HS256"])
+            # pass the user_id from the token payload to the decorated function
+            kwargs['user_id'] = payload['user_id']
+
+        except jwt.ExpiredSignatureError:
+            return jsonify({'message': 'Token has expired'}), 401
+        except (jwt.InvalidTokenError, IndexError):
+            return jsonify({'message': 'Invalid Token'}), 401
+        
+        return f(*args, **kwargs)
+
+    decorated_function.__name__ = f.__name__
+    return decorated_function
+
+@food_bp.route('/stats', methods=['GET'])
+@jwt_required
+def get_food_entry_stats(user_id):
+    """
+    Endpoint to get food entry statistics.
+    The user_id is automatically passed from the JWT token by the decorator.
+    """
+    food = food_model.get_todays_food_entries_by_user_id(user_id)
+    if food:
+        return jsonify(food), 200
+    else:
+        return jsonify({"error": "Food entry not found"}), 404
 
 @food_bp.route('/entries', methods=['GET'])
 def get_all_food_entries():
