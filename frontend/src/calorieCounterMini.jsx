@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { FaFire } from "react-icons/fa";
 import CircularProgress from '@mui/material/CircularProgress';
-import Box from '@mui/material/Box';
 import './styles/index.css';
 
 function CalorieCounterMini() {
@@ -35,7 +34,7 @@ function CalorieCounterMini() {
 	// function to fetch food entries for the user with JWT token
 	const fetchFoodEntries = async () => {
 		// start loading state
-    setIsLoading(true);
+    	setIsLoading(true);
 
 		// get the JWT token from local storage
 		const token = localStorage.getItem('token');
@@ -57,7 +56,7 @@ function CalorieCounterMini() {
 				},
 			});
 
-			// check if response if ok
+			// check if response is ok
 			if (response.ok) {
 				const data = await response.json();
 				setIsLoading(false);
