@@ -126,7 +126,8 @@ def get_food_entries_by_user(user_id):
     else:
         return jsonify({"error": "Failed to fetch food entries for user"}), 500
     
-@food_bp.route('/entries/today/<int:user_id>', methods=['GET'])
+@food_bp.route('/entries/today', methods=['GET'])
+@jwt_required
 def get_todays_food_entries_by_user(user_id):
     """Endpoint to get all of today's food entries for a specific user"""
     food_entries = food_model.get_todays_food_entries_by_user_id(user_id)
@@ -136,7 +137,8 @@ def get_todays_food_entries_by_user(user_id):
     else:
         return jsonify({"error": "Failed to fetch today's food entries for user"}), 500
     
-@food_bp.route('/entries/specific/<int:user_id>/<specified_day>', methods=['GET'])
+@food_bp.route('/entries/specific/<specified_day>', methods=['GET'])
+@jwt_required
 def get_specified_days_food_entries_by_user(user_id, specified_day):
     """Endpoint to get all of specified day's food entries for a specific user"""
     food_entries = food_model.get_specified_days_food_entries_by_user_id(user_id, specified_day)

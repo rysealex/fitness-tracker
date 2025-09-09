@@ -78,15 +78,31 @@ function CalorieCounter() {
 
 	// function to handle the specified day change
 	const handleSpecifiedDayChange = async (specifiedDay) => {
-		// get the current users user_id from local storage
-		const userId = localStorage.getItem('userId');
-		if (!userId) {
-			console.error("User ID not found in local storage.");
+		// // get the current users user_id from local storage
+		// const userId = localStorage.getItem('userId');
+		// if (!userId) {
+		// 	console.error("User ID not found in local storage.");
+		// 	return;
+		// }
+
+		// get the JWT token from local storage
+		const token = localStorage.getItem('token');
+
+		// if token does not exist, user is not authenticated
+		if (!token) {
+			console.error("User is not authenticated.");
 			return;
 		}
+
 		// fetch food entries for the user for the specified day
 		try {
-			const response = await fetch(`http://localhost:5000/food/entries/specific/${userId}/${specifiedDay}`);
+			const response = await fetch(`http://localhost:5000/food/entries/specific/${specifiedDay}`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}` // use the JWT token for authentication
+				},
+			});
 			if (response.ok) {
 				const data = await response.json();
 				if (!data) {
@@ -256,12 +272,22 @@ function CalorieCounter() {
 
 	//  function to fetch food entries for the user
 	const fetchFoodEntries = async () => {
-		// get the current users user_id from local storage
-		const userId = localStorage.getItem('userId');
-		if (!userId) {
-			console.error("User ID not found in local storage.");
+		// // get the current users user_id from local storage
+		// const userId = localStorage.getItem('userId');
+		// if (!userId) {
+		// 	console.error("User ID not found in local storage.");
+		// 	return;
+		// }
+
+		// get the JWT token from local storage
+		const token = localStorage.getItem('token');
+
+		// if token does not exist, user is not authenticated
+		if (!token) {
+			console.error("User is not authenticated.");
 			return;
 		}
+
 		// // first fetch all food entries for the user
 		// try {
 		// 	const response = await fetch(`http://localhost:5000/food/entries/${userId}`);
@@ -277,7 +303,13 @@ function CalorieCounter() {
 		// }
 		// second fetch today's food entries for the user
 		try {
-			const response = await fetch(`http://localhost:5000/food/entries/today/${userId}`);
+			const response = await fetch(`http://localhost:5000/food/entries/today`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}` // use the JWT token for authentication
+				},
+			});
 			if (response.ok) {
 				const data = await response.json();
 				setTodayFoodEntries(data);
