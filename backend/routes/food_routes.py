@@ -60,14 +60,15 @@ def get_all_food_entries():
         return jsonify({"error": "Failed to fetch food entries"}), 500
 
 @food_bp.route('/add', methods=['POST'])
-def add_food_entry():
+@jwt_required
+def add_food_entry(user_id):
     """Endpoint to add a new food entry"""
     data = request.get_json()
     
     if not data:
         return jsonify({"error": "No input data provided"}), 400
     
-    user_id = data.get('user_id')
+    #user_id = data.get('user_id')
     food_name = data.get('food_name')
     total_calories = data.get('total_calories')
     meal_type = data.get('meal_type')

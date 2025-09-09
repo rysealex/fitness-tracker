@@ -211,6 +211,16 @@ function CalorieCounter() {
 			hasError = true;
 		}
 		if (hasError) return; // stop if input validation failed
+		
+		// get the JWT token from local storage
+		const token = localStorage.getItem('token');
+
+		// if token does not exist, user is not authenticated
+		if (!token) {
+			console.error("User is not authenticated.");
+			return;
+		}
+
 		// proceed with form submission
 		try {
 			console.log("Submitting food entry now!");
@@ -218,9 +228,10 @@ function CalorieCounter() {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}` // use the JWT token for authentication
 				},
 				body: JSON.stringify({
-					user_id: localStorage.getItem('userId'), // get user id from local storage
+					// user_id: localStorage.getItem('userId'), // get user id from local storage
 					food_name: foodName,
 					total_calories: parseInt(totalCalories),
 					meal_type: mealType,
