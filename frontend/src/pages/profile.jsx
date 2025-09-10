@@ -47,13 +47,22 @@ function Profile() {
     setProfilePicError("");
     setSuccessMessage("");
 
-    // get the current user ID from local storage
-    const userId = localStorage.getItem('userId');
+    // // get the current user ID from local storage
+    // const userId = localStorage.getItem('userId');
 
-    if (!userId) {
-      console.error("User ID not found. Cannot upload profile picture.");
-      return;
-    }
+    // if (!userId) {
+    //   console.error("User ID not found. Cannot upload profile picture.");
+    //   return;
+    // }
+
+    // get the JWT token from local storage
+		const token = localStorage.getItem('token');
+
+		// if token does not exist, user is not authenticated
+		if (!token) {
+			console.error("User is not authenticated.");
+			return;
+		}
 
     // start loading state
     setIsLoadingPic(true);
@@ -64,8 +73,11 @@ function Profile() {
       formData.append('profile_pic', file);
 
       // PUT request to backend to update profile pic endpoint
-      const response = await fetch(`http://localhost:5000/auth/user/${userId}/update-profile-pic`, {
+      const response = await fetch(`http://localhost:5000/auth/update-profile-pic`, {
         method: 'PUT',
+        headers: {
+					'Authorization': `Bearer ${token}` // use the JWT token for authentication
+				},
         body: formData,
       });
 

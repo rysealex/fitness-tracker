@@ -50,7 +50,7 @@
 
 # AWS RDS Connection
 import os
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
 from dotenv import load_dotenv
 from database import init_db
@@ -58,6 +58,7 @@ from routes.auth_routes import auth_bp
 from routes.food_routes import food_bp
 from routes.workout_routes import workout_bp
 from routes.goal_routes import goal_bp
+from config import Config
 
 # Load environment variables from .env file
 load_dotenv()
@@ -69,6 +70,9 @@ def create_app():
     """
     app = Flask(__name__)
     CORS(app)  # Enable CORS for all routes
+
+    # Load configuration from the Config class
+    app.config.from_object(Config)
 
     print("Initializing database connection pool...")
     init_db()
@@ -83,6 +87,11 @@ def create_app():
     @app.route('/')
     def index():
         return jsonify({"message": "Welcome to the Fitness Tracker API"})
+    
+    # Route to serve uploaded profile pictures
+    @app.route('/images/<filename>')
+    def uploaded_file(filename):
+        return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
     return app
 

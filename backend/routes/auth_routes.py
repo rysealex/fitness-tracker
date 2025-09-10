@@ -224,7 +224,8 @@ def upload_profile_pic():
         current_app.logger.warning(f"File type not allowed for: {file.filename}")
         return jsonify({"message": "File type not allowed"}), 400
 
-@auth_bp.route('/user/<string:user_id>/update-profile-pic', methods=['PUT'])
+@auth_bp.route('/update-profile-pic', methods=['PUT'])
+@jwt_required
 def update_profile_pic(user_id):
     """Endpoint to update a user profile pic"""
     if 'profile_pic' not in request.files:
