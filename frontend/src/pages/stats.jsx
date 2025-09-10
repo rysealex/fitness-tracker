@@ -68,12 +68,21 @@ function Stats() {
 
   // handle the update stats form submission
   const handleSubmit = async () => {
-    // get the current users user_id from local storage
-    const userId = localStorage.getItem('userId');
-    if (!userId) {
-      console.error("User ID not found in local storage.");
-      return;
-    }
+    // // get the current users user_id from local storage
+    // const userId = localStorage.getItem('userId');
+    // if (!userId) {
+    //   console.error("User ID not found in local storage.");
+    //   return;
+    // }
+
+    // get the JWT token from local storage
+		const token = localStorage.getItem('token');
+
+		// if token does not exist, user is not authenticated
+		if (!token) {
+			console.error("User is not authenticated.");
+			return;
+		}
 
     // start loading state
     setIsLoadingStats(true);
@@ -115,16 +124,16 @@ function Stats() {
 
     try {
       console.log("Sending update:", {
-        userId,
         height_ft: parseFloat(editEntry.height_ft),
         weight_lbs: parseFloat(editEntry.weight_lbs)
       });
       // try to update the user stats with current attribute and value
-      const response = await fetch(`http://localhost:5000/auth/user/${userId}/update-height-weight`, {
+      const response = await fetch(`http://localhost:5000/auth/update-height-weight`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
-        },
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}` // use the JWT token for authentication
+				},
         body: JSON.stringify({
           height_ft: parseFloat(editEntry.height_ft),
           weight_lbs: parseFloat(editEntry.weight_lbs)

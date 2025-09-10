@@ -274,7 +274,8 @@ def update_profile_pic(user_id):
         current_app.logger.warning(f"File type not allowed for user {user_id}: {file.filename}")
         return jsonify({"message": "File type not allowed"}), 400
     
-@auth_bp.route('/user/<int:user_id>/update-height-weight', methods=['PUT'])
+@auth_bp.route('/update-height-weight', methods=['PUT'])
+@jwt_required
 def update_height_weight(user_id):
     """Endpoint to update user height and weight"""
     data = request.get_json()
