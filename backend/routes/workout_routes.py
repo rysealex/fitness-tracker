@@ -43,11 +43,13 @@ def get_workout_logs_stats(user_id):
     Endpoint to get workout log statistics.
     The user_id is automatically passed from the JWT token by the decorator.
     """
-    workout_logs = workout_model.get_todays_workout_logs_by_user_id(user_id)
-    if workout_logs:
+    try:
+        workout_logs = workout_model.get_todays_workout_logs_by_user_id(user_id)
+        # always return a list, even if there are currnetly no logs
         return jsonify(workout_logs), 200
-    else:
-        return jsonify({"error": "Workout logs not found"}), 404
+    # only give error if there is an actual exception
+    except Exception as e:
+        return jsonify({"error": "An internal server error occured."}), 500
 
 @workout_bp.route('/entries', methods=['GET'])
 def get_all_workout_logs():

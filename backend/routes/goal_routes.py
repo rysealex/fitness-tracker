@@ -43,11 +43,13 @@ def get_goal_entry_stats(user_id):
     Endpoint to get goal entry statistics.
     The user_id is automatically passed from the JWT token by the decorator.
     """
-    goals = goal_model.get_goals_by_user_id(user_id)
-    if goals:
+    try:
+        goals = goal_model.get_goals_by_user_id(user_id)
+        # always return a list, even if there are currnetly no goals
         return jsonify(goals), 200
-    else:
-        return jsonify({"error": "Goal entry not found"}), 404
+    # only give error if there is an actual exception
+    except Exception as e:
+        return jsonify({"error": "An internal server error occured."}), 500
 
 @goal_bp.route('/entries', methods=['GET'])
 def get_all_goals():

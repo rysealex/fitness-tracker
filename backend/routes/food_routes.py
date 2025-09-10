@@ -43,11 +43,13 @@ def get_food_entry_stats(user_id):
     Endpoint to get food entry statistics.
     The user_id is automatically passed from the JWT token by the decorator.
     """
-    food = food_model.get_todays_food_entries_by_user_id(user_id)
-    if food:
+    try:
+        food = food_model.get_todays_food_entries_by_user_id(user_id)
+        # always return a list, even if there are currnetly no entries
         return jsonify(food), 200
-    else:
-        return jsonify({"error": "Food entry not found"}), 404
+    # only give error if there is an actual exception
+    except Exception as e:
+        return jsonify({"error": "An internal server error occured."}), 500
 
 @food_bp.route('/entries', methods=['GET'])
 def get_all_food_entries():
