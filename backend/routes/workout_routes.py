@@ -60,14 +60,15 @@ def get_all_workout_logs():
         return jsonify({"error": "Failed to fetch workout logs"}), 500
 
 @workout_bp.route('/add', methods=['POST'])
-def add_workout_log():
+@jwt_required
+def add_workout_log(user_id):
     """Endpoint to add a new workout log"""
     data = request.get_json()
     
     if not data:
         return jsonify({"error": "No input data provided"}), 400
     
-    user_id = data.get('user_id')
+    # user_id = data.get('user_id')
     workout_type = data.get('workout_type')
     calories_burned = data.get('calories_burned')
     duration_min = data.get('duration_min')
@@ -126,7 +127,8 @@ def get_workout_logs_by_user(user_id):
     else:
         return jsonify({"error": "Failed to fetch workout logs for user"}), 500
     
-@workout_bp.route('/entries/today/<int:user_id>', methods=['GET'])
+@workout_bp.route('/entries/today', methods=['GET'])
+@jwt_required
 def get_todays_workout_logs_by_user(user_id):
     """Endpoint to get all of today's workout logs for a specific user"""
     workout_logs = workout_model.get_todays_workout_logs_by_user_id(user_id)
@@ -136,7 +138,8 @@ def get_todays_workout_logs_by_user(user_id):
     else:
         return jsonify({"error": "Failed to fetch today's workout logs for user"}), 500
     
-@workout_bp.route('/entries/specific/<int:user_id>/<specified_day>', methods=['GET'])
+@workout_bp.route('/entries/specific/<specified_day>', methods=['GET'])
+@jwt_required
 def get_specified_days_wrokout_logs_by_user(user_id, specified_day):
     """Endpoint to get all of specified day's workout logs for a specific user"""
     workout_logs = workout_model.get_specified_days_workout_logs_by_user_id(user_id, specified_day)

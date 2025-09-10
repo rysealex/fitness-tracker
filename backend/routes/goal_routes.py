@@ -60,14 +60,15 @@ def get_all_goals():
         return jsonify({"error": "Failed to fetch goals"}), 500
     
 @goal_bp.route('/add', methods=['POST'])
-def add_goal():
+@jwt_required
+def add_goal(user_id):
     """Endpoint to add a new goal"""
     data = request.get_json()
     
     if not data:
         return jsonify({"error": "No input data provided"}), 400
     
-    user_id = data.get('user_id')
+    # user_id = data.get('user_id')
     goal_title = data.get('goal_title')
     goal_type = data.get('goal_type')
     # start_date = data.get('start_date')
@@ -124,7 +125,8 @@ def delete_goal(goal_id):
     else:
         return jsonify({"error": "Failed to delete goal"}), 500
 
-@goal_bp.route('/entries/<int:user_id>', methods=['GET'])
+@goal_bp.route('/entriesbyuser', methods=['GET'])
+@jwt_required
 def get_goals_by_user(user_id):
     """Endpoint to get all goals for a specific user"""
     goals = goal_model.get_goals_by_user_id(user_id)

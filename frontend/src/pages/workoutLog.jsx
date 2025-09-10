@@ -77,15 +77,31 @@ function WorkoutLog() {
 
 	// function to handle the specified day change
 	const handleSpecifiedDayChange = async (specifiedDay) => {
-		// get the current users user_id from local storage
-		const userId = localStorage.getItem('userId');
-		if (!userId) {
-			console.error("User ID not found in local storage.");
+		// // get the current users user_id from local storage
+		// const userId = localStorage.getItem('userId');
+		// if (!userId) {
+		// 	console.error("User ID not found in local storage.");
+		// 	return;
+		// }
+
+		// get the JWT token from local storage
+		const token = localStorage.getItem('token');
+
+		// if token does not exist, user is not authenticated
+		if (!token) {
+			console.error("User is not authenticated.");
 			return;
 		}
+
 		// fetch workout logs for the user for the specified day
 		try {
-			const response = await fetch(`http://localhost:5000/workout/entries/specific/${userId}/${specifiedDay}`);
+			const response = await fetch(`http://localhost:5000/workout/entries/specific/${specifiedDay}`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}` // use the JWT token for authentication
+				},
+			});
 			if (response.ok) {
 				const data = await response.json();
 				if (!data) {
@@ -133,6 +149,16 @@ function WorkoutLog() {
 			hasError = true;
 		}
 		if (hasError) return; // stop if input validation failed
+		
+		// get the JWT token from local storage
+		const token = localStorage.getItem('token');
+
+		// if token does not exist, user is not authenticated
+		if (!token) {
+			console.error("User is not authenticated.");
+			return;
+		}
+
 		// proceed with form submission
 		try {
 			console.log("Submitting workout log now!");
@@ -140,9 +166,10 @@ function WorkoutLog() {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}` // use the JWT token for authentication
 				},
 				body: JSON.stringify({
-					user_id: localStorage.getItem('userId'), // get user id from local storage
+					// user_id: localStorage.getItem('userId'), // get user id from local storage
 					workout_type: workoutType,
 					calories_burned: parseInt(caloriesBurned),
 					duration_min: parseInt(durationMin),
@@ -258,12 +285,12 @@ function WorkoutLog() {
 
 	// function to fetch workout logs for the user
 	const fetchWorkoutLogs = async () => {
-		// get the current users user_id from local storage
-		const userId = localStorage.getItem('userId');
-		if (!userId) {
-			console.error("User ID not found in local storage.");
-			return;
-		}
+		// // get the current users user_id from local storage
+		// const userId = localStorage.getItem('userId');
+		// if (!userId) {
+		// 	console.error("User ID not found in local storage.");
+		// 	return;
+		// }
 		// // first fetch all workout logs for the user
 		// try {
 		// 	const response = await fetch(`http://localhost:5000/workout/entries/${userId}`);
@@ -277,9 +304,25 @@ function WorkoutLog() {
 		// } catch (error) {
 		// 	console.error("Error fetching all user workout logs:", error);
 		// }
+
+		// get the JWT token from local storage
+		const token = localStorage.getItem('token');
+
+		// if token does not exist, user is not authenticated
+		if (!token) {
+			console.error("User is not authenticated.");
+			return;
+		}
+
 		// second fetch today's workout logs for the user
 		try {
-			const response = await fetch(`http://localhost:5000/workout/entries/today/${userId}`);
+			const response = await fetch(`http://localhost:5000/workout/entries/today`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}` // use the JWT token for authentication
+				}
+			});
 			if (response.ok) {
 				const data = await response.json();
 				setTodayWorkoutLogs(data);

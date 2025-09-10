@@ -90,16 +90,27 @@ function Goals() {
             addGoalTypeRef.current.focus();
         }
         if (hasError) return; // stop if input validation failed
+        
+        // get the JWT token from local storage
+		const token = localStorage.getItem('token');
+
+		// if token does not exist, user is not authenticated
+		if (!token) {
+			console.error("User is not authenticated.");
+			return;
+		}
+        
         // proceed with form submission
         try {
             console.log("Submitting goal now!");
             const response = await fetch('http://localhost:5000/goal/add', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}` // use the JWT token for authentication
+				},
                 body: JSON.stringify({
-                    user_id: localStorage.getItem('userId'), // get user id from local storage
+                    // user_id: localStorage.getItem('userId'), // get user id from local storage
                     goal_title: goalTitle,
                     goal_type: goalType
                 }),
@@ -206,16 +217,31 @@ function Goals() {
 
 	// function to fetch goals for the current user
 	const fetchGoals = async () => {
-		// get the current users user_id from local storage
-		const userId = localStorage.getItem('userId');
-		if (!userId) {
-			console.error("User ID not found in local storage.");
+		// // get the current users user_id from local storage
+		// const userId = localStorage.getItem('userId');
+		// if (!userId) {
+		// 	console.error("User ID not found in local storage.");
+		// 	return;
+		// }
+
+        // get the JWT token from local storage
+		const token = localStorage.getItem('token');
+
+		// if token does not exist, user is not authenticated
+		if (!token) {
+			console.error("User is not authenticated.");
 			return;
 		}
 
 		// continue with the goals fetch
 		try {
-			const response = await fetch(`http://localhost:5000/goal/entries/${userId}`);
+			const response = await fetch(`http://localhost:5000/goal/entriesbyuser`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}` // use the JWT token for authentication
+				}
+			});
 			if (response.ok) {
 				const data = await response.json();
 				setGoals(data); // update goals state
