@@ -163,7 +163,8 @@ def update_user_attribute(user_id):
     else:
         return jsonify({"error": "Failed to update user attribute"}), 500
 
-@auth_bp.route('/delete/<int:user_id>', methods=['DELETE'])
+@auth_bp.route('/delete', methods=['DELETE'])
+@jwt_required
 def delete_user(user_id):
     """Endpoint to delete a user by user_id and password"""
     data = request.get_json()

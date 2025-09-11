@@ -50,22 +50,34 @@ export default function DeleteAccountForm() {
       setIsLoading(false);
       return;
     }
-    // get the current users user_id from local storage
-    const userId = localStorage.getItem('userId');
-    if (!userId) {
-      console.error("User ID not found in local storage.");
-      setIsLoading(false);
-      return;
-    }
+    // // get the current users user_id from local storage
+    // const userId = localStorage.getItem('userId');
+    // if (!userId) {
+    //   console.error("User ID not found in local storage.");
+    //   setIsLoading(false);
+    //   return;
+    // }
+
+    // get the JWT token from local storage
+		const token = localStorage.getItem('token');
+
+		// if token does not exist, user is not authenticated
+		if (!token) {
+			console.error("User is not authenticated.");
+			setIsLoading(false);
+			return;
+		}
+
     try {
       // try to delete the user account
-      const response = await fetch(`http://localhost:5000/auth/delete/${userId}`, {
+      const response = await fetch(`http://localhost:5000/auth/delete`, {
         method: 'DELETE',
         headers: {
-          'Content-Type': 'application/json',
-        },
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}` // use the JWT token for authentication
+				},
         body: JSON.stringify({ 
-          user_id: userId, 
+          // user_id: userId, 
           password: password 
         }),
       });
@@ -73,10 +85,12 @@ export default function DeleteAccountForm() {
       if (response.ok) {
         const data = await response.json();
         console.log("User account deleted successfully:", data);
-        // clear the userId, password, and username from local storage
-        localStorage.removeItem('userId');
-        localStorage.removeItem('password');
-        localStorage.removeItem('username');
+        // // clear the userId, password, and username from local storage
+        // localStorage.removeItem('userId');
+        // localStorage.removeItem('password');
+        // localStorage.removeItem('username');
+        // clear the token from local storage
+        localStorage.removeItem('token');
         setSuccessMessage("Successfuly deleted account! You will be redirected shortly.");
         setIsLoading(true);
         // clear success message and redirect to landing page after 3 sec
