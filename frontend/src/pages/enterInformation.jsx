@@ -27,6 +27,9 @@ function EnterInformation() {
   const [occupation, setOccupation] = useState("Unemployed"); // optional
   const [isLoading, setIsLoading] = useState(false);
 
+  // success message usestate
+  const [successMessage, setSuccessMessage] = useState("");
+
   // error usestates
   const [fnameError, setFnameError] = useState("");
   const [lnameError, setLnameError] = useState("");
@@ -99,6 +102,9 @@ function EnterInformation() {
     // set loading state
     setIsLoading(true);
 
+    // clear success message
+    setSuccessMessage("");
+
     // clear previous errors
     setFnameError("");
     setLnameError("");
@@ -156,6 +162,7 @@ function EnterInformation() {
 
     if (hasError) {
       setIsLoading(false);
+      setSuccessMessage("");
       return; // stop if input validation failed
     }
 
@@ -169,6 +176,7 @@ function EnterInformation() {
         finalProfilePicUrl = uploadedUrl; // use the URL if successful
       } else {
         setIsLoading(false);
+        setSuccessMessage("");
         setProfilePicError("Profile picture upload failed.")
         console.log("Profile picture upload failed, cannot submit user information.");
         return;
@@ -204,16 +212,20 @@ function EnterInformation() {
         // localStorage.setItem('userId', data.user_id);
         // console.log('User ID stored in local storage:', data.user_id);
         
-        // remove username and password from local storage for security
-        localStorage.removeItem('username');
-        localStorage.removeItem('password');
-        setIsLoading(false);
-        // redirect to login page
-        handleNavigate('/login');
+        // set the success message
+        setSuccessMessage("Account successfully created!");
+
+        // clear success message and redirect to login page after 3 sec
+        setTimeout(() => {
+          setSuccessMessage("");
+          setIsLoading(false);
+          handleLoginRedirect();
+        }, 3000);
         
         // handleNavigate("/home");
         //window.location.reload(); // reload home page to reflect new user data
       } else {
+        setSuccessMessage("");
         setFname("");
         setLname("");
         setHeight("");
@@ -226,6 +238,7 @@ function EnterInformation() {
         console.log('Account information submission failed:', response.statusText);
       }
     } catch (error) {
+      setSuccessMessage("");
       setFname("");
       setLname("");
       setHeight("");
@@ -444,6 +457,11 @@ function EnterInformation() {
             {isLoading && (
               <Box sx={{ mt: 2, textAlign: 'center' }}>
                 <CircularProgress sx={{ color: '#C51D34' }} />
+              </Box>
+            )}
+            {successMessage && (
+              <Box sx={{ color: '#C51D34', mt: 2, textAlign: 'center' }}>
+                {successMessage}
               </Box>
             )}
             {generalError && (
