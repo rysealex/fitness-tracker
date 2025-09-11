@@ -201,10 +201,17 @@ function EnterInformation() {
         const data = await response.json();
         console.log('Account information submitted successfully:', data);
         // store the user id in local storage
-        localStorage.setItem('userId', data.user_id);
-        console.log('User ID stored in local storage:', data.user_id);
+        // localStorage.setItem('userId', data.user_id);
+        // console.log('User ID stored in local storage:', data.user_id);
+        
+        // remove username and password from local storage for security
+        localStorage.removeItem('username');
+        localStorage.removeItem('password');
         setIsLoading(false);
-        handleNavigate("/home");
+        // redirect to login page
+        handleNavigate('/login');
+        
+        // handleNavigate("/home");
         //window.location.reload(); // reload home page to reflect new user data
       } else {
         setFname("");
