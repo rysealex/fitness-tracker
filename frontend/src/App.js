@@ -7,6 +7,7 @@ import CreateAccount from "./pages/createAccount"
 import Home from "./pages/home"
 import EnterInformation from "./pages/enterInformation"
 import Stats from "./pages/stats"
+import Notifications from './pages/notifications';
 import Profile from "./pages/profile"
 import Settings from "./pages/settings"
 import CalorieCounter from './pages/calorieCounter';
@@ -39,6 +40,14 @@ function App() {
           element={
             <StatsProvider>
               <Stats />
+            </StatsProvider>
+          }
+        />
+        <Route
+          path="/notifications"
+          element={
+            <StatsProvider>
+              <Notifications />
             </StatsProvider>
           }
         />
