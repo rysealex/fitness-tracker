@@ -553,6 +553,9 @@ function WorkoutLog() {
 							handleSubmit(e, formattedDate);
 						}}
 						variant="contained"
+						style={{
+							backgroundColor: '#C51D34'
+						}}
 					>
 						Add
 					</Button>
@@ -626,6 +629,9 @@ function WorkoutLog() {
 							handleEditSubmit(formattedDate);
 						}}
 						variant="contained"
+						style={{
+							backgroundColor: '#C51D34'
+						}}
 					>
 						Save
 					</Button>

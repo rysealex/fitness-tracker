@@ -59,7 +59,7 @@ function Home() {
                   Goals
                 </Typography>
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                  Track and manage your personal goals here!
+                  Manage your personal goals here!
                 </Typography>
               </CardContent>
               <CardActions>

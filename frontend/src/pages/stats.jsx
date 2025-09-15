@@ -294,7 +294,11 @@ function Stats() {
           </Button>
           {isEditing && (
             <Button 
-            onClick={ () => handleSubmit() }
+              onClick={ () => handleSubmit() }
+              variant='contained'
+              style={{
+                backgroundColor: '#C51D34'
+              }}
             >
               Save
             </Button>

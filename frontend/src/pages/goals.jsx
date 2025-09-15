@@ -342,12 +342,18 @@ function Goals() {
                     </Typography>
                     <Button
                         variant="contained"
+                        style={{
+							backgroundColor: '#C51D34'
+						}}
                         onClick={() => setAddModalOpen(true)}
                     >
                         Add New Goal
                     </Button>
                     <Button
                         variant="contained"
+                        style={{
+							backgroundColor: '#C51D34'
+						}}
                         onClick={() => handleNavigate('/home')}
                         className="exit-button"
                     >
@@ -461,6 +467,9 @@ function Goals() {
                     <Button
                         onClick={(e) => handleSubmit(e)}
                         variant="contained"
+                        style={{
+							backgroundColor: '#C51D34'
+						}}
                     >
                         Add
                     </Button>
@@ -533,7 +542,9 @@ function Goals() {
                     <Button
                         onClick={() => handleEditGoal(editGoal.goal_id)}
                         variant="contained"
-                        color="error" // Using color="error" to map to the green save button style
+                        style={{
+							backgroundColor: '#C51D34'
+						}}
                     >
                         Save
                     </Button>

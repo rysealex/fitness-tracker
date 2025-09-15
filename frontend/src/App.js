@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { StatsProvider } from './StatsContext';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Navbar from './navbar';
 import Welcome from "./pages/welcome";
 import Login from "./pages/login"
@@ -17,6 +18,30 @@ import './App.css';
 
 function App() {
 
+  const customTheme = createTheme({
+    palette: {
+      primary: {
+        main: '#C51D34',
+      },
+    },
+    components: {
+      MuiPickersDay: {
+        styleOverrides: {
+          root: {
+            '&.Mui-selected': {
+              backgroundColor: '#C51D34',
+              '&:hover': {
+                backgroundColor: '#A0152B',
+              },
+            },
+            '&:hover': {
+              backgroundColor: 'rgba(197, 29, 52, 0.08)',
+            }
+          }
+        }
+      }
+    }
+  });
 
   return (
     <Router>
@@ -71,7 +96,9 @@ function App() {
           path="/calorie-counter"
           element={
             <StatsProvider>
-              <CalorieCounter />
+              <ThemeProvider theme={customTheme}>
+                <CalorieCounter />
+              </ThemeProvider>
             </StatsProvider>
           }
         />
@@ -79,7 +106,9 @@ function App() {
           path="/workout-log"
           element={
             <StatsProvider>
-              <WorkoutLog />
+              <ThemeProvider theme={customTheme}>
+                <WorkoutLog />
+              </ThemeProvider>
             </StatsProvider>
           }
         />

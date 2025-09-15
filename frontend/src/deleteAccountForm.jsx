@@ -171,8 +171,10 @@ export default function DeleteAccountForm() {
             </Button>
             <Button
               onClick={handleDelete}
-              color="error"
               variant="contained"
+              style={{
+                backgroundColor: '#C51D34'
+              }}
             >
               Confirm Delete
             </Button>
