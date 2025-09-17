@@ -190,12 +190,12 @@ function Profile() {
           </Box>
         )}
         {successMessage && (
-          <Box sx={{ color: '#1dc51dff', mt: 2, textAlign: 'center' }}>
+          <Box sx={{ color: '#1dc51dff', mt: 2, textAlign: 'center', fontFamily: 'kanit, sans-serif' }}>
             {successMessage}
           </Box>
         )}
         {profilePicError && (
-          <Typography color="error" variant="body2" sx={{ textAlign: 'center' }}>
+          <Typography color="error" variant="body2" sx={{ textAlign: 'center', fontFamily: 'kanit, sans-serif' }}>
             {profilePicError}
           </Typography>
         )}

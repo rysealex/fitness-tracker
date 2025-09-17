@@ -249,7 +249,7 @@ function Stats() {
 
       {/* Edit Modal */}
       <Dialog open={editModalOpen} onClose={closeEditModal}>
-        <DialogTitle>Edit Stats</DialogTitle>
+        <DialogTitle style={{ fontFamily: 'kanit, sans-serif' }}>Edit Stats</DialogTitle>
         <DialogContent>
           {editEntry && (
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
@@ -276,12 +276,12 @@ function Stats() {
                 inputRef={weightInputRef}
               />
               {isLoadingStats && (
-                <Box sx={{ mt: 2, textAlign: 'center' }}>
+                <Box sx={{ mt: 2, textAlign: 'center', fontFamily: 'kanit, sans-serif' }}>
                   <CircularProgress sx={{ color: '#C51D34' }} />
                 </Box>
               )}
               {generalError && (
-                <Box sx={{ color: '#C51D34', mt: 2, textAlign: 'center' }}>
+                <Box sx={{ color: '#C51D34', mt: 2, textAlign: 'center', fontFamily: 'kanit, sans-serif' }}>
                   {generalError}
                 </Box>
               )}

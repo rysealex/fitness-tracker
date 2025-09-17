@@ -127,11 +127,10 @@ export default function DeleteAccountForm() {
         Delete Account
       </Button>
       <Dialog open={deleteModalOpen} onClose={handleClose}>
-        <DialogTitle>Delete Account</DialogTitle>
+        <DialogTitle style={{ fontFamily: 'kanit, sans-serif' }}>Delete Account</DialogTitle>
         <DialogContent>
-          <Typography sx={{ mb: 2 }}>
-            Are you sure you want to delete your account? This action cannot be undone.<br />
-            Please enter your password to confirm.
+          <Typography sx={{ mb: 2, fontFamily: 'kanit, sans-serif' }}>
+            Are you sure you want to delete your account? This action cannot be undone. Please enter your password to confirm.
           </Typography>
           <TextField
             label="Password"
@@ -154,12 +153,12 @@ export default function DeleteAccountForm() {
             </Box>
           )}
           {successMessage && (
-            <Box sx={{ color: '#1dc51dff', mt: 2, textAlign: 'center' }}>
+            <Box sx={{ color: '#1dc51dff', mt: 2, textAlign: 'center', fontFamily: 'kanit, sans-serif' }}>
               {successMessage}
             </Box>
           )}
           {generalError && (
-            <Typography color="error" variant="body2" sx={{ textAlign: 'center' }}>
+            <Typography color="error" variant="body2" sx={{ textAlign: 'center', fontFamily: 'kanit, sans-serif' }}>
               {generalError}
             </Typography>
           )}
@@ -176,7 +175,7 @@ export default function DeleteAccountForm() {
                 backgroundColor: '#C51D34'
               }}
             >
-              Confirm Delete
+              Confirm
             </Button>
           </DialogActions>
         )}

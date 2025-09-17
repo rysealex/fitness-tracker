@@ -195,7 +195,7 @@ function CreateAccount() {
               </Box>
             )}
             {generalError && (
-              <Box sx={{ color: '#C51D34', mt: 2, textAlign: 'center' }}>
+              <Box sx={{ color: '#C51D34', mt: 2, textAlign: 'center', fontFamily: 'kanit, sans-serif' }}>
                 {generalError}
               </Box>
             )}
