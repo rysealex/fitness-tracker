@@ -9,7 +9,7 @@ function Settings() {
       <Navbar />
       <section className='settings-container'>
         <h1>Settings</h1>
-        <div style={{ marginTop: '20px' }}>
+        <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
           <DeleteAccountForm />
         </div> 
       </section>

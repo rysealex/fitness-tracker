@@ -82,7 +82,7 @@ function WorkoutLogMini() {
         <div className="mini-container">
             <GiWeightLiftingUp className="workout-log-mini-weight-lifting-icon" />
             <div className="mini-text-value-group">
-                <span className="workout-log-mini-text">Today's Workouts</span>
+                <span className="workout-log-mini-text">Workouts</span>
                 <span className="mini-value">
 					{isLoading ? (
 						// <Box sx={{ mt: 2, textAlign: 'center' }}>

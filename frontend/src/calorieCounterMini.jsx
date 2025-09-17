@@ -91,7 +91,7 @@ function CalorieCounterMini() {
 		<div className="mini-container">
 			<FaFire className="calorie-counter-mini-flame-icon" />
 			<div className="mini-text-value-group">
-				<span className="calorie-counter-mini-text">Today's Calories</span>
+				<span className="calorie-counter-mini-text">Calories</span>
 				<span className="mini-value">
 					{isLoading ? (
 						// <Box sx={{ mt: 2, textAlign: 'center' }}>

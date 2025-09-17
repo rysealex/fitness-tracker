@@ -11,9 +11,11 @@ function CurrentDate() {
         return () => clearInterval(intervalId);
     }, []);
 
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+
     return (
         <div>
-            {currentDate.toLocaleDateString()}
+            {currentDate.toLocaleDateString('en-US', options)}
         </div>
     );
 }
