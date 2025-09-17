@@ -8,7 +8,7 @@ function Notifications() {
             <Navbar />
             <section className='notifications-container'>
                 <h1>Notifications</h1>
-                <p>Notifications page coming soon!</p>
+                <p style={{ marginTop: '20px' }}>Notifications page coming soon!</p>
             </section>
         </div>
     );

@@ -196,7 +196,7 @@ function Stats() {
     <div className='centered-page'>
       <Navbar />
       <section className='profile-container'>
-        <h1>Your Stats</h1>
+        <h1>Stats</h1>
         <div className='profile-content-wrapper'>
           {/* User Info Section */}
           <Box sx={{ position: 'relative' }} className="profile-info-section">

@@ -8,8 +8,10 @@ function Settings() {
     <div className='centered-page'>
       <Navbar />
       <section className='settings-container'>
-        <h1>Settings</h1> 
-        <DeleteAccountForm />
+        <h1>Settings</h1>
+        <div style={{ marginTop: '20px' }}>
+          <DeleteAccountForm />
+        </div> 
       </section>
     </div>
   );

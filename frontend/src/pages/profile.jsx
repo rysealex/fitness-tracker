@@ -130,7 +130,7 @@ function Profile() {
     <div className='centered-page'>
       <Navbar />
       <section className='profile-container'>
-        <h1>Your Profile</h1>
+        <h1>Profile</h1>
         <div className='profile-content-wrapper'>
           {/* Profile Picture Section */}
           <div className='profile-picture-section'>
