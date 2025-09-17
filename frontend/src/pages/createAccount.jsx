@@ -125,7 +125,7 @@ function CreateAccount() {
               className='textfield'
               error={!!usernameError}
               id="username-input"
-              label="Username"
+              label="Username *"
               variant="outlined"
               value={username}
               onChange={(e) => {
@@ -147,7 +147,7 @@ function CreateAccount() {
               className='textfield'
               error={!!passwordError}
               id="password-input"
-              label="Password"
+              label="Password *"
               variant="outlined"
               type="password"
               value={password}
@@ -170,7 +170,7 @@ function CreateAccount() {
               className='textfield'
               error={!!passwordConfirmError}
               id="confirm-password-input"
-              label="Confirm Password"
+              label="Confirm Password *"
               variant="outlined"
               type="password"
               value={confirmPassword}
@@ -205,11 +205,11 @@ function CreateAccount() {
               style={{marginTop: '15px',
                 backgroundColor: '#C51D34'
               }}>
-                Create
+                Continue
             </Button>
           </form>
-          <p>Already have an account? 
-            <a href="" onClick={() => handleNavigate("/login")}>    Login</a>
+          <p style={{ fontFamily: 'kanit, sans-serif', marginBottom: '25px' }}>Already have an account? 
+            <a href="" style={{ fontFamily: 'kanit, sans-serif' }} onClick={() => handleNavigate("/login")}>    Login</a>
           </p>
         </div>
       </div>

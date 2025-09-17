@@ -100,7 +100,7 @@ function Login() {
                 className='textfield'
                 error={!!usernameError}
                 id="username-input"
-                label="Username"
+                label="Username *"
                 variant="outlined"
                 value={username}
                 onChange={(e) => {
@@ -122,7 +122,7 @@ function Login() {
                 className='textfield'
                 error={!!passwordError}
                 id="password-input"
-                label="Password"
+                label="Password *"
                 variant="outlined"
                 type="password"
                 value={password}
@@ -160,8 +160,8 @@ function Login() {
                   Login
               </Button>
             </form>
-            <p>Don't have an account? 
-              <a href="" onClick={() => handleNavigate("/create-account")}>    Register</a>
+            <p style={{ fontFamily: 'kanit, sans-serif', marginBottom: '25px' }}>Don't have an account? 
+              <a href="" style={{ fontFamily: 'kanit, sans-serif' }} onClick={() => handleNavigate("/create-account")}>    Register</a>
             </p>
         </div>
       </div>

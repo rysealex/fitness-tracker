@@ -9,6 +9,8 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 import CircularProgress from '@mui/material/CircularProgress';
+import Grid from '@mui/material/Grid';
+import { Label } from '@mui/icons-material';
 
 function EnterInformation() {
   const navigate = useNavigate();
@@ -213,14 +215,14 @@ function EnterInformation() {
         // console.log('User ID stored in local storage:', data.user_id);
         
         // set the success message
-        setSuccessMessage("Account successfully created!");
+        setSuccessMessage("Account successfully created! You will be prompted to login shortly.");
 
-        // clear success message and redirect to login page after 3 sec
+        // clear success message and redirect to login page after 5 sec
         setTimeout(() => {
           setSuccessMessage("");
           setIsLoading(false);
           handleLoginRedirect();
-        }, 3000);
+        }, 5000);
         
         // handleNavigate("/home");
         //window.location.reload(); // reload home page to reflect new user data
@@ -258,202 +260,235 @@ function EnterInformation() {
         <div class="enter-info-box">
           <h2>Enter Information</h2>
           <form onSubmit={handleSubmit}>
-            <TextField
-              className='textfield'
-              error={!!fnameError}
-              id="fname-input"
-              label="First Name"
-              variant="outlined"
-              value={fname}
-              onChange={(e) => {
-                setFname(e.target.value);
-                setFnameError(""); // clear error when user starts typing
-              }}
-              helperText={fnameError}
-              inputRef={fnameInputRef}
-              style={{padding: '10px',
-                marginTop: '25px',
-                border: 'none',
-                borderRadius: '10px',
-                background: 'transparent',
-                border: '1px solid #fff',
-                color: '#fff',
-                fontSize: '13px'}}
-            />
-            <TextField
-              className='textfield'
-              error={!!lnameError}
-              id="lname-input"
-              label="Last Name"
-              value={lname}
-              onChange={(e) => {
-                setLname(e.target.value);
-                setLnameError(""); // clear error when user starts typing
-              }}
-              helperText={lnameError}
-              inputRef={lnameInputRef}
-              style={{padding: '10px',
-                marginTop: '25px',
-                border: 'none',
-                borderRadius: '10px',
-                background: 'transparent',
-                border: '1px solid #fff',
-                color: '#fff',
-                fontSize: '13px'}}
-            />
-            <TextField
-              className='textfield'
-              error={!!heightError}
-              id="height-input"
-              label="Height (feet)"
-              variant="outlined"
-              type="text"
-              value={height}
-              onChange={(e) => {
-                setHeight(e.target.value);
-                setHeightError(""); // clear error when user starts typing
-              }}
-              helperText={heightError}
-              inputRef={heightInputRef}
-              style={{padding: '10px',
-                marginTop: '25px',
-                border: 'none',
-                borderRadius: '10px',
-                background: 'transparent',
-                border: '1px solid #fff',
-                color: '#fff',
-                fontSize: '13px'}}
-            />
-            <TextField
-              className='textfield'
-              error={!!weightError}
-              id="weight-input"
-              label="Weight (lbs)"
-              variant="outlined"
-              type="text"
-              value={weight}
-              onChange={(e) => {
-                setWeight(e.target.value);
-                setWeightError(""); // clear error when user starts typing
-              }}
-              helperText={weightError}
-              inputRef={weightInputRef}
-              style={{padding: '10px',
-                marginTop: '25px',
-                border: 'none',
-                borderRadius: '10px',
-                background: 'transparent',
-                border: '1px solid #fff',
-                color: '#fff',
-                fontSize: '13px'}}
-            />
-            <TextField
-              className='textfield'
-              error={!!dobError}
-              id="dob-input"
-              variant="outlined"
-              type="date"
-              value={dob}
-              onChange={(e) => {
-                setDob(e.target.value);
-                setDobError(""); // clear error when user starts typing
-              }}
-              helperText={dobError}
-              inputRef={dobInputRef}
-              style={{padding: '10px',
-                marginTop: '25px',
-                border: 'none',
-                borderRadius: '10px',
-                background: 'transparent',
-                border: '1px solid #fff',
-                color: '#fff',
-                fontSize: '13px'}}
-            />
-            {/* <TextField
-              className='textfield'
-              error={!!genderError}
-              id="gender-input"
-              label="Gender"
-              variant="outlined"
-              type="text"
-              value={gender}
-              onChange={(e) => {
-                setGender(e.target.value);
-                setGenderError(""); // clear error when user starts typing
-              }}
-              helperText={genderError}
-              style={{padding: '10px',
-                marginTop: '25px',
-                border: 'none',
-                borderRadius: '10px',
-                background: 'transparent',
-                border: '1px solid #fff',
-                color: '#fff',
-                fontSize: '13px'}}
-            /> */}
-            <FormControl
-              variant="outlined"
-              error={!!genderError}
-            >
-              <InputLabel id="gender-label">Gender</InputLabel>
-              <Select
-                labelId="gender-label"
-                id="gender-select"
-                value={gender}
-                label="Gender"
-                onChange={(e) => {
-                  setGender(e.target.value);
-                  setGenderError("");
-                }}
-                inputRef={genderInputRef}
-                style={{padding: '10px',
-                  marginTop: '25px',
-                  border: 'none',
-                  borderRadius: '10px',
-                  background: 'transparent',
-                  border: '1px solid #fff',
-                  color: '#fff',
-                  fontSize: '13px'}}
-              >
-                <MenuItem value="Male">Male</MenuItem>
-                <MenuItem value="Female">Female</MenuItem>
-                <MenuItem value="Other">Other</MenuItem>
-              </Select>
-              {genderError && <FormHelperText sx={{ color: '#d32f2f' }}>{genderError}</FormHelperText>}
-            </FormControl>
-            <TextField
-              className='textfield'
-              error={!!profilePicError}
-              id="profile-pic-input"
-              variant="outlined"
-              type="file"
-              onChange={handleFileChange}
-              helperText={profilePicError}
-              style={{padding: '10px',
-                marginTop: '25px',
-                border: 'none',
-                borderRadius: '10px',
-                background: 'transparent',
-                border: '1px solid #fff',
-                color: '#fff',
-                fontSize: '13px'}}
-            />
-            <TextField
-              className='textfield'
-              id="occupation-input"
-              label="Occupation"
-              variant="outlined"
-              type="text"
-              onChange={(e) => setOccupation(e.target.value)}
-              style={{padding: '10px',
-                marginTop: '25px',
-                border: 'none',
-                borderRadius: '10px',
-                background: 'transparent',
-                border: '1px solid #fff',
-                color: '#fff',
-                fontSize: '13px'}}
-            />
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  className='textfield'
+                  error={!!fnameError}
+                  id="fname-input"
+                  label="First Name *"
+                  variant="outlined"
+                  value={fname}
+                  onChange={(e) => {
+                    setFname(e.target.value);
+                    setFnameError(""); // clear error when user starts typing
+                  }}
+                  helperText={fnameError}
+                  inputRef={fnameInputRef}
+                  style={{padding: '10px',
+                    marginTop: '25px',
+                    border: 'none',
+                    borderRadius: '10px',
+                    background: 'transparent',
+                    border: '1px solid #fff',
+                    color: '#fff',
+                    fontSize: '13px'}}
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  className='textfield'
+                  error={!!lnameError}
+                  id="lname-input"
+                  label="Last Name *"
+                  value={lname}
+                  onChange={(e) => {
+                    setLname(e.target.value);
+                    setLnameError(""); // clear error when user starts typing
+                  }}
+                  helperText={lnameError}
+                  inputRef={lnameInputRef}
+                  style={{padding: '10px',
+                    marginTop: '25px',
+                    border: 'none',
+                    borderRadius: '10px',
+                    background: 'transparent',
+                    border: '1px solid #fff',
+                    color: '#fff',
+                    fontSize: '13px'}}
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <FormControl
+                  variant="outlined"
+                  error={!!genderError}
+                  fullWidth
+                  sx={{
+                    marginTop: '25px', // This aligns the label vertically
+                  }}
+                >
+                  <InputLabel id="gender-label">Gender *</InputLabel>
+                  <Select
+                    labelId="gender-label"
+                    id="gender-select"
+                    value={gender}
+                    label="Gender"
+                    onChange={(e) => {
+                      setGender(e.target.value);
+                      setGenderError("");
+                    }}
+                    inputRef={genderInputRef}
+                    style={{padding: '12.5px',
+                      // marginTop: '25px',
+                      border: 'none',
+                      borderRadius: '10px',
+                      background: 'transparent',
+                      border: '1px solid #fff',
+                      //color: '#fff',
+                      fontSize: '13px',
+                      // height: '100%'
+                    }}
+                  >
+                    <MenuItem value="Male">Male</MenuItem>
+                    <MenuItem value="Female">Female</MenuItem>
+                    <MenuItem value="Other">Other</MenuItem>
+                  </Select>
+                  {genderError && <FormHelperText sx={{ color: '#d32f2f' }}>{genderError}</FormHelperText>}
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  className='textfield'
+                  error={!!heightError}
+                  id="height-input"
+                  label="Height (ft) *"
+                  variant="outlined"
+                  type="text"
+                  value={height}
+                  onChange={(e) => {
+                    setHeight(e.target.value);
+                    setHeightError(""); // clear error when user starts typing
+                  }}
+                  helperText={heightError}
+                  inputRef={heightInputRef}
+                  style={{padding: '10px',
+                    marginTop: '25px',
+                    border: 'none',
+                    borderRadius: '10px',
+                    background: 'transparent',
+                    border: '1px solid #fff',
+                    color: '#fff',
+                    fontSize: '13px'}}
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  className='textfield'
+                  error={!!weightError}
+                  id="weight-input"
+                  label="Weight (lbs) *"
+                  variant="outlined"
+                  type="text"
+                  value={weight}
+                  onChange={(e) => {
+                    setWeight(e.target.value);
+                    setWeightError(""); // clear error when user starts typing
+                  }}
+                  helperText={weightError}
+                  inputRef={weightInputRef}
+                  style={{padding: '10px',
+                    marginTop: '25px',
+                    border: 'none',
+                    borderRadius: '10px',
+                    background: 'transparent',
+                    border: '1px solid #fff',
+                    color: '#fff',
+                    fontSize: '13px'}}
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <InputLabel id="dob-label">Date of Birth *</InputLabel>
+                <TextField
+                  labelId="dob-label"
+                  className='textfield'
+                  error={!!dobError}
+                  id="dob-input"
+                  variant="outlined"
+                  type="date"
+                  value={dob}
+                  onChange={(e) => {
+                    setDob(e.target.value);
+                    setDobError(""); // clear error when user starts typing
+                  }}
+                  helperText={dobError}
+                  inputRef={dobInputRef}
+                  style={{padding: '10px',
+                    marginTop: '3px',
+                    border: 'none',
+                    borderRadius: '10px',
+                    background: 'transparent',
+                    border: '1px solid #fff',
+                    color: '#fff',
+                    fontSize: '13px',
+                    width: '100%' }}
+                />
+              </Grid>
+                {/* <TextField
+                  className='textfield'
+                  error={!!genderError}
+                  id="gender-input"
+                  label="Gender"
+                  variant="outlined"
+                  type="text"
+                  value={gender}
+                  onChange={(e) => {
+                    setGender(e.target.value);
+                    setGenderError(""); // clear error when user starts typing
+                  }}
+                  helperText={genderError}
+                  style={{padding: '10px',
+                    marginTop: '25px',
+                    border: 'none',
+                    borderRadius: '10px',
+                    background: 'transparent',
+                    border: '1px solid #fff',
+                    color: '#fff',
+                    fontSize: '13px'}}
+                /> */}
+            </Grid>
+            <Grid container justifyContent="center" spacing={2} sx={{ marginTop: 2 }}>
+              <Grid item xs={12} sm={6}>
+                <InputLabel id="profile-pic-label">Profile Picture (optional)</InputLabel>
+                <TextField
+                  labelId="profile-pic-label"
+                  className='textfield'
+                  error={!!profilePicError}
+                  id="profile-pic-input"
+                  variant="outlined"
+                  type="file"
+                  onChange={handleFileChange}
+                  helperText={profilePicError}
+                  style={{padding: '10px',
+                    marginTop: '3px',
+                    border: 'none',
+                    borderRadius: '10px',
+                    background: 'transparent',
+                    border: '1px solid #fff',
+                    color: '#fff',
+                    fontSize: '13px',
+                    width: '80%'
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  className='textfield'
+                  id="occupation-input"
+                  label="Occupation (optional)"
+                  variant="outlined"
+                  type="text"
+                  onChange={(e) => setOccupation(e.target.value)}
+                  style={{padding: '10px',
+                    marginTop: '25px',
+                    border: 'none',
+                    borderRadius: '10px',
+                    background: 'transparent',
+                    border: '1px solid #fff',
+                    color: '#fff',
+                    fontSize: '13px'}}
+                />
+              </Grid>
+            </Grid>  
             {isLoading && (
               <Box sx={{ mt: 2, textAlign: 'center' }}>
                 <CircularProgress sx={{ color: '#C51D34' }} />
@@ -473,14 +508,15 @@ function EnterInformation() {
               variant="contained" 
               type="submit"
               style={{
-                backgroundColor: '#C51D34'
+                backgroundColor: '#C51D34',
+                marginTop: '15px'
               }}
             >
-              Continue
+              Create
             </Button>
           </form>
-          <p>Already have an account? 
-            <a href="" onClick={handleLoginRedirect}>    Login</a>
+          <p style={{ marginBottom: '25px', fontFamily: 'kanit, sans-serif' }}>Already have an account? 
+            <a href="" style={{ fontFamily: 'kanit, sans-serif' }} onClick={handleLoginRedirect}>    Login</a>
           </p>
         </div>
       </div>
