@@ -3,7 +3,7 @@ import { StaticDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
-import { Edit, Delete, Add } from '@mui/icons-material';
+import { Edit, Delete, Add, KeyboardBackspace } from '@mui/icons-material';
 
 function CalorieCounter() {
 	const navigate = useNavigate();
@@ -389,7 +389,16 @@ function CalorieCounter() {
             {/* Left Column */}
             <Box sx={{ flex: 1, minWidth: 320 }}>
                 <Card sx={{ mb: 3, p: 2 }}>
-                    <Typography variant="h6" align="center" gutterBottom>
+                    <Typography 
+						sx={{
+							fontFamily: 'kanit, sans-serif',
+							fontWeight: '700',
+							fontSize: '1.5rem',
+						}}
+						variant="h6"
+						align="center" 
+						gutterBottom
+					>
                         Select Day
                     </Typography>
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -405,35 +414,65 @@ function CalorieCounter() {
                         />
                     </LocalizationProvider>
                 </Card>
-				<Card sx={{ p: 2, textAlign: "center" }}>
+				<Card 
+					sx={{ 
+						p: 2, 
+						textAlign: "left",
+						backgroundColor: 'transparent',
+						boxShadow: 'none',
+					}}
+				>
 		 			<Button 
 						variant="contained" 
 						color="primary" 
 						onClick={() => handleNavigate('/home')}
-						fullWidth
+						maxWidth="sm"
 					>
-						Exit
+						<KeyboardBackspace /> Back
 					</Button>
 				</Card>
             </Box>
 
             {/* Right Column */}
-            <Box sx={{ flex: 2, minWidth: 350 }}>
+            <Box sx={{ flex: 2, minWidth: 350}}>
                 <Card sx={{ mb: 4 }}>
                     <CardContent>
-                        <Typography variant="h6" gutterBottom>
+                        <Typography 
+							variant="h6" 
+							gutterBottom 
+							sx={{
+								fontFamily: 'kanit, sans-serif',
+								fontWeight: '700',
+								fontSize: '1.5rem',
+							}}
+						>
                             {isToday(new Date(specifiedDay))
                                 ? "Today's Food Entries"
                                 : `${new Date(specifiedDay).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })} Food Entries`}
                         </Typography>
-                        <Typography variant="subtitle1" sx={{ mb: 2 }}>
+                        <Typography 
+							variant="subtitle1" 
+							sx={{ 
+								mb: 2,
+								fontFamily: 'kanit, sans-serif',
+								fontWeight: '500',
+								fontSize: '1.15rem',	
+							}}
+						>
                             Total Calories: <b>{calcTodayTotalCalories(todayFoodEntries)}</b>
                         </Typography>
                         <Divider sx={{ mb: 2 }} />
 						{mealTypes.map((type) => (
 							<Box key={type} sx={{ mb: 3 }}>
 								<Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-								<Typography variant="subtitle1">{type}</Typography>
+								<Typography 
+									variant="subtitle1"
+									sx={{
+										fontFamily: 'kanit, sans-serif', 
+									}}
+								>
+									{type}
+								</Typography>
 								<IconButton
 									size="small"
 									color="primary"
@@ -450,15 +489,25 @@ function CalorieCounter() {
 								</IconButton>
 								</Box>
 								{grouped[type].length === 0 ? (
-								<Typography color="text.secondary" sx={{ mb: 1, ml: 2 }}>
-									No {type.toLowerCase()} entries
+								<Typography color="text.secondary" fontStyle={'italic'} sx={{ mb: 1, ml: 2, fontFamily: 'kanit, sans-serif' }}>
+									No {type.toLowerCase()} entries.
 								</Typography>
 								) : (
 								grouped[type].map((entry) => (
 									<Box key={entry.food_entries_id} sx={{ mb: 1, p: 1, borderRadius: 1, bgcolor: "#f9f9f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
 									<Box>
-										<Typography variant="subtitle2">{entry.food_name}</Typography>
-										<Typography variant="body2">Calories: {entry.total_calories}</Typography>
+										<Typography 
+											variant="subtitle2"
+											sx={{ fontFamily: 'kanit, sans-serif' }}
+										>
+											<b>{entry.food_name}</b>
+										</Typography>
+										<Typography 
+											variant="body2"
+											sx={{ fontFamily: 'kanit, sans-serif' }}
+										>
+											<b>{entry.total_calories}</b> cals
+										</Typography>
 										{/*<Typography variant="body2" color="text.secondary">Date: {entry.created_at}</Typography>*/}
 									</Box>
 									<Box>
@@ -491,7 +540,7 @@ function CalorieCounter() {
 			<Dialog open={addModalOpen} onClose={() => setAddModalOpen(false)}>
 				<DialogTitle>Add New {mealType ? mealType : "Food"} Entry</DialogTitle>
 				<DialogContent>
-					<Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
+					<Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1, fontFamily: 'kanit, sans-serif' }}>
 						<TextField
 							label="Food Name"
 							variant="outlined"
@@ -572,7 +621,7 @@ function CalorieCounter() {
                 <DialogTitle>Edit Food Entry</DialogTitle>
                 <DialogContent>
                     {editEntry && (
-                        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
+                        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1, fontFamily: 'kanit, sans-serif' }}>
                             <TextField
                                 label="Food Name"
                                 name="food_name"

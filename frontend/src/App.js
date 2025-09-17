@@ -116,7 +116,9 @@ function App() {
           path="/goals"
           element={
             <StatsProvider>
-              <Goals />
+              <ThemeProvider theme={customTheme}>
+                <Goals />
+              </ThemeProvider>
             </StatsProvider>
           }
         />

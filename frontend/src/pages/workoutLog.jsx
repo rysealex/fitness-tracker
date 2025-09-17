@@ -3,7 +3,7 @@ import { StaticDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
-import { Edit, Delete, Add } from '@mui/icons-material';
+import { Edit, Delete, Add, KeyboardBackspace } from '@mui/icons-material';
 
 function WorkoutLog() {
 	const navigate = useNavigate();
@@ -394,7 +394,16 @@ function WorkoutLog() {
 			{/* Left Column */}
 			<Box sx={{ flex: 1, minWidth: 320 }}>
 				<Card sx={{ mb: 3, p: 2 }}>
-					<Typography variant="h6" align="center" gutterBottom>
+					<Typography 
+						sx={{
+							fontFamily: 'kanit, sans-serif',
+							fontWeight: '700',
+							fontSize: '1.5rem',
+						}}
+						variant="h6"
+						align="center" 
+						gutterBottom
+					>
 						Select Day
 					</Typography>
 					<LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -410,14 +419,21 @@ function WorkoutLog() {
 						/>
 					</LocalizationProvider>
 				</Card>
-				<Card sx={{ p: 2, textAlign: "center" }}>
+				<Card sx={{ 
+					p: 2, 
+						textAlign: "left",
+						backgroundColor: 'transparent',
+						boxShadow: 'none',
+
+					}}
+				>
 					<Button 
 						variant="contained" 
 						color="primary" 
 						onClick={() => handleNavigate('/home')}
-						fullWidth
+						maxWidth="sm"
 					>
-						Exit
+						<KeyboardBackspace /> Back
 					</Button>
 				</Card>
 			</Box>
@@ -426,19 +442,42 @@ function WorkoutLog() {
 			<Box sx={{ flex: 2, minWidth: 350 }}>
 				<Card sx={{ mb: 4 }}>
 					<CardContent>
-						<Typography variant="h6" gutterBottom>
-							{isToday(new Date(specifiedDay))
-								? "Today's Workouts"
-								: `${new Date(specifiedDay).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })} Workouts`}
-						</Typography>
-						<Typography variant="subtitle1" sx={{ mb: 2 }}>
-							Total Calories Burned: <b>{calcTodayTotalCaloriesBurned(todayWorkoutLogs)}</b>
-						</Typography>
+						<Typography 
+							variant="h6" 
+							gutterBottom 
+							sx={{
+								fontFamily: 'kanit, sans-serif',
+								fontWeight: '700',
+								fontSize: '1.5rem',
+							}}
+						>
+                            {isToday(new Date(specifiedDay))
+                                ? "Today's Food Entries"
+                                : `${new Date(specifiedDay).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })} Food Entries`}
+                        </Typography>
+						<Typography 
+							variant="subtitle1" 
+							sx={{ 
+								mb: 2,
+								fontFamily: 'kanit, sans-serif',
+								fontWeight: '500',
+								fontSize: '1.15rem',	
+							}}
+						>
+                            Total Calories Burned: <b>{calcTodayTotalCaloriesBurned(todayWorkoutLogs)}</b>
+                        </Typography>
 						<Divider sx={{ mb: 2 }} />
 						{workoutTypes.map((type) => (
 							<Box key={type} sx={{ mb: 3 }}>
 								<Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-								<Typography variant="subtitle1">{type}</Typography>
+								<Typography 
+									variant="subtitle1"
+									sx={{
+										fontFamily: 'kanit, sans-serif', 
+									}}
+								>
+									{type}
+								</Typography>
 								<IconButton
 									size="small"
 									color="primary"
@@ -455,16 +494,31 @@ function WorkoutLog() {
 								</IconButton>
 								</Box>
 								{grouped[type].length === 0 ? (
-								<Typography color="text.secondary" sx={{ mb: 1, ml: 2 }}>
-									No {type.toLowerCase()} workouts
+								<Typography color="text.secondary" fontStyle={'italic'} sx={{ mb: 1, ml: 2, fontFamily: 'kanit, sans-serif' }}>
+									No {type.toLowerCase()} workouts.
 								</Typography>
 								) : (
 								grouped[type].map((entry) => (
 									<Box key={entry.workout_types_id} sx={{ mb: 1, p: 1, borderRadius: 1, bgcolor: "#f9f9f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
 									<Box>
-										<Typography variant="subtitle2">{entry.workout_name}</Typography>
-										<Typography variant="body2">Calories Burned: {entry.calories_burned}</Typography>
-										<Typography variant="body2">Duration (Min): {entry.duration_min}</Typography>
+										<Typography 
+											variant="subtitle2"
+											sx={{ fontFamily: 'kanit, sans-serif' }}
+										>
+											<b>{entry.workout_type}</b>
+										</Typography>
+										<Typography 
+											variant="body2"
+											sx={{ fontFamily: 'kanit, sans-serif' }}
+										>
+											<b>{entry.calories_burned}</b> cals burned
+										</Typography>
+										<Typography 
+											variant="body2"
+											sx={{ fontFamily: 'kanit, sans-serif' }}
+										>
+											<b>{entry.duration_min}</b> min
+										</Typography>
 										{/*<Typography variant="body2" color="text.secondary">Date: {entry.created_at}</Typography>*/}
 									</Box>
 									<Box>
@@ -497,7 +551,7 @@ function WorkoutLog() {
 			<Dialog open={addModalOpen} onClose={() => setAddModalOpen(false)}>
 				<DialogTitle>Add New {workoutType ? workoutType : ""} Workout</DialogTitle>
 				<DialogContent>
-					<Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
+					<Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1, fontFamily: 'kanit, sans-serif' }}>
 						<TextField
 							label="Calories Burned "
 							variant="outlined"
@@ -567,7 +621,7 @@ function WorkoutLog() {
 				<DialogTitle>Edit Workout</DialogTitle>
 				<DialogContent>
 					{editEntry && (
-						<Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
+						<Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1, fontFamily: 'kanit, sans-serif' }}>
 							<TextField
 								label="Calories Burned"
 								name="calories_burned"

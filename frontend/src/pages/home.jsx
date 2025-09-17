@@ -55,10 +55,10 @@ function Home() {
               /> */}
               <CardMedia><GoalsMini/></CardMedia>
               <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
+                <Typography gutterBottom variant="h5" component="div" sx={{ fontFamily: 'kanit, sans-serif' }}>
                   Goals
                 </Typography>
-                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                <Typography variant="body2" sx={{ color: 'text.secondary', fontFamily: 'kanit, sans-serif', fontStyle: 'italic' }}>
                   Manage your personal goals here!
                 </Typography>
               </CardContent>
@@ -83,10 +83,10 @@ function Home() {
               /> */}
               <CardMedia><WorkoutLogMini/></CardMedia>
               <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
+                <Typography gutterBottom variant="h5" component="div" sx={{ fontFamily: 'kanit, sans-serif' }}>
                   Workout Log
                 </Typography>
-                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                <Typography variant="body2" sx={{ color: 'text.secondary', fontFamily: 'kanit, sans-serif', fontStyle: 'italic' }}>
                   Enter your workouts here!
                 </Typography>
               </CardContent>
@@ -111,10 +111,10 @@ function Home() {
               /> */}
               <CardMedia><CalorieCounterMini/></CardMedia>
               <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
+                <Typography gutterBottom variant="h5" component="div" sx={{ fontFamily: 'kanit, sans-serif' }}>
                   Calorie Counter
                 </Typography>
-                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                <Typography variant="body2" sx={{ color: 'text.secondary', fontFamily: 'kanit, sans-serif', fontStyle: 'italic' }}>
                   Track your daily calories here!
                 </Typography>
               </CardContent>

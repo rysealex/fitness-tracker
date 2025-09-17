@@ -613,6 +613,7 @@ body {
 .goals-container {
     min-height: 100vh;
     padding: 24px; /* p-6 */
+    margin-top: 25px;
 }
 
 .max-w-7xl {

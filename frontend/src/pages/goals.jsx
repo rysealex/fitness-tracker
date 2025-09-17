@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
-import { Button, Dialog, DialogContent, DialogActions, DialogTitle, TextField, Box, MenuItem, Typography } from "@mui/material";
+import { Button, IconButton, Dialog, DialogContent, DialogActions, DialogTitle, TextField, Box, MenuItem, Typography } from "@mui/material";
+import { Edit, Delete, Add, KeyboardBackspace } from '@mui/icons-material';
 import '../styles/index.css'
 
 function Goals() {
@@ -303,15 +304,18 @@ function Goals() {
                                     <p className="goal-card-text">End Date: {goal.end_date ? formattedDate(goal.end_date) : "N/A"}</p>
                                     <p className="goal-card-text">Status: <span className={`goal-status-${goal.status.toLowerCase()}`}>{goal.status}</span></p>
                                     <div className="goal-card-actions">
-                                        <Button
+                                        {/* <Button
                                             variant="outlined"
                                             size="small"
                                             onClick={() => openEditModal(goal)}
                                             className="edit-button"
                                         >
                                             Edit
-                                        </Button>
-                                        <Button
+                                        </Button> */}
+                                        <IconButton color="primary" onClick={() => openEditModal(goal)}>
+                                            <Edit />
+                                        </IconButton>
+                                        {/* <Button
                                             variant="outlined"
                                             size="small"
                                             color="error"
@@ -319,7 +323,13 @@ function Goals() {
                                             className="delete-button"
                                         >
                                             Delete
-                                        </Button>
+                                        </Button> */}
+                                        <IconButton
+                                            color="error"
+                                            onClick={() => handleDeleteGoal(goal.goal_id)}
+                                        >
+                                            <Delete />
+                                        </IconButton>
                                     </div>
                                 </div>
                             ))}
@@ -336,7 +346,7 @@ function Goals() {
 		<div className="goals-container">
             <div className="max-w-7xl">
                 {/* Header and Exit Button */}
-                <div className="header-section">
+                {/* <div className="header-section">
                     <Typography variant="h4" component="h1" className="page-title">
                         Your Goals
                     </Typography>
@@ -359,7 +369,7 @@ function Goals() {
                     >
                         Exit
                     </Button>
-                </div>
+                </div> */}
 
                 {/* Add New Goal Section */}
                 {/* <div className="add-goal-section">
@@ -400,9 +410,41 @@ function Goals() {
 
                 {/* Goal Status Sections */}
                 <div className="goal-status-sections">
-                    {renderGoalSection("Active Goals", groupedActiveGoals)}
-                    {renderGoalSection("Completed Goals", groupedCompletedGoals)}
-                    {renderGoalSection("Abandoned Goals", groupedAbandonedGoals)}
+                    {
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '30px', marginTop: '5px' }}>
+                            <Button
+                                variant="contained"
+                                style={{
+                                    backgroundColor: '#C51D34'
+                                }}
+                                onClick={() => setAddModalOpen(true)}
+                            >
+                                <Add /> Add
+                            </Button>
+                            {/* <IconButton
+                                size="small"
+                                color="primary"
+                                sx={{ ml: 1, color: '#C51D34' }}
+                                onClick={() => setAddModalOpen(true)}
+                            >
+                                <Add />
+                            </IconButton> */}
+                            <Button
+                                variant="contained"
+                                style={{
+                                    backgroundColor: '#C51D34'
+                                }}
+                                onClick={() => handleNavigate('/home')}
+                                className="exit-button"
+                                maxWidth="sm"
+                            >
+                                <KeyboardBackspace /> Back
+                            </Button>
+                        </div>
+                    }
+                    {renderGoalSection("Active", groupedActiveGoals)}
+                    {renderGoalSection("Completed", groupedCompletedGoals)}
+                    {renderGoalSection("Abandoned", groupedAbandonedGoals)}
                 </div>
             </div>
 
