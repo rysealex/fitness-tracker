@@ -501,12 +501,12 @@ function WorkoutLog() {
 								grouped[type].map((entry) => (
 									<Box key={entry.workout_types_id} sx={{ mb: 1, p: 1, borderRadius: 1, bgcolor: "#f9f9f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
 									<Box>
-										<Typography 
+										{/* <Typography 
 											variant="subtitle2"
 											sx={{ fontFamily: 'kanit, sans-serif' }}
 										>
 											<b>{entry.workout_type}</b>
-										</Typography>
+										</Typography> */}
 										<Typography 
 											variant="body2"
 											sx={{ fontFamily: 'kanit, sans-serif' }}
