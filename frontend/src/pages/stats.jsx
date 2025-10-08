@@ -100,9 +100,9 @@ function Stats() {
       heightInputRef.current.focus();
       setIsLoadingStats(false);
       return;
-    } else if (isNaN(parsedHeight) || !/^\d+\.?\d{0,1}$/.test(editEntry.height_ft)) {
+    } else if (isNaN(parsedHeight) || !/^\d+\.?\d{0,2}$/.test(editEntry.height_ft)) {
       setHeight("");
-      setHeightError("New height must be a decimal to the tenth place (e.g., 5.9).");
+      setHeightError("New height must be a decimal to the hundredth place (e.g., 5.90).");
       heightInputRef.current.focus();
       setIsLoadingStats(false);
       return;

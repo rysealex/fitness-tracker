@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS `fitness_tracker`.`Users` (
   `fname` VARCHAR(35) NOT NULL,
   `lname` VARCHAR(35) NOT NULL,
   `dob` DATE NOT NULL,
-  `height_ft` DECIMAL(3, 1) NOT NULL,
+  `height_ft` DECIMAL(3, 2) NOT NULL,
   `weight_lbs` DECIMAL(6, 2) NOT NULL,
   `gender` ENUM("Male", "Female", "Other") NOT NULL,
   `profile_pic` VARCHAR(255) NULL,

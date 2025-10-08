@@ -134,9 +134,9 @@ function EnterInformation() {
       setHeightError("Enter your height.");
       hasError = true;
       heightInputRef.current.focus();
-    } else if (isNaN(parseFloat(height)) || !/^\d+\.?\d{0,1}$/.test(height)) {
+    } else if (isNaN(parseFloat(height)) || !/^\d+\.?\d{0,2}$/.test(height)) {
       setHeight("");
-      setHeightError("Height must be a decimal to the tenth place (e.g., 5.9).");
+      setHeightError("Height must be a decimal to the hundredth place (e.g., 5.90).");
       hasError = true;
       heightInputRef.current.focus();
     }

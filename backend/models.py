@@ -14,7 +14,7 @@ class User(db.Model):
     fname = db.Column(db.String(35), nullable=False)
     lname = db.Column(db.String(35), nullable=False)
     dob = db.Column(db.Date, nullable=False)
-    height_ft = db.Column(db.DECIMAL(3, 1), nullable=False)
+    height_ft = db.Column(db.DECIMAL(3, 2), nullable=False)
     weight_lbs = db.Column(db.DECIMAL(6, 2), nullable=False)
     gender = db.Column(Enum("Male", "Female", "Other"), nullable=False)
     profile_pic = db.Column(db.String(255), nullable=True)
