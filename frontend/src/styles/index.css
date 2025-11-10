@@ -647,6 +647,14 @@ body {
     padding: 10px;
 }
 
+/* Styling for the advice page */
+.advice-container h1 {
+    text-align: center;
+    color: #C51D34;
+    font-size: 60px;
+    text-shadow: 1px 1px 2px #C51D34, 0 0 1em rgb(0, 0, 0), 0 0 0.2em rgb(0, 0, 0);
+}
+
 /* Styling for the notifications page */
 .notifications-container h1 {
     text-align: center;
