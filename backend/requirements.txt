@@ -11,3 +11,6 @@ Flask-Migrate
 python-dotenv
 mysql-connector-python
 PyMySQL
+# for connecting to langgraph and openai
+langgraph
+langchain-openai
