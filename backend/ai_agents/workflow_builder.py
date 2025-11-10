@@ -5,6 +5,7 @@ from .agents import retrieve_user_logs, analyze_data, generate_advice_and_guardr
 # Query Router Function
 def decide_safety_route(state: AgentState) -> AgentState:
     """Determines if the user query is safe or should redirect to the Guardrail Agent"""
+    
     query = state["user_query"].lower() # User query in lowercase
 
     # Keyword-based safety check (Use LLM for production)
