@@ -46,6 +46,11 @@ function Navbar() {
 					</span>Stats</Link>
 				</li>
 				<li>
+				<Link to='/advice'><span class="material-symbols-outlined">
+					network_intelligence
+					</span>Advice</Link>
+				</li>
+				<li>
 				<Link to='/notifications'><span class="material-symbols-outlined">
 					notifications_active
 					</span>Notifications</Link>
