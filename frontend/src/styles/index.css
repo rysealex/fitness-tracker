@@ -648,11 +648,113 @@ body {
 }
 
 /* Styling for the advice page */
-.advice-container h1 {
+.advice-container {
+    /* Reusing structure from .enter-info-container but perhaps smaller/more focused */
+    width: 600px; 
+    position: relative;
+    z-index: 1;
+    background: #808080; /* Matching your grey background */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    border: 1px solid #fff;
+    padding: 20px;
+    margin-top: 20px; /* Give some space if it's not perfectly centered top/bottom */
+}
+
+.advice-container::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: -1;
+}
+
+.advice-title {
+    color: #C51D34; /* Matching your accent color */
     text-align: center;
-    color: #C51D34;
-    font-size: 60px;
+    margin-bottom: 30px;
+    font-size: 40px;
     text-shadow: 1px 1px 2px #C51D34, 0 0 1em rgb(0, 0, 0), 0 0 0.2em rgb(0, 0, 0);
+}
+
+.advice-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 0 20px;
+}
+
+.advice-label {
+    color: #fff; /* Light text color for labels */
+    font-weight: 500;
+    text-align: left;
+}
+
+.advice-input {
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #fff;
+    background: transparent;
+    color: #fff; /* Text color inside the input */
+    font-family: 'kanit', sans-serif;
+    font-size: 14px;
+    resize: vertical; /* Allow vertical resizing */
+}
+
+.advice-input:focus {
+    outline: none;
+    border-color: #C51D34; /* Highlight on focus */
+    box-shadow: 0 0 5px rgba(197, 29, 52, 0.7);
+}
+
+.advice-submit-button {
+    background-color: #C51D34;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+    font-family: 'kanit', sans-serif;
+}
+
+.advice-submit-button:hover:not(:disabled) {
+    background-color: #A0182B; /* Darker red on hover */
+}
+
+.advice-submit-button:disabled {
+    background-color: #6a6a6a;
+    cursor: not-allowed;
+}
+
+
+/* Output Box Styling */
+.advice-output-box {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.3); /* Slightly darker background for content box */
+    border-radius: 10px;
+    border: 1px solid #C51D34;
+}
+
+.advice-output-box h2 {
+    color: #fff;
+    font-size: 1.4em;
+    margin-top: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+}
+
+.ai-response-text {
+    color: #e0e0e0; /* Light grey for response text */
+    text-align: left;
+    white-space: pre-wrap; /* Preserves line breaks from AI response */
 }
 
 /* Styling for the notifications page */
