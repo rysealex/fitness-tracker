@@ -20,14 +20,20 @@ function Advice() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Input validation here
-
     // Set loading state and clear previous advice
     setIsLoading(true);
     setAdviceResponse("");
 
     // Change to actual API call later
     console.log("Sending user query to Fitness Tracker Advice Workflow!\nUser query: ", userQuery);
+
+    setTimeout(() => {
+      setIsLoading(false);
+      setAdviceResponse(prevState => ({
+        ...prevState,
+        final_response: `You asked: ${userQuery}\nCurrently in Development!`,
+      }));
+    }, 2000);
   }
 
   return(
@@ -37,15 +43,15 @@ function Advice() {
         <h1 className='advice-title'>AI Fitness Advisor</h1>
         <form className='advice-form' onSubmit={handleSubmit}>
           <label htmlFor="advice-input" className="advice-label">
-            Ask your fitness question:
+            Hello! What's Your Question?
           </label>
           <textarea
               id="advice-input"
               className='advice-input'
               value={userQuery}
               onChange={(e) => setUserQuery(e.target.value)}
-              placeholder="e.g., What's a good full-body workout for a beginner?"
-              rows="4"
+              placeholder="Ask your questions"
+              rows="2"
               disabled={isLoading}
           />
           <button 
@@ -53,13 +59,13 @@ function Advice() {
               className='advice-submit-button'
               disabled={isLoading || !userQuery.trim()}
           >
-              {isLoading ? 'Getting Advice...' : 'Get Advice'}
+              {isLoading ? 'Loading...' : 'Submit'}
           </button>
         </form>
 
-        {adviceResponse && (
+        {adviceResponse.final_response && (
           <div className='advice-output-box'>
-            <h2>AI Response:</h2>
+            {/* <h2>AI Response:</h2> */}
             <p className='ai-response-text'>{adviceResponse.final_response}</p>
           </div>
         )}
